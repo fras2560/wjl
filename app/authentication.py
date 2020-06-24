@@ -6,6 +6,7 @@ from flask import render_template, redirect, url_for
 from flask_dance.contrib.github import github
 from flask_dance.contrib.facebook import facebook
 from flask_dance.contrib.google import google
+import os
 
 
 def requires_login(fnc):
@@ -49,3 +50,18 @@ def get_login_email() -> str:
         resp = google.get("/oauth2/v1/userinfo")
         assert resp.ok, resp.text
         return resp.json().get("email", None)
+
+
+def is_gmail_supported() -> bool:
+    """Returns whether current setup support Gmail authentication."""
+    return os.environ.get("GOOGLE_OAUTH_CLIENT_ID", "") != ""
+
+
+def is_github_supported() -> bool:
+    """Returns whether current setup support Github authentication."""
+    return os.environ.get("GITHUB_OAUTH_CLIENT_ID", "") != ""
+
+
+def is_facebook_supported() -> bool:
+    """Returns whether current setup support Facebook authentication."""
+    return os.environ.get("FACEBOOK_OAUTH_CLIENT_ID", "") != ""

@@ -1,6 +1,7 @@
 from app import wjl_app
 from app.model import Field, Team
-from app.authentication import requires_login, get_login_email, are_logged_in
+from app.authentication import requires_login, get_login_email, are_logged_in,\
+    is_facebook_supported, is_github_supported, is_gmail_supported
 from flask import render_template
 
 
@@ -67,11 +68,17 @@ def need_to_login():
     return render_template("login.html",
                            message="Need to login to proceed further.",
                            logged_in=are_logged_in(),
-                           email=get_login_email())
+                           email=get_login_email(),
+                           github_enabled=is_github_supported(),
+                           facebook_enabled=is_facebook_supported(),
+                           gmail_enabled=is_gmail_supported())
 
 
 @wjl_app.route("/login")
 def loginpage():
     return render_template("login.html",
                            logged_in=are_logged_in(),
-                           email=get_login_email())
+                           email=get_login_email(),
+                           github_enabled=is_github_supported(),
+                           facebook_enabled=is_facebook_supported(),
+                           gmail_enabled=is_gmail_supported())
