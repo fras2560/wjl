@@ -1,1 +1,1 @@
-web: gunicorn runserver:app	
+web: gunicorn runserver:wjl_app
