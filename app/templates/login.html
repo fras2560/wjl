@@ -1,0 +1,40 @@
+
+{% extends "base.html" %}
+
+{% block header %}
+<link href="{{ url_for('static', filename="css/login.css") }}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="kpx_login">
+    <h3 class="kpx_authTitle">Login</h3>
+    {% if message %}
+        <p class="message">
+            {{message}}
+        </p>
+    {% endif %}
+    <div class="row kpx_row-sm-offset-3 kpx_socialButtons">
+      <div class="col-xs-2 col-sm-2">
+        <a href="{{url_for('facebook.login') }}" class="btn btn-lg btn-block kpx_btn-facebook" data-toggle="tooltip" data-placement="top" title="Facebook">
+          <i class="fa fa-facebook fa-2x"></i>
+          <span class="hidden-xs"></span>
+        </a>
+      </div>
+      <div class="col-xs-2 col-sm-2">
+        <a href="{{url_for('github.login') }}" class="btn btn-lg btn-block kpx_btn-github" data-toggle="tooltip" data-placement="top" title="GitHub">
+          <i class="fa fa-github fa-2x"></i>
+          <span class="hidden-xs"></span>
+        </a>
+      </div>
+      <div class="col-xs-2 col-sm-2">
+        <a href="{{url_for('google.login') }}" class="btn btn-lg btn-block kpx_btn-google-plus" data-toggle="tooltip" data-placement="top" title="Google Plus">
+          <i class="fa fa-google-plus fa-2x"></i>
+          <span class="hidden-xs"></span>
+        </a>
+      </div>  
+    </div><br>
+</div>
+
+
+
+{% endblock %}
