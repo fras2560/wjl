@@ -3,3 +3,4 @@ gunicorn>=19.9.0
 Flask-SQLAlchemy>=2.3
 Werkzeug>=0.14
 Flask-Dance>=3.0.0
+psycopg2-binary>=2.7
