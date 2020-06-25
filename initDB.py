@@ -1,5 +1,5 @@
-from app import DB
-from app.model import Field, Team
+from app import wjl_app
+from app.model import Field, Team, DB
 import json
 
 
@@ -38,7 +38,8 @@ def add_teams(file_path: str, field_lookup: dict) -> dict:
     return team_lookup
 
 
-DB.drop_all()
-DB.create_all()
-fields_lookup = add_fields("data/fields.json")
-team_lookup = add_teams("data/teams.json", fields_lookup)
+with wjl_app.app_context():
+    DB.drop_all()
+    DB.create_all()
+    fields_lookup = add_fields("data/fields.json")
+    team_lookup = add_teams("data/teams.json", fields_lookup)

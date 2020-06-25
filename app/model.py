@@ -1,10 +1,14 @@
-from app import DB
 from typing import TypedDict
 from enum import Enum
 from datetime import datetime
+from flask_login import UserMixin
+from flask_dance.consumer.storage.sqla import OAuthConsumerMixin
+from flask_sqlalchemy import SQLAlchemy
 
-""" The score limit of a standard game. """
+""" The score limit of a standard game."""
 STANDARD_SCORE_LIMIT = 21
+"""The database object."""
+DB = SQLAlchemy()
 
 
 class TeamSheet(TypedDict):
@@ -47,7 +51,7 @@ roster = DB.Table('roster',
                   )
 
 
-class Player(DB.Model):
+class Player(UserMixin, DB.Model):
     """
         A class used to store the user information
         Columns:
@@ -55,16 +59,25 @@ class Player(DB.Model):
             email: the email associated with the user
     """
     id = DB.Column(DB.Integer, primary_key=True)
-    email = DB.Column(DB.String(120), unique=True)
+    email = DB.Column(DB.String(256), unique=True)
+    name = DB.Column(DB.String(256))
 
-    def __init__(self, email: str):
+    def __init__(self, email: str, name: str = None):
         self.email = email
+        self.name = name
 
     def json(self) -> dict:
         return {
             "id": self.id,
-            "email": self.email
+            "email": self.email,
+            "name": self.name
         }
+
+
+class OAuth(OAuthConsumerMixin, DB.Model):
+    provider_user_id = DB.Column(DB.String(256), unique=True, nullable=False)
+    player_id = DB.Column(DB.Integer, DB.ForeignKey(Player.id), nullable=False)
+    player = DB.relationship(Player)
 
 
 class Field(DB.Model):
@@ -104,20 +117,21 @@ class Team(DB.Model):
     """
     id = DB.Column(DB.Integer, primary_key=True)
     name = DB.Column(DB.String(120), unique=True)
-    home_field = DB.Column(DB.Integer, DB.ForeignKey('field.id'))
+    home_field_id = DB.Column(DB.Integer, DB.ForeignKey('field.id'))
+    home_field = DB.relationship(Field)
     players = DB.relationship('Player',
                               secondary=roster,
                               backref=DB.backref('teams', lazy='dynamic'))
 
     def __init__(self, name: str, home_field: Field = None):
         self.name = name
-        self.home_field = None if home_field is None else home_field.id
+        self.home_field_id = None if home_field is None else home_field.id
 
     def json(self) -> dict:
         players = [player.json() for player in self.players]
         field = ("No homefield"
                  if self.home_field is None
-                 else Field.query.get(self.home_field).json())
+                 else self.home_field)
         return {
             "id": self.id,
             "name": self.name,
@@ -157,8 +171,11 @@ class Match(DB.Model):
     """
     id = DB.Column(DB.Integer, primary_key=True)
     away_team_id = DB.Column(DB.Integer, DB.ForeignKey("team.id"))
+    away_team = DB.relationship(Team, foreign_keys=[away_team_id])
     home_team_id = DB.Column(DB.Integer, DB.ForeignKey("team.id"))
+    home_team = DB.relationship(Team, foreign_keys=[home_team_id])
     session_id = DB.Column(DB.Integer, DB.ForeignKey("session.id"))
+    session = DB.relationship(Session)
     date = DB.Column(DB.DateTime)
     status = DB.Column(DB.String(120))
 
@@ -177,6 +194,7 @@ class Sheet(DB.Model):
     """
     id = DB.Column(DB.Integer, primary_key=True)
     match_id = DB.Column(DB.Integer, DB.ForeignKey("match.id"))
+    match = DB.relationship(Match)
     home_score = DB.Column(DB.Integer)
     home_slot = DB.Column(DB.Boolean)
     home_dingers = DB.Column(DB.Integer)

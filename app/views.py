@@ -1,8 +1,10 @@
 from app import wjl_app
 from app.model import Field, Team
-from app.authentication import requires_login, get_login_email, are_logged_in,\
+from app.errors import NotFoundException
+from flask_login import logout_user, login_required
+from app.authentication import get_login_email, are_logged_in,\
     is_facebook_supported, is_github_supported, is_gmail_supported
-from flask import render_template
+from flask import render_template, redirect, url_for, flash
 
 
 @wjl_app.route("/schedule")
@@ -20,7 +22,7 @@ def standings():
 
 
 @wjl_app.route("/submit_score")
-@requires_login
+@login_required
 def submit_score():
     print(get_login_email())
     return render_template("submit_score.html",
@@ -36,13 +38,11 @@ def homepage():
 
 
 @wjl_app.route("/field/<int:field_id>")
-@requires_login
+@login_required
 def field(field_id: int):
     field = Field.query.get(field_id)
     if field is None:
-        return render_template("error.html", message="Sorry field not found",
-                               logged_in=are_logged_in(),
-                               email=get_login_email())
+        raise NotFoundException("Sorry, field not found")
     return render_template("field.html",
                            field=field.json(),
                            logged_in=are_logged_in(),
@@ -50,13 +50,11 @@ def field(field_id: int):
 
 
 @wjl_app.route("/team/<int:team_id>")
-@requires_login
+@login_required
 def team(team_id: int):
     team = Team.query.get(team_id)
     if team is None:
-        return render_template("error.html", message="Sorry team not found",
-                               logged_in=are_logged_in(),
-                               email=get_login_email())
+        raise NotFoundException("Sorry, field not found")
     return render_template("team.html",
                            team=team.json(),
                            logged_in=are_logged_in(),
@@ -82,3 +80,11 @@ def loginpage():
                            github_enabled=is_github_supported(),
                            facebook_enabled=is_facebook_supported(),
                            gmail_enabled=is_gmail_supported())
+
+
+@wjl_app.route("/logout")
+@login_required
+def logout():
+    logout_user()
+    flash("You have logged out")
+    return redirect(url_for())
