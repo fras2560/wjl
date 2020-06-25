@@ -73,6 +73,9 @@ class Player(UserMixin, DB.Model):
             "name": self.name
         }
 
+    def __str__(self):
+        return f"Player: {self.name}"
+
 
 class OAuth(OAuthConsumerMixin, DB.Model):
     provider_user_id = DB.Column(DB.String(256), unique=True, nullable=False)

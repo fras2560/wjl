@@ -148,12 +148,13 @@ def find_player(user_info: UserInfo) -> Player:
 
 def are_logged_in() -> bool:
     """Returns whether the person is logged in."""
-    return False
+    print(current_user.get_id())
+    return current_user.get_id() is not None
 
 
 def get_login_email() -> str:
     """Returns the email based whichever app they have authorized with."""
-    return "no-email@wjl.ca"
+    return None if not are_logged_in() else current_user.email
 
 
 def is_gmail_supported() -> bool:

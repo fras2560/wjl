@@ -4,7 +4,7 @@ from app.errors import NotFoundException
 from flask_login import logout_user, login_required
 from app.authentication import get_login_email, are_logged_in,\
     is_facebook_supported, is_github_supported, is_gmail_supported
-from flask import render_template, redirect, url_for, flash
+from flask import render_template, redirect, url_for
 
 
 @wjl_app.route("/schedule")
@@ -86,5 +86,5 @@ def loginpage():
 @login_required
 def logout():
     logout_user()
-    flash("You have logged out")
-    return redirect(url_for())
+    print("You have logged out")
+    return redirect(url_for("homepage"))
