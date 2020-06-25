@@ -1,9 +1,9 @@
 
 from flask import render_template
 from app import wjl_app
-from app.authentication import are_logged_in, get_login_email
 from app.errors import OAuthException, NotFoundException,\
     NotPartOfLeagueException
+from app.views import get_base_data
 
 
 @wjl_app.errorhandler(NotFoundException)
@@ -12,6 +12,5 @@ from app.errors import OAuthException, NotFoundException,\
 def handle_generic_error(error):
     message = str(error)
     return render_template("error.html",
-                           message=str(message),
-                           logged_in=are_logged_in(),
-                           email=get_login_email())
+                           base_data=get_base_data(),
+                           message=str(message))

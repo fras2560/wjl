@@ -1,8 +1,150 @@
 {% extends "base.html" %}
+
+{% block header %}
+<link href="https://cdn.datatables.net/1.10.10/css/jquery.dataTables.min.css" rel="stylesheet">
+<link href="https://cdn.datatables.net/responsive/2.2.3/css/responsive.dataTables.min.css" rel="stylesheet">
+{% endblock %}
+
 {% block content %}
 <h4>
     The standings
 </h4>
+<ul class="nav nav-pills" id="listing">
+    {% for session in league_sessions %}
+    <li class="nav-item">
+        {% if loop.index == 1 %}
+            <a class="nav-link active" aria-selected="true" id="sessionLink{{session.id}}" data-toggle="pill" role="tab" aria-controls="session{{session.id}}" href="#session{{session.id}}">
+        {% else %}
+            <a class="nav-link" aria-selected="false" id="sessionLink{{session.id}}" data-toggle="pill" role="tab" aria-controls="session{{session.id}}" href="#session{{session.id}}">
+        {% endif %}
+          {{session.name}}
+        </a>
+    </li>
+    {% endfor %}
+</ul>
+<div class="tab-content">
+    {% for session in league_sessions %}
+        {% if loop.index == 1%}
+        <div id="session{{session.id}}" class="tab-pane fade show active" aria-labelledby="sessionLink{{session.id}}">
+        {% else %}
+        <div id="session{{session.id}}" class="tab-pane fade in"aria-labelledby="sessionLink{{session.id}}" >
+        {% endif %}
+          <h4 id="session_header_{{session.id}}">
+            {{session.name}}
+          </h4>
+          <img src="{{url_for('static', filename="ajax-loader.gif")}}" id="sessionloader{{session.id}}" />
+          <table id="session_table_{{session.id}}" width="100%" class="display">
+              <thead>
+                  <tr>
+                      <th data-priority="1">
+                        Team
+                      </th>
+                      <th data-priority="2">
+                        Wins
+                      </th>
+                      <th data-priority="2">
+                        Win %
+                      </th>
+                      <th data-priority="4">
+                        Losses
+                      </th>
+                      <th data-priority="5">
+                          Points Scored
+                      </th>
+                      <th data-priority="3">
+                        Jams
+                      </th>
+                      <th data-priority="5">
+                          Slots
+                      </th>
+                  </tr>
+              </thead>
+              <tbody>
+              </tbody>
+          </table>
+      </div>
+    {% endfor %}
+</div>
+{% endblock %}
 
+
+{% block script %}
+<script src="{{ url_for('static', filename="js/jquery.dataTables.min.js") }}"></script>
+<script src="{{ url_for('static', filename="js/jquery.dataTables.responsive.min.js") }}"></script>
+<script>
+$(document).ready(ready());
+function ready() {
+    // load the whole league and then each of its divisions
+
+    {% for session in league_sessions %}
+    loadSession({{session.id}});
+    {% endfor %}
+}
+
+function loadSession(session_id) {
+    $.ajax({
+        tyoe: "GET",
+        url: "/standings/" + session_id,
+        contentType: "application/json",
+        dataType: "json",
+        async: true,
+        success: function (team_records) {
+            console.log(team_records);
+            display_table(team_records, '#session_table_' + session_id );
+            $('#sessionloader' + session_id).hide();
+        }, error: function(request, error) {
+            console.error(request);
+            console.error(error);
+        }
+    });
+}
+
+function convert_teams_formatting(teams_map) {
+  var teams = []
+  for (var prop in teams_map) {
+    if (Object.prototype.hasOwnProperty.call(teams_map, prop)) {
+      team = teams_map[prop];
+      team['team_id'] = prop;
+      teams.push(team);
+    }
+  }
+  return teams;
+}
+
+function display_table(team_records, selector) {
+  var table = $(selector).DataTable({
+                  "data": team_records,
+                  "responsive": true,
+                  "order": [[1, "desc"]],
+                  "columns": [
+                      {"data": "name", "render": renderTeamLink},
+                      {"data": "wins"},
+                      {"data": "wins", "render": renderWinPercentage},
+                      {"data": "losses"},
+                      {"data": "points_scored"},
+                      {"data": "jams"},
+                      {"data": "slots"}
+                  ]
+                  
+  });
+}
+
+/** Renders a team link*/
+function renderTeamLink(data, type, row, meta) {
+    if (type === 'display') {
+        data = '<a href="/team/' + row.id + '">' + row.name + '</a>';
+    }
+    return data;
+}
+
+/**Render the winning percentage. */
+function renderWinPercentage(data, type, row, meta) {
+  if (type === 'display') {
+    data = (row.wins / row.games_played);
+  }
+  return data;
+}
+
+</script>
 
 {% endblock %}

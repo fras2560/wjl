@@ -150,7 +150,7 @@ class Session(DB.Model):
             name: the name of the session
     """
     id = DB.Column(DB.Integer, primary_key=True)
-    name = DB.Column(DB.String(120))
+    name = DB.Column(DB.String(120), unique=True)
 
     def __init__(self, name: str):
         self.name = name
@@ -204,6 +204,7 @@ class Sheet(DB.Model):
     home_deuces = DB.Column(DB.Integer)
     home_jams = DB.Column(DB.Integer)
     away_score = DB.Column(DB.Integer)
+    away_slot = DB.Column(DB.Boolean)
     away_dingers = DB.Column(DB.Integer)
     away_deuces = DB.Column(DB.Integer)
     away_jams = DB.Column(DB.Integer)
