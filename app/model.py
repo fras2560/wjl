@@ -61,6 +61,10 @@ class Player(UserMixin, DB.Model):
     id = DB.Column(DB.Integer, primary_key=True)
     email = DB.Column(DB.String(256), unique=True)
     name = DB.Column(DB.String(256))
+    players = DB.relationship('Team',
+                              secondary=roster,
+                              backref=DB.backref('teamsplayers',
+                                                 lazy='dynamic'))
 
     def __init__(self, email: str, name: str = None):
         self.email = email
@@ -74,7 +78,7 @@ class Player(UserMixin, DB.Model):
         }
 
     def __str__(self):
-        return f"Player: {self.name}"
+        return self.name
 
 
 class OAuth(OAuthConsumerMixin, DB.Model):
@@ -110,6 +114,9 @@ class Field(DB.Model):
             "link": self.link
         }
 
+    def __str__(self) -> str:
+        return self.name
+
 
 class Team(DB.Model):
     """
@@ -142,6 +149,9 @@ class Team(DB.Model):
             "homefield": field
         }
 
+    def __str__(self) -> str:
+        return self.name
+
 
 class Session(DB.Model):
     """
@@ -151,6 +161,8 @@ class Session(DB.Model):
     """
     id = DB.Column(DB.Integer, primary_key=True)
     name = DB.Column(DB.String(120), unique=True)
+    matches = DB.relationship('Match',
+                              backref='matches', lazy='dynamic')
 
     def __init__(self, name: str):
         self.name = name
@@ -177,8 +189,12 @@ class Match(DB.Model):
     away_team = DB.relationship(Team, foreign_keys=[away_team_id])
     home_team_id = DB.Column(DB.Integer, DB.ForeignKey("team.id"))
     home_team = DB.relationship(Team, foreign_keys=[home_team_id])
+    field_id = DB.Column(DB.Integer, DB.ForeignKey("field.id"))
+    field = DB.relationship(Field)
     session_id = DB.Column(DB.Integer, DB.ForeignKey("session.id"))
     session = DB.relationship(Session)
+    sheets = DB.relationship('Sheet',
+                             backref='sheets', lazy='dynamic')
     date = DB.Column(DB.DateTime)
     status = DB.Column(DB.String(120))
 
@@ -189,6 +205,19 @@ class Match(DB.Model):
         self.session_id = session.id
         self.date = date
         self.status = status
+
+    def json(self) -> dict:
+        home_team = "TBD" if self.home_team is None else self.home_team.name
+        away_team = "TBD" if self.away_team is None else self.away_team.name
+        field = "???" if self.field is None else self.field.name
+        return {
+            "home_team": home_team,
+            "away_team": away_team,
+            "field": field,
+            "date": self.date.strftime("%Y-%m-%d"),
+            "time": self.date.strftime("%H:%M"),
+            "datetime": self.date.strftime("%Y-%m-%d %H:%M")
+        }
 
 
 class Sheet(DB.Model):
@@ -222,6 +251,16 @@ class Sheet(DB.Model):
         self.away_dingers = away_sheet.get(TeamSheet.DINGERS)
         self.away_deuces = away_sheet.get(TeamSheet.DEUCES)
         self.away_jams = away_sheet.get(TeamSheet.JAMS)
+
+    def json(self) -> dict:
+        return {
+            "home_score": self.home_score,
+            "home_slot": self.home_slot,
+            "home_jams": self.home_jams,
+            "away_score": self.away_score,
+            "away_slot": self.away_slot,
+            "away_jams": self.away_jams
+        }
 
     def who_won(self) -> WhichTeam:
         """Return who won the given sheet."""

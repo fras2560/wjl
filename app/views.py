@@ -1,11 +1,14 @@
 from typing import TypedDict
 from flask_login import logout_user, login_required
 from flask import render_template, redirect, url_for, Response
+from sqlalchemy import func, asc
+from datetime import datetime
 from app import wjl_app
-from app.model import Field, Team, Session, Match, Sheet, WhichTeam
+from app.model import Field, Team, Session, Match, Sheet, WhichTeam, DB
 from app.errors import NotFoundException
 from app.authentication import get_login_email, are_logged_in,\
     is_facebook_supported, is_github_supported, is_gmail_supported
+from app.helpers import is_date_between_range
 import json
 
 
@@ -13,6 +16,25 @@ class WebsiteData(TypedDict):
     """Data that every website page needs."""
     logged_in: bool
     email: str
+
+
+class ScheduleRecord(TypedDict):
+    """A schedule record"""
+    id: int
+    date: str
+    home_team: str
+    away_team: str
+    field: str
+    result_link: str
+
+    @staticmethod
+    def create_schedule_record(match: Match) -> "ScheduleRecord":
+        record = match.json()
+        record["result_link"] = None
+        for sheet in match.sheets:
+            record["result_link"] = url_for("match_result", match_id=match.id)
+            break
+        return record
 
 
 class TeamRecord(TypedDict):
@@ -27,31 +49,58 @@ class TeamRecord(TypedDict):
     slots: int
 
     @staticmethod
-    def empty_record(id: int, name: str):
+    def empty_record(team_id: int, team_name: str) -> "TeamRecord":
         return {
-            "id": id,
-            "name": name,
+            "id": team_id,
+            "name": team_name,
             "wins": 0,
             "losses": 0,
             "games_played": 0,
             "points_scored": 0,
             "jams": 0,
-            "slots": 0
+            "slots": 0,
+            "team_link": url_for('team', team_id=team_id)
         }
 
 
 @wjl_app.route("/schedule")
 def schedule():
+    league_sessions = [session.json() for session in Session.query.all()]
+    active_session = get_active_session()
+    active_session = (active_session
+                      if active_session is not None
+                      else league_sessions[-1])
     return render_template("schedule.html",
-                           base_data=get_base_data())
+                           base_data=get_base_data(),
+                           league_sessions=league_sessions,
+                           active_session=active_session,
+                           today=datetime.now())
+
+
+@wjl_app.route("/schedule/<int:session_id>")
+def schedule_table(session_id):
+    session = Session.query.get(session_id)
+    if session is None:
+        return Response(None, status=404, mimetype="application/json")
+    matches = Match.query.filter(
+        Match.session_id == session_id).order_by(asc(Match.date)).all()
+    schedule = [ScheduleRecord.create_schedule_record(match)
+                for match in matches]
+    return Response(json.dumps(schedule),
+                    status=200, mimetype="application/json")
 
 
 @wjl_app.route("/standings")
 def standings():
     league_sessions = [session.json() for session in Session.query.all()]
+    active_session = get_active_session()
+    active_session = (active_session
+                      if active_session is not None
+                      else league_sessions[-1])
     return render_template("standings.html",
                            base_data=get_base_data(),
-                           league_sessions=league_sessions)
+                           league_sessions=league_sessions,
+                           active_session=active_session)
 
 
 @wjl_app.route("/standings/<int:session_id>")
@@ -87,10 +136,21 @@ def standing_table(session_id):
                 teams[match.away_team_id]['losses'] += 1
     team_records = list(teams.values())
     team_records = sorted(team_records, reverse=True,
-                          key=lambda x: x["wins"] / min(1, x["games_played"]))
-    print(team_records)
+                          key=lambda x: x["wins"] / max(1, x["games_played"]))
     return Response(json.dumps(team_records),
                     status=200, mimetype="application/json")
+
+
+@wjl_app.route("/match_results/<int:match_id>")
+def match_result(match_id):
+    match = Match.query.get(match_id)
+    if match is None:
+        raise NotFoundException("Sorry, match not found")
+    sheets = [sheet.json() for sheet in match.sheets]
+    return render_template("match_results.html",
+                           base_data=get_base_data(),
+                           match=match.json(),
+                           sheets=sheets)
 
 
 @wjl_app.route("/submit_score")
@@ -162,6 +222,12 @@ def logout():
     return redirect(url_for("homepage"))
 
 
+@wjl_app.route("/privacy")
+def privacy_policy():
+    """A route for the privacy policy"""
+    return render_template("privacy_policy.html", base_data=get_base_data())
+
+
 def get_base_data() -> WebsiteData:
     """Return base data needed for all pages.
 
@@ -172,3 +238,22 @@ def get_base_data() -> WebsiteData:
         "logged_in": are_logged_in(),
         "email": get_login_email()
     }
+
+
+def get_active_session() -> Session:
+    """Get the active session out of the list of sessions.
+
+    Returns:
+        Session: the current active session otherwise None
+    """
+    start_date = func.min(Match.date).label("session_start")
+    end_date = func.max(Match.date).label("session_end")
+    sessions = DB.session.query(start_date, end_date,
+                                Match.session_id).group_by(Match.session_id)
+    current = datetime.now()
+    for session in sessions:
+        print(session)
+        if is_date_between_range(current, session[0], session[1]):
+            print(f"Active session {session}")
+            return Session.query.get(session[2])
+    return None

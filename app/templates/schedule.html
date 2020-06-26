@@ -1,8 +1,143 @@
 {% extends "base.html" %}
+
+{% block header %}
+<link href="https://cdn.datatables.net/1.10.10/css/jquery.dataTables.min.css" rel="stylesheet">
+<link href="https://cdn.datatables.net/responsive/2.2.3/css/responsive.dataTables.min.css" rel="stylesheet">
+{% endblock %}
+
 {% block content %}
 <h4>
     Schedule
 </h4>
+<ul class="nav nav-pills" id="listing">
+    {% for session in league_sessions %}
+    <li class="nav-item">
+        {% if session.id == active_session.id %}
+            <a class="nav-link active" aria-selected="true" id="sessionLink{{session.id}}" data-toggle="pill" role="tab" aria-controls="session{{session.id}}" href="#session{{session.id}}">
+        {% else %}
+            <a class="nav-link" aria-selected="false" id="sessionLink{{session.id}}" data-toggle="pill" role="tab" aria-controls="session{{session.id}}" href="#session{{session.id}}">
+        {% endif %}
+          {{session.name}}
+        </a>
+    </li>
+    {% endfor %}
+</ul>
+<div class="tab-content">
+    {% for session in league_sessions %}
+        {% if session.id == active_session.id %}
+        <div id="session{{session.id}}" class="tab-pane fade show active" aria-labelledby="sessionLink{{session.id}}">
+        {% else %}
+        <div id="session{{session.id}}" class="tab-pane fade in"aria-labelledby="sessionLink{{session.id}}" >
+        {% endif %}
+          <h4 id="session_header_{{session.id}}">
+            {{session.name}}
+          </h4>
+          <img src="{{url_for('static', filename="ajax-loader.gif")}}" id="sessionloader{{session.id}}" />
+          <table id="session_table_{{session.id}}" width="100%" class="display">
+              <thead>
+                  <tr>
+                      <th data-priority="2">
+                        Date
+                      </th>
+                      <th data-priority="4">
+                        Time
+                      </th>
+                      <th data-priority="3">
+                        Field
+                      </th>
+                      <th data-priority="1">
+                        Home Team
+                      </th>
+                      <th data-priority="1">
+                        Away Team
+                      </th>
+                      <th data-priority="5">
+                        Results
+                      </th>
+                  </tr>
+              </thead>
+              <tbody>
+              </tbody>
+          </table>
+      </div>
+    {% endfor %}
+</div>
+{% endblock %}
 
+
+{% block script %}
+<script src="{{ url_for('static', filename="js/jquery.dataTables.min.js") }}"></script>
+<script src="{{ url_for('static', filename="js/jquery.dataTables.responsive.min.js") }}"></script>
+<script>
+$(document).ready(ready());
+function ready() {
+    // plug-in code for jumping a page with a certain value
+    jQuery.fn.dataTable.Api.register( 'page.jumpToData()', function ( data, column ) {
+        var pos = this.column(column, {order:'current'}).data().indexOf( data );
+     
+        if ( pos >= 0 ) {
+            var page = Math.floor( pos / this.page.info().length );
+            this.page( page ).draw( false );
+        }
+     
+        return this;
+    } );
+
+    // load the whole league and then each of its divisions
+    {% for session in league_sessions %}
+    loadSession({{session.id}});
+    {% endfor %}
+}
+
+function loadSession(session_id) {
+    $.ajax({
+        tyoe: "GET",
+        url: "/schedule/" + session_id,
+        contentType: "application/json",
+        dataType: "json",
+        async: true,
+        success: function (schedule) {
+            console.log(schedule);
+            display_table(schedule, '#session_table_' + session_id );
+            $('#sessionloader' + session_id).hide();
+        }, error: function(request, error) {
+            console.error(request);
+            console.error(error);
+        }
+    });
+}
+
+
+function display_table(schedule, selector) {
+  var table = $(selector).DataTable({
+                  "data": schedule,
+                  "responsive": true,
+                  "order": [[1, "desc"]],
+                  "columns": [
+                      {"data": "date"},
+                      {"data": "time"},
+                      {"data": "field"},
+                      {"data": "home_team"},
+                      {"data": "away_team"},
+                      {"data": "result_link", "render": renderResults}
+                  ]
+  });
+  // jump to todays date
+  table.page.jumpToData("{{today}}", 0);
+}
+
+/** Renders a team link*/
+function renderResults(data, type, row, meta) {
+    if (type === 'display') {
+        if (row.result_link != null) {
+            data = '<a href="' + row.result_link + '">Results</a>';
+        } else {
+            data = 'To be played';
+        }
+    }
+    return data;
+}
+
+</script>
 
 {% endblock %}

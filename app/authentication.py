@@ -148,7 +148,6 @@ def find_player(user_info: UserInfo) -> Player:
 
 def are_logged_in() -> bool:
     """Returns whether the person is logged in."""
-    print(current_user.get_id())
     return current_user.get_id() is not None
 
 

@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+<h4>
+    {{match.home_team}} vs {{match.away_team}} on {{match.date}}
+</h4>
+<ul>
+    {% for sheet in sheets %}
+        {% if sheet.away_slot %}
+            <li>
+                {{match.away_team}} Slot {{sheet.home_score}} - {{sheet.away_score}} ({{sheet.home_jams}} - {{sheet.away_jams}})
+            </li>
+        {% elif sheet.home_slot %}
+            <li>
+                {{match.home_team}} Slot {{sheet.home_score}} - {{sheet.away_score}} ({{sheet.home_jams}} - {{sheet.away_jams}})
+            </li>
+        {% else %}
+            <li>
+                {{sheet.home_score}} - {{sheet.away_score}} ({{sheet.home_jams}} - {{sheet.away_jams}})
+            </li>
+        {% endif %}
+
+    {% endfor %}
+</ul>
+<p>
+    Home Team Score - Away Team Score (Home Team Jams - Away Team Jams)
+</p>
+
+{% endblock %}

@@ -7,12 +7,12 @@
 
 {% block content %}
 <h4>
-    The standings
+    Standings
 </h4>
 <ul class="nav nav-pills" id="listing">
     {% for session in league_sessions %}
     <li class="nav-item">
-        {% if loop.index == 1 %}
+        {% if session.id == active_session.id %}
             <a class="nav-link active" aria-selected="true" id="sessionLink{{session.id}}" data-toggle="pill" role="tab" aria-controls="session{{session.id}}" href="#session{{session.id}}">
         {% else %}
             <a class="nav-link" aria-selected="false" id="sessionLink{{session.id}}" data-toggle="pill" role="tab" aria-controls="session{{session.id}}" href="#session{{session.id}}">
@@ -24,7 +24,7 @@
 </ul>
 <div class="tab-content">
     {% for session in league_sessions %}
-        {% if loop.index == 1%}
+        {% if session.id == active_session.id %}
         <div id="session{{session.id}}" class="tab-pane fade show active" aria-labelledby="sessionLink{{session.id}}">
         {% else %}
         <div id="session{{session.id}}" class="tab-pane fade in"aria-labelledby="sessionLink{{session.id}}" >
@@ -49,7 +49,7 @@
                         Losses
                       </th>
                       <th data-priority="5">
-                          Points Scored
+                        Points
                       </th>
                       <th data-priority="3">
                         Jams
@@ -132,7 +132,7 @@ function display_table(team_records, selector) {
 /** Renders a team link*/
 function renderTeamLink(data, type, row, meta) {
     if (type === 'display') {
-        data = '<a href="/team/' + row.id + '">' + row.name + '</a>';
+        data = '<a href="' + row.team_link + '">' + row.name + '</a>';
     }
     return data;
 }
@@ -140,7 +140,8 @@ function renderTeamLink(data, type, row, meta) {
 /**Render the winning percentage. */
 function renderWinPercentage(data, type, row, meta) {
   if (type === 'display') {
-    data = (row.wins / row.games_played);
+    const gp = Math.max(row.games_played, 1);
+    data = (row.wins / gp);
   }
   return data;
 }
