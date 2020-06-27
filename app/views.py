@@ -23,17 +23,24 @@ class ScheduleRecord(TypedDict):
     id: int
     date: str
     home_team: str
+    home_team_link: str
     away_team: str
+    away_team_link: str
     field: str
+    field_link: str
     result_link: str
 
     @staticmethod
     def create_schedule_record(match: Match) -> "ScheduleRecord":
         record = match.json()
         record["result_link"] = None
+        # check if they have any results to display
         for sheet in match.sheets:
             record["result_link"] = url_for("match_result", match_id=match.id)
             break
+        record["home_team_link"] = url_for("team", team_id=match.home_team_id)
+        record["away_team_link"] = url_for("team", team_id=match.away_team_id)
+        record["field_link"] = url_for("field", field_id=match.field_id)
         return record
 
 
@@ -252,7 +259,6 @@ def get_active_session() -> Session:
                                 Match.session_id).group_by(Match.session_id)
     current = datetime.now()
     for session in sessions:
-        print(session)
         if is_date_between_range(current, session[0], session[1]):
             print(f"Active session {session}")
             return Session.query.get(session[2])

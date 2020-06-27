@@ -97,7 +97,6 @@ function loadSession(session_id) {
         dataType: "json",
         async: true,
         success: function (schedule) {
-            console.log(schedule);
             display_table(schedule, '#session_table_' + session_id );
             $('#sessionloader' + session_id).hide();
         }, error: function(request, error) {
@@ -116,13 +115,14 @@ function display_table(schedule, selector) {
                   "columns": [
                       {"data": "date"},
                       {"data": "time"},
-                      {"data": "field"},
-                      {"data": "home_team"},
-                      {"data": "away_team"},
+                      {"data": "field", "render": renderFieldLink},
+                      {"data": "home_team", "render": renderHomeTeamLink},
+                      {"data": "away_team", "render": renderAwayTeamLink},
                       {"data": "result_link", "render": renderResults}
                   ]
   });
   // jump to todays date
+  console.log("{{today}}");
   table.page.jumpToData("{{today}}", 0);
 }
 
@@ -138,6 +138,29 @@ function renderResults(data, type, row, meta) {
     return data;
 }
 
+/** Renders a home team link*/
+function renderFieldLink(data, type, row, meta) {
+    if (type === 'display') {
+        data = '<a href="' + row.field_link + '">' + row.field + '</a>';
+    }
+    return data;
+}
+
+/** Renders a home team link*/
+function renderHomeTeamLink(data, type, row, meta) {
+    if (type === 'display') {
+        data = '<a href="' + row.home_team_link + '">' + row.home_team + '</a>';
+    }
+    return data;
+}
+
+/** Renders an away team link*/
+function renderAwayTeamLink(data, type, row, meta) {
+    if (type === 'display') {
+        data = '<a href="' + row.away_team_link + '">' + row.away_team + '</a>';
+    }
+    return data;
+}
 </script>
 
 {% endblock %}

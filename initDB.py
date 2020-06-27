@@ -77,14 +77,12 @@ def parse_int(value: str) -> int:
 def create_teamsheet(home_team: bool, sheet: dict) -> TeamSheet:
     """Returns a team sheet from the sheet"""
     prefix = "Home" if home_team else "Away"
-    print(sheet)
     teamsheet = TeamSheet.empty_sheet()
     teamsheet[TeamSheet.SCORE] = parse_int(sheet[f"{prefix} Score"])
     teamsheet[TeamSheet.SLOT] = (True
                                  if parse_int(sheet[f"{prefix} Slots"]) >= 1
                                  else False)
     teamsheet[TeamSheet.JAMS] = parse_int(sheet[f"{prefix} Jams"])
-    print(teamsheet)
     return teamsheet
 
 
