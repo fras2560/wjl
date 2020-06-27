@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>
+    Submit scores for match
+</h1>
+<ul class="nav nav-pills" id="listing">
+    <li class="nav-item">
+        <a class="nav-link active"
+           aria-selected="true"
+           id="outstandingGamesLink"
+           data-toggle="pill"
+           role="tab" aria-controls="outstandingGames"
+           href="#outstandingGames">
+           Games
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link"
+           aria-selected="true"
+           id="submittedGamesLink"
+           data-toggle="pill"
+           role="tab" aria-controls="submittedGames"
+           href="#submittedGames">
+           Previous Results
+        </a>
+    </li>
+</ul>
+<div class="tab-content">
+    <div id="outstandingGames" class="tab-pane fade show active" aria-labelledby="outstandingLink">
+        <ul>
+        {% for match in outstanding_matches %}
+            <li>
+                {{match.date}}: {{match.home_team}} vs {{match.away_team}}
+                <a href="{{match.submit_link}}" class="btn btn-success">
+                    Submit scores
+                </a>
+            </li>
+        {% endfor %}
+        </ul>
+    </div>
+    <div id="submittedGames" class="tab-pane fade in" aria-labelledby="submittedGamesLink">
+        <ul>
+            {% for match in submitted_matches %}
+                <li>
+                    {{match.date}}: {{match.home_team}} vs {{match.away_team}}
+                    <a href="{{match.submit_link}}" class="btn btn-success">
+                        Add scores
+                    </a>
+                    <a href="{{match.edit_link}}" class="btn btn-warning">
+                        Edit scores
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+{% endblock %}
+
+{% block footer %}
+<script>
+</script>
+{% endblock %}

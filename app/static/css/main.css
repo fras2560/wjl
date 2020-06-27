@@ -1,3 +1,46 @@
 .mainContent {
     text-align: center;
 }
+
+.fa.fa-button {
+    font-size: 20px;
+}
+
+.fa.clickableIcon {
+    font-size: 30px;
+}
+
+#outstandingGames li,
+#submittedGames li{
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+#listing li a.nav-link {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.center-text {
+    line-height: 50px;
+}
+
+button.scoreAppButton {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    font-size: 20px;
+}
+
+button.scoreAppButton:disabled,
+button.scoreAppButton:disabled {
+    cursor:not-allowed;
+}
+
+#helpModal li {
+    text-align: left;
+    font-size: 12px;
+}
+
+.helpLink {
+    margin-bottom: 40px;
+}

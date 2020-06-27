@@ -1,8 +1,11 @@
 {% extends "base.html" %}
 {% block content %}
-<h4>
+<h1>
+    Match Results
+</h1>
+<h2>
     {{match.home_team}} vs {{match.away_team}} on {{match.date}}
-</h4>
+</h2>
 <ul>
     {% for sheet in sheets %}
         {% if sheet.away_slot %}

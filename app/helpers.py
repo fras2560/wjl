@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 def is_date_between_range(date: datetime, start_range: datetime,
@@ -14,3 +14,12 @@ def is_date_between_range(date: datetime, start_range: datetime,
         bool: true if date is between range otherwise false
     """
     return date >= start_range and date <= end_range
+
+
+def tomorrow_date() -> datetime:
+    """Get tomorrows date.
+
+    Returns:
+        datetime:tomorrow
+    """
+    return datetime.today() + timedelta(days=1)

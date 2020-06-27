@@ -6,9 +6,9 @@
 {% endblock %}
 
 {% block content %}
-<h4>
+<h1>
     Schedule
-</h4>
+</h1>
 <ul class="nav nav-pills" id="listing">
     {% for session in league_sessions %}
     <li class="nav-item">
@@ -29,9 +29,6 @@
         {% else %}
         <div id="session{{session.id}}" class="tab-pane fade in"aria-labelledby="sessionLink{{session.id}}" >
         {% endif %}
-          <h4 id="session_header_{{session.id}}">
-            {{session.name}}
-          </h4>
           <img src="{{url_for('static', filename="ajax-loader.gif")}}" id="sessionloader{{session.id}}" />
           <table id="session_table_{{session.id}}" width="100%" class="display">
               <thead>
@@ -91,7 +88,7 @@ function ready() {
 
 function loadSession(session_id) {
     $.ajax({
-        tyoe: "GET",
+        type: "GET",
         url: "/schedule/" + session_id,
         contentType: "application/json",
         dataType: "json",

@@ -6,9 +6,9 @@
 {% endblock %}
 
 {% block content %}
-<h4>
+<h1>
     Standings
-</h4>
+</h1>
 <ul class="nav nav-pills" id="listing">
     {% for session in league_sessions %}
     <li class="nav-item">
@@ -83,7 +83,7 @@ function ready() {
 
 function loadSession(session_id) {
     $.ajax({
-        tyoe: "GET",
+        type: "GET",
         url: "/standings/" + session_id,
         contentType: "application/json",
         dataType: "json",

@@ -1,18 +1,18 @@
 {% extends "base.html" %}
 {% block content %}
-<h2>
+<h1>
     {{ team.name }}
 </h2>
 
 {% if team.homefield %}
-<h4>
+<h3>
     Field: <a href="/field/{{team.homefield.id}}">{{ team.homefield.name }}</a>
-</h4>
+</h3>
 {% endif %}
 
-<h4>
+<h2>
 Players
-</h4>
+</h2>
 <ul>
     {% for player in team.players %}
         <li> {{ player.name }} </li>

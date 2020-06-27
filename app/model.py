@@ -80,6 +80,11 @@ class Player(UserMixin, DB.Model):
     def __str__(self):
         return self.name
 
+    def can_submit_scores(self, match: 'Match') -> bool:
+        """Tells whether the player can submit scores for the given match."""
+        team_ids = [team.id for team in self.teams]
+        return match.away_team_id in team_ids or match.home_team_id in team_ids
+
 
 class OAuth(OAuthConsumerMixin, DB.Model):
     provider_user_id = DB.Column(DB.String(256), unique=True, nullable=False)
@@ -213,12 +218,19 @@ class Match(DB.Model):
         field = "???" if self.field is None else self.field.name
         return {
             "home_team": home_team,
+            "home_team_id": self.home_team_id,
             "away_team": away_team,
+            "away_team_id": self.away_team_id,
             "field": field,
             "date": self.date.strftime("%Y-%m-%d"),
             "time": self.date.strftime("%H:%M"),
             "datetime": self.date.strftime("%Y-%m-%d %H:%M")
         }
+
+    def has_sheets(self) -> bool:
+        for sheet in self.sheets:
+            return True
+        return False
 
 
 class Sheet(DB.Model):

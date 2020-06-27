@@ -1,14 +1,15 @@
 from typing import TypedDict
 from flask_login import logout_user, login_required
 from flask import render_template, redirect, url_for, Response
-from sqlalchemy import func, asc
+from flask_login import current_user
+from sqlalchemy import func, asc, or_
 from datetime import datetime
 from app import wjl_app
 from app.model import Field, Team, Session, Match, Sheet, WhichTeam, DB
-from app.errors import NotFoundException
+from app.errors import NotFoundException, LackScorePermissionException
 from app.authentication import get_login_email, are_logged_in,\
     is_facebook_supported, is_github_supported, is_gmail_supported
-from app.helpers import is_date_between_range
+from app.helpers import is_date_between_range, tomorrow_date
 import json
 
 
@@ -33,11 +34,8 @@ class ScheduleRecord(TypedDict):
     @staticmethod
     def create_schedule_record(match: Match) -> "ScheduleRecord":
         record = match.json()
-        record["result_link"] = None
-        # check if they have any results to display
-        for sheet in match.sheets:
-            record["result_link"] = url_for("match_result", match_id=match.id)
-            break
+        record["result_link"] = (url_for("match_result", match_id=match.id)
+                                 if match.has_sheets() else None)
         record["home_team_link"] = url_for("team", team_id=match.home_team_id)
         record["away_team_link"] = url_for("team", team_id=match.away_team_id)
         record["field_link"] = url_for("field", field_id=match.field_id)
@@ -111,7 +109,7 @@ def standings():
 
 
 @wjl_app.route("/standings/<int:session_id>")
-def standing_table(session_id):
+def standing_table(session_id: int):
     session = Session.query.get(session_id)
     if session is None:
         return Response(None, status=404, mimetype="application/json")
@@ -149,7 +147,7 @@ def standing_table(session_id):
 
 
 @wjl_app.route("/match_results/<int:match_id>")
-def match_result(match_id):
+def match_result(match_id: int):
     match = Match.query.get(match_id)
     if match is None:
         raise NotFoundException("Sorry, match not found")
@@ -163,9 +161,70 @@ def match_result(match_id):
 @wjl_app.route("/submit_score")
 @login_required
 def submit_score():
+    """A route to get matches that one can submit scores for."""
+    team_ids = [team.id for team in current_user.teams]
+    all_matches = (Match.query
+                   .filter(or_(Match.away_team_id.in_(team_ids),
+                               Match.home_team_id.in_(team_ids)))
+                   .filter(Match.date <= tomorrow_date())
+                   .all())
+    submitted_matches = []
+    outstanding_matches = []
+    for match in all_matches:
+        match_data = match.json()
+        match_data["submit_link"] = url_for("submit_sheet", match_id=match.id)
+        match_data["edit_link"] = url_for("edit_sheet", match_id=match.id)
+        if match.has_sheets():
+            submitted_matches.append(match_data)
+        else:
+            outstanding_matches.append(match_data)
+    return render_template("pick_match_to_submit.html",
+                           base_data=get_base_data(),
+                           outstanding_matches=outstanding_matches,
+                           submitted_matches=submitted_matches)
+
+
+@wjl_app.route("/submit_sheet/<int:match_id>")
+@login_required
+def submit_sheet(match_id: int):
     """A route to submit a gamesheet for some match."""
-    return render_template("submit_score.html",
-                           base_data=get_base_data(),)
+    match = Match.query.get(match_id)
+    if match is None:
+        raise NotFoundException("Unable to find match")
+    if not current_user.can_submit_scores(match):
+        raise LackScorePermissionException("Not part of team")
+    return render_template("submit_sheet.html",
+                           base_data=get_base_data(),
+                           match=match.json(),
+                           match_link=url_for('match', match_id=match.id))
+
+
+@wjl_app.route("/match/<int:match_id>")
+def match(match_id):
+    match = Match.query.get(match_id)
+    if match is None:
+        return Response(None, status=404, mimetype="application/json")
+    match_data = match.json()
+    sheets = []
+    for sheet in match.sheets:
+        sheets.append(sheet.json())
+    match_data["sheets"] = sheets
+    return Response(json.dumps(match_data),
+                    status=200, mimetype="application/json")
+
+
+@wjl_app.route("/edit_sheet/<int:match_id>")
+@login_required
+def edit_sheet(match_id: int):
+    """A route to edit a match's gamesheets."""
+    match = Match.query.get(match_id)
+    if match is None:
+        raise NotFoundException("Unable to find match")
+    if not current_user.can_submit_scores(match):
+        raise LackScorePermissionException("Not part of team")
+    return render_template("edit_sheet.html",
+                           base_data=get_base_data(),
+                           match=match)
 
 
 @wjl_app.route("/")

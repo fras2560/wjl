@@ -1,0 +1,587 @@
+{% extends "base.html" %}
+{% block content %}
+<div id="submitScoreApp">
+    <h1>
+        Submit Match Scores
+    </h1>
+    <h2>
+        [[match.date]]
+    </h2>
+    <div class="row align-items-center">
+        <div class="col-6 col-md-4 ">
+            [[ match.home_team ]]
+            <i v-if="hammer == match.home_team_id" v-on:click="switchHammar" class="fa fa-gavel clickableIcon" aria-hidden="true"></i>
+        </div>
+        <div class="col-md-4 d-none d-sm-block" >
+            VS
+        </div>
+        <div class="col-6 col-md-4 ">
+            [[ match.away_team ]]
+            <i v-if="hammer == match.away_team_id" v-on:click="switchHammar" class="fa fa-gavel clickableIcon" aria-hidden="true"></i>
+        </div>
+    </div>
+    <div class="row align-items-center">
+        <div class="col-6 col-sm-4">
+            [[ howManyWins(match.home_team_id, match) ]] - <i class="fa fa-trophy clickableIcon" aria-hidden="true"></i> 
+        </div>
+        <div class="col-md-4 d-none d-sm-block" >
+        </div>
+        <div class="col-6 col-sm-4">
+            [[ howManyWins(match.away_team_id, match) ]] - <i class="fa fa-trophy clickableIcon" aria-hidden="true"></i>
+        </div>
+    </div>
+    <div class="row align-items-center">
+        <div class="col-6 col-sm-4">
+            [[ active_sheet.home_score ]]
+        </div>
+        <div class="col-md-4 d-none d-sm-block" >
+        </div>
+        <div class="col-6 col-sm-4">
+            [[ active_sheet.away_score ]]
+        </div>
+    </div>
+    <div class="row align-item-center">
+        <div class="col-6 col-sm-4">
+            <button
+                type="button"
+                v-if="teamControlsEnabled(match.home_team_id)"
+                v-on:click="hitSlot(match.home_team_id)"
+                class="btn btn-danger scoreAppButton"
+                title="Hit a slot">
+                <i class="fa fa-bullseye fa-button" aria-hidden="true"></i> - [[ (active_sheet.home_slot) ? "yes" : "no" ]]
+            </button>
+            <button
+                type="button"
+                v-else
+                class="btn btn-secondary scoreAppButton" disabled
+                title="Reached score">
+                <i class="fa fa-bullseye fa-button" aria-hidden="true"></i> - [[ (active_sheet.home_slot) ? "yes" : "no" ]]
+            </button>
+        </div>
+        <div class="col-md-4 d-none d-sm-block" >
+        </div>
+        <div class="col-6 col-sm-4">
+            <button
+                type="button"
+                v-if="teamControlsEnabled(match.away_team_id)"
+                v-on:click="hitSlot(match.away_team_id)"
+                class="btn btn-danger scoreAppButton"
+                title="Hit a slot">
+                <i class="fa fa-bullseye fa-button" aria-hidden="true"></i> - [[ (active_sheet.away_slot) ? "yes" : "no" ]]
+            </button>
+            <button
+                type="button"
+                v-else
+                class="btn btn-secondary scoreAppButton" disabled
+                title="Reached score">
+                <i class="fa fa-bullseye fa-button" aria-hidden="true"></i> - [[ (active_sheet.away_slot) ? "yes" : "no" ]]
+            </button>
+        </div>
+    </div>
+
+    <div class="row align-item-center">
+        <div class="col-6 col-sm-4">
+            <button
+                type="button"
+                v-if="teamControlsEnabled(match.home_team_id)"
+                v-on:click="addScore(match.home_team_id, 3)"
+                class="btn btn-warning scoreAppButton"
+                title="Jammed">
+                <i class="fa fa-trash fa-button" aria-hidden="true"></i>  - [[ active_sheet.home_jams ]]
+            </button>
+            <button
+                type="button"
+                v-else
+                class="btn btn-secondary scoreAppButton" disabled
+                title="Reached score"> 
+                <i class="fa fa-trash fa-button" aria-hidden="true"></i>  - [[ active_sheet.home_jams ]]
+            </button>
+        </div>
+        <div class="col-md-4 d-none d-sm-block" >
+        </div>
+        <div class="col-6 col-sm-4">
+            <button
+                type="button"
+                v-if="teamControlsEnabled(match.away_team_id)"
+                v-on:click="addScore(match.away_team_id, 3)"
+                class="btn btn-warning scoreAppButton"
+                title="Jammed">
+                <i class="fa fa-trash fa-button" aria-hidden="true"></i> - [[ active_sheet.away_jams ]]
+            </button>
+            <button
+                type="button"
+                v-else
+                class="btn btn-secondary scoreAppButton" disabled
+                title="Reached score">
+                <i class="fa fa-trash fa-button" aria-hidden="true"></i> - [[ active_sheet.away_jams ]]
+            </button>
+        </div>
+    </div>
+    <div class="row align-item-center">
+        <div class="col-6 col-sm-4">
+            <button
+                type="button"
+                v-if="teamControlsEnabled(match.home_team_id)"
+                v-on:click="addScore(match.home_team_id, 2)"
+                class="btn btn-success scoreAppButton"
+                title="Deuce">
+                <i class="fa fa-hand-peace-o fa-button" aria-hidden="true"></i> - [[ active_sheet.home_deuces ]]
+            </button>
+            <button
+                type="button"
+                v-else
+                class="btn btn-secondary scoreAppButton" disabled
+                title="Reached score">
+                <i class="fa fa-hand-peace-o fa-button" aria-hidden="true"></i> - [[ active_sheet.home_deuces ]]
+            </button>
+        </div>
+        <div class="col-md-4 d-none d-sm-block" >
+        </div>
+        <div class="col-6 col-sm-4">
+            <button
+                type="button"
+                v-if="teamControlsEnabled(match.away_team_id)"
+                 v-on:click="addScore(match.away_team_id, 2)"
+                 class="btn btn-success scoreAppButton"
+                 title="Deuce">
+                <i class="fa fa-hand-peace-o fa-button" aria-hidden="true"></i> - [[ active_sheet.away_deuces ]]
+            </button>
+            <button
+                type="button"
+                v-else
+                class="btn btn-secondary scoreAppButton" disabled
+                title="Reached score">
+                <i class="fa fa-hand-peace-o fa-button" aria-hidden="true"></i> - [[ active_sheet.away_deuces ]]
+            </button>
+        </div>
+    </div>
+    <div class="row align-item-center">
+        <div class="col-6 col-sm-4">
+            <button
+                type="button"
+                v-if="teamControlsEnabled(match.home_team_id)"
+                v-on:click="addScore(match.home_team_id, 1)"
+                class="btn btn-info scoreAppButton"
+                title="Dinger">
+                <i class="fa fa-hand-o-up fa-button" aria-hidden="true"></i> - [[ active_sheet.home_dingers ]]
+            </button>
+            <button
+                type="button"
+                v-else
+                class="btn btn-secondary scoreAppButton" disabled
+                title="Reached score">
+                <i class="fa fa-hand-o-up fa-button" aria-hidden="true"></i> - [[ active_sheet.home_dingers ]]
+            </button>
+        </div>
+        <div class="col-md-4 d-none d-sm-block" >
+        </div>
+        <div class="col-6 col-sm-4">
+            <button
+                type="button"
+                v-if="teamControlsEnabled(match.away_team_id)"
+                v-on:click="addScore(match.away_team_id, 1)"
+                class="btn btn-info scoreAppButton"     
+                title="Dinger">
+                <i class="fa fa-hand-o-up fa-button" aria-hidden="true"></i> - [[ active_sheet.away_dingers ]]
+            </button>
+            <button
+                type="button"
+                v-else
+                class="btn btn-secondary scoreAppButton" disabled
+                title="Reached score">
+                <i class="fa fa-hand-o-up fa-button" aria-hidden="true"></i> - [[ active_sheet.away_dingers ]]
+            </button>
+        </div>
+    </div>
+    <div class="row align-items-center">
+        <div class="col-sm-4 d-none d-sm-block">
+            <!-- Empty divs. -->
+        </div>
+        <div class="col-12 col-sm-4 text-center" >
+            <!-- The overtime controls. -->
+            <button
+                v-if="askForOvertimeMethod()"
+                v-on:click="pickOvertimeMethod(overtime_method + 1)"
+                class="btn btn-success scoreAppButton"
+                title="First to ten"
+                >
+                <i class="fa fa-plus fa-button" aria-hidden="true"></i>10
+
+            </button>
+            <button
+                v-if="askForOvertimeMethod()"
+                v-on:click="pickOvertimeMethod('sudden_death')"
+                class="btn btn-danger scoreAppButton"
+                title="Sudden death"
+                >
+                <i class="fa fa-heartbeat fa-button" aria-hidden="true"></i>
+            </button>
+        </div>
+        <div class="col-sm-4 d-none d-sm-block">
+            <!-- Empty divs -->
+        </div>
+    </div>
+    <div class="row align-items-center">
+        <div class="col-sm-4 d-none d-sm-block">
+            <!-- Empty divs. -->
+        </div>
+        <div class="col-12 col-sm-4 text-center" >
+            <!-- Submit and undo controls. -->
+            <button
+                v-if="sheetComplete(active_sheet, overtime_method) && !askForOvertimeMethod()"
+                v-on:click="submitSheet()"
+                class="btn btn-success scoreAppButton"
+                title="Submit score"
+                >
+                <i class="fa fa-check fa-button" aria-hidden="true"></i>
+            </button>
+            <button
+                v-if="undoEnabled()"
+                v-on:click="undo()"
+                class="btn btn-light scoreAppButton"
+                title="Undo"
+                >
+                <i class="fa fa-undo fa-button" aria-hidden="true"></i>
+            </button>
+        </div>
+        <div class="col-sm-4 d-none d-sm-block">
+            <!-- Empty divs -->
+        </div>
+    </div>
+    <div class="row align-items-center">
+        <div class="col-sm-4 d-none d-sm-block">
+            <!-- Empty divs. -->
+        </div>
+        <div class="col-12 col-sm-4 text-center" >
+            <!-- Submit and undo controls. -->
+            <button
+                class="btn btn-link helpLink"
+                title="Help"
+                data-toggle="modal"
+                data-target="#helpModal"
+                >
+                Help
+            </button>
+        </div>
+        <div class="col-sm-4 d-none d-sm-block">
+            <!-- Empty divs -->
+        </div>
+    </div>
+</div>
+
+<!-- Help Modal -->
+<div class="modal fade" id="helpModal" tabindex="-1" role="dialog" aria-labelledby="helpModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="helpModalLabel">Submitting your score</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <h5>Icon explanations</h5>
+                <ul>
+                    <li>
+                        <i class="fa fa-undo fa-butto" aria-hidden="true"></i> - Undo your previous action (except OT selection)
+                    </li>
+                    <li>
+                        <i class="fa fa-check fa-butto" aria-hidden="true"></i> - Submit the score for the game
+                    </li>
+                    <li>
+                        <i class="fa fa-heartbeat fa-butto" aria-hidden="true"></i> - sudden death overtime
+                    </li>
+                    <li>
+                        <i class="fa fa-plus fa-butto" aria-hidden="true"></i>10 - overtime with first to ten
+                    </li>
+                    <li>
+                        <i class="fa fa-hand-o-up fa-button" aria-hidden="true"></i> - one-point dinger
+                    </li>
+                    <li>
+                        <i class="fa fa-hand-peace-o fa-button" aria-hidden="true"></i>  - two-point deuce
+                    </li>
+                    <li>
+                        <i class="fa fa-trash fa-button" aria-hidden="true"></i> - 3-point jam
+                    </li>
+                    <li>
+                        <i class="fa fa-bullseye fa-button" aria-hidden="true"></i> - hit a slot
+                    </li>
+                    <li>
+                        <i class="fa fa-trophy fa-button" aria-hidden="true"></i> - how many wins in the match
+                    </li>
+                    <li>
+                        <i class="fa fa-gavel fa-button" aria-hidden="true"></i> - hammer/redemption: team with extra throw 
+                    </li>
+                </ul>
+                <p>
+                    Use the buttons to help keep track of your score as you play.
+                    The application was designed to handle over time with either playing sudden death or first to score ten.
+                    A slot if a instance win regardless of hammer and overtime.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
+
+{% block script %}
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script>
+$(document).ready(ready());
+function ready() {
+    $.ajax({
+        type: "GET",
+        url: "{{match_link}}",
+        contentType: "application/json",
+        dataType: "json",
+        async: true,
+        success: function(match) {
+            console.log(match);
+            startApp(match);
+        }, error: function(request, error) {
+            console.error(request);
+            console.error(error);
+        }
+    });
+}
+
+/** A constant for suddent death*/
+const SUDDEN_DEATH = "sudden_death";
+
+/** Returns a new sheet for the match.*/
+function newSheet(match) {
+    return {
+        "id": null,
+        "match_id": match.id,
+        "away_score": 0,
+        "home_score": 0,
+        "home_slot": false,
+        "away_slot": false,
+        "home_jams": 0,
+        "away_jams": 0,
+        "home_deuces": 0,
+        "away_deuces": 0,
+        "home_dingers": 0,
+        "away_dingers": 0
+    };
+}
+
+/** Who has the last shot (hammar/redemption). */
+function whoHasHammer(match) {
+    return (match.sheets.length %2 == 0) ? match.home_team_id : match.away_team_id;
+}
+
+function startApp(match) {
+    const app = new Vue({
+        el: '#submitScoreApp',
+        data: {
+            match: match,
+            active_sheet: newSheet(match),
+            hammer: whoHasHammer(match),
+            previous_states: [],
+            overtime_method: 0
+        },
+        delimiters: ['[[', ']]'],
+        methods: {
+            /** The given team hit a slot.*/
+            hitSlot: function(team_id) {
+                const home_team = match.home_team_id == team_id;
+                const temp_sheet = Object.assign({}, this.active_sheet);
+                const score_limit = 
+                    (this.overtime_method == SUDDEN_DEATH)
+                    ? Math.max(match.home_score, match.away_score) + 1
+                    : this.overtime_method * 10 + 21;
+                if (home_team) {
+                    temp_sheet.home_slot = true;
+                    temp_sheet.home_score = score_limit;
+                } else {
+                    temp_sheet.away_slot = true;
+                    temp_sheet.away_score = score_limit;
+                }
+                // remember the previous state in case undo
+                const temp = this.active_sheet;
+                this.previous_states.push(temp);
+                this.active_sheet = temp_sheet;
+            },
+
+            /** Add to the given teams score the given number of points.*/
+            addScore: function(team_id, points) {
+                const home_team = this.match.home_team_id == team_id;
+                const temp_sheet = Object.assign({}, this.active_sheet);
+                if (home_team) {
+                    // check if their score went over
+                    const goOver = this.didGoOver(
+                        this.active_sheet.home_score,
+                        points,
+                        this.overtime_method);
+                    temp_sheet.home_score += (goOver) ? (-1 * points) : points;
+
+                    // keep tracks of stats only if did not go over
+                    if (!goOver && points == 3) {
+                        temp_sheet.home_jams += 1;
+                    } else if (!goOver && points == 2) {
+                        temp_sheet.home_deuces += 1;
+                    } else if (!goOver && points == 1) {
+                        temp_sheet.home_dingers += 1;
+                    }
+                } else {
+                    // check if their score went over
+                    const goOver = this.didGoOver(
+                        this.active_sheet.away_score,
+                        points,
+                        this.overtime_method);
+                    temp_sheet.away_score += (goOver) ? (-1 * points) : points;
+
+                    // keep tracks of stats only if did not go over
+                    if (!goOver && points == 3) {
+                        temp_sheet.away_jams += 1;
+                    } else if (!goOver && points == 2) {
+                        temp_sheet.away_deuces += 1;
+                    } else if (!goOver && points == 1) {
+                        temp_sheet.away_dingers += 1;
+                    }
+                }
+                // remember the previous state in case undo
+                const temp = this.active_sheet;
+                this.previous_states.push(temp);
+                this.active_sheet = temp_sheet;
+            },
+
+            /** Submit the sheet to the backend and move on to next game.*/
+            submitSheet: function() {
+                this.saveSheet(this.active_sheet);
+                this.match.sheets.push(this.active_sheet);
+                this.active_sheet = window.newSheet(this.match);
+                this.previous_states = [];
+                this.switchHammar();
+            },
+
+            /** Save the sheet to the backend.*/
+            saveSheet: function(sheet){
+                console.log("TODO: save sheet");
+                console.log(sheet);
+            },
+
+            /** Switch the hammer to the other team.*/
+            switchHammar: function() {
+                this.hammer = (this.hammer == this.match.home_team_id)
+                    ? this.match.away_team_id : this.match.home_team_id;
+            },
+
+            /**Determine how many wins the team has in the match.*/
+            howManyWins: function(team_id) {
+                let wins = 0;
+                const home_team = this.match.home_team_id == team_id;
+                for (let sheet of this.match.sheets) {
+                    if (home_team && (sheet.home_score > sheet.away_score ||
+                                sheet.home_slot == true)) {
+                        wins  += 1;
+                    } else if (!home_team && (sheet.away_score > sheet.home_score ||
+                                              sheet.away_slot == true)) {
+                        wins += 1;
+                    }
+                }
+                return wins;
+            },
+
+            /** Returns whether the given team controls should be enabled or disabled.*/
+            teamControlsEnabled: function(team_id) {
+                const have_hammer = team_id == this.hammer;
+                const my_score = (team_id == this.match.home_team_id)
+                    ? this.active_sheet.home_score : this.active_sheet.away_score;
+                const other_score =  (team_id == this.match.home_team_id)
+                    ?  this.active_sheet.away_score : this.active_sheet.home_score;
+                if (this.active_sheet.home_slot || this.active_sheet.away_slot){
+                    // if either team hits a slots then controls become disabled
+                    return false;
+                } else if (!this.sheetComplete(this.active_sheet,
+                                               this.overtime_method)) {
+                    // if niether team has reach end game score
+                    // then controls should be enabled
+                    return true;
+                } else if (this.overtime_method == SUDDEN_DEATH) {
+                    // sudden death should always have controls enabled
+                    return true;
+                } else {
+                    score_limit = this.overtime_method * 10 + 21;
+                    if (my_score == score_limit) {
+                        // if I have reach score limit then controls are disbaled
+                        return false;
+                    } else if (other_score == score_limit && !have_hammer) {
+                        // if other team has reached score limit and has hammer
+                        // then controls are disabled
+                        return false;
+                    } else {
+                        // I have hammer but other team has reach limit
+                        return true;
+                    }
+                }
+            },
+
+            /** Returns whether the given sheet is complete. */
+            sheetComplete: function(sheet, overtime_method) {
+                if(sheet.away_slot || sheet.home_slot) {
+                    return true;
+                } else if (overtime_method == SUDDEN_DEATH) {
+                    return sheet.home_score != sheet.away_score;
+                } else {
+                    score_limit = overtime_method * 10 + 21;
+                    return sheet.home_score == score_limit || sheet.away_score == score_limit;
+                }
+            },
+
+            /**Determine whether need to ask for overtime method.*/
+            askForOvertimeMethod: function() {
+                if (this.overtime_method == SUDDEN_DEATH) {
+                    // once sudden death then never going to change
+                    // back to first to ten
+                    return false;
+                } else {
+                    score_limit = this.overtime_method * 10 + 21;
+                    if (this.active_sheet.home_score == score_limit &&
+                        this.active_sheet.away_score ==score_limit) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
+            },
+
+            /** Picks the overtime method to use.*/
+            pickOvertimeMethod: function(method) {
+                this.overtime_method = method;
+            },
+
+            /** Determine if the player went over the correct score. */
+            didGoOver: function (team_points, points) {
+                if (this.overtime_method == "sudden_death") {
+                    // sudden death you can never go over
+                    return false;
+                } else {
+                    // allows for infinite number of overtimes
+                    return (team_points + points > (this.overtime_method * 10 + 21)) ? true : false;
+                }
+            },
+
+            /**Any undos available. */
+            undoEnabled: function() {
+                return this.previous_states.length > 0;
+            },
+
+            /** Undo the previous change. */
+            undo: function() {
+                if (this.undoEnabled()) {
+                    this.active_sheet = this.previous_states.pop();
+                }
+            }
+        }
+    });
+}
+</script>
+
+{% endblock %}
