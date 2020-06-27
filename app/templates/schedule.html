@@ -112,7 +112,7 @@ function display_table(schedule, selector) {
   var table = $(selector).DataTable({
                   "data": schedule,
                   "responsive": true,
-                  "order": [[1, "desc"]],
+                  "order": [[0, "asc"]],
                   "columns": [
                       {"data": "date"},
                       {"data": "time"},

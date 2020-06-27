@@ -74,7 +74,7 @@ def schedule():
                            base_data=get_base_data(),
                            league_sessions=league_sessions,
                            active_session=active_session,
-                           today=datetime.now())
+                           today=datetime.now().strftime("%Y-%m-%d"))
 
 
 @wjl_app.route("/schedule/<int:session_id>")

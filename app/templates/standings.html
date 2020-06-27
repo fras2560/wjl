@@ -115,7 +115,7 @@ function display_table(team_records, selector) {
   var table = $(selector).DataTable({
                   "data": team_records,
                   "responsive": true,
-                  "order": [[1, "desc"]],
+                  "order": [[2, "desc"]],
                   "columns": [
                       {"data": "name", "render": renderTeamLink},
                       {"data": "wins"},
@@ -139,9 +139,11 @@ function renderTeamLink(data, type, row, meta) {
 
 /**Render the winning percentage. */
 function renderWinPercentage(data, type, row, meta) {
-  if (type === 'display') {
+  console.log(type);
+  if (type === 'display' || type === 'sort' || type == 'filter') {
     const gp = Math.max(row.games_played, 1);
-    data = (row.wins / gp);
+    data = parseFloat((row.wins / gp).toFixed(3));
+    console.log(data); 
   }
   return data;
 }
