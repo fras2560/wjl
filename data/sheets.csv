@@ -1,0 +1,115 @@
+Week,Game,Home Team,Home Score,Home Jams,Home Slots,Home Result,Away Team,Away Score,Away Jams,Away Slots,Away Result
+1,1,Deaner Dunglers,21,4,0,W,Pavy Petunias,13,1,0,L
+1,2,Deaner Dunglers,26,3,0,OTW,Pavy Petunias,24,2,0,L
+1,3,Deaner Dunglers,21,5,0,W,Pavy Petunias,12,2,0,L
+1,4,Deaner Dunglers,21,5,0,W,Pavy Petunias,9,1,0,L
+1,1,Wiener Jammers,18,3,0,L,Dallas Cowboys,21,4,0,W
+1,2,Wiener Jammers,21,6,0,W,Dallas Cowboys,14,0,0,L
+1,3,Wiener Jammers,24,5,0,OTL,Dallas Cowboys,31,5,0,OTW
+1,4,Wiener Jammers,15,3,0,L,Dallas Cowboys,21,4,0,W
+1,5,Wiener Jammers,19,4,0,L,Dallas Cowboys,21,5,0,W
+1,1,Harvaяd Cossacks,21,0,0,W,Space Jam,11,0,0,L
+1,2,Harvaяd Cossacks,15,0,0,L,Space Jam,21,0,0,W
+1,3,Harvaяd Cossacks,21,0,0,OTL,Space Jam,21,0,0,OTW
+1,4,Harvaяd Cossacks,12,0,0,L,Space Jam,21,0,0,W
+1,5,Harvaяd Cossacks,21,0,0,W,Space Jam,17,0,0,L
+1,6,Harvaяd Cossacks,21,0,0,W,Space Jam,19,0,0,L
+1,7,Harvaяd Cossacks,17,0,0,L,Space Jam,21,0,0,W
+1,1,Bluevale bullies!,21,0,0,W,The Disc Heads,20,0,0,L
+1,2,Bluevale bullies!,21,0,0,W,The Disc Heads,20,0,0,L
+1,3,Bluevale bullies!,21,0,0,W,The Disc Heads,19,0,0,L
+1,4,Bluevale bullies!,14,0,0,L,The Disc Heads,21,0,0,W
+1,5,Bluevale bullies!,16,0,0,L,The Disc Heads,21,0,0,W
+1,6,Bluevale bullies!,0,0,0,L,The Disc Heads,21,0,1,W
+1,7,Bluevale bullies!,17,0,0,L,The Disc Heads,21,0,0,W
+2,1,Harvaяd Cossacks,21,0,0,W,The Disc Heads,18,0,0,L
+2,2,Harvaяd Cossacks,0,0,0,L,The Disc Heads,21,0,1,W
+2,3,Harvaяd Cossacks,21,0,0,W,The Disc Heads,15,0,0,L
+2,4,Harvaяd Cossacks,12,0,0,L,The Disc Heads,21,0,0,W
+2,5,Harvaяd Cossacks,7,0,0,L,The Disc Heads,21,0,0,W
+2,6,Harvaяd Cossacks,24,0,0,OTW,The Disc Heads,21,0,0,OTL
+2,7,Harvaяd Cossacks,21,0,0,W,The Disc Heads,19,0,0,L
+2,1,Bluevale bullies!,21,0,1,W,Space Jam,16,0,0,L
+2,2,Bluevale bullies!,16,0,0,L,Space Jam,21,0,0,W
+2,3,Bluevale bullies!,15,0,0,L,Space Jam,21,0,0,W
+2,4,Bluevale bullies!,22,0,0,OTL,Space Jam,25,0,0,OTW
+2,5,Bluevale bullies!,17,0,0,L,Space Jam,21,0,0,W
+2,1,Dallas Cowboys,10,2,0,L,Frisbeers,21,5,0,W
+2,2,Dallas Cowboys,21,5,0,W,Frisbeers,19,2,0,L
+2,3,Dallas Cowboys,10,2,0,L,Frisbeers,21,5,0,W
+2,4,Dallas Cowboys,23,5,0,OTL,Frisbeers,24,5,0,OTW
+2,5,Dallas Cowboys,0,0,0,L,Frisbeers,21,0,1,W
+2,1,Wiener Jammers,14,0,0,L,Pavy Petunias,21,0,0,W
+2,2,Wiener Jammers,6,0,0,L,Pavy Petunias,21,0,0,W
+2,3,Wiener Jammers,20,0,0,W,Pavy Petunias,20,0,0,L
+2,4,Wiener Jammers,3,0,0,L,Pavy Petunias,21,0,0,W
+2,5,Wiener Jammers,16,0,0,L,Pavy Petunias,21,0,0,W
+3,1,Dallas Cowboys,19,3,0,L,The Disc Heads,21,5,0,W
+3,2,Dallas Cowboys,12,2,0,L,The Disc Heads,21,5,0,W
+3,3,Dallas Cowboys,27,7,0,OTW,The Disc Heads,26,6,0,OTL
+3,4,Dallas Cowboys,21,6,0,W,The Disc Heads,17,6,0,L
+3,5,Dallas Cowboys,24,6,0,OTL,The Disc Heads,25,6,0,OTW
+3,6,Dallas Cowboys,24,7,0,OTL,The Disc Heads,27,8,0,OTW
+3,1,Wiener Jammers,15,0,0,L,Space Jam,21,0,0,W
+3,2,Wiener Jammers,13,0,0,L,Space Jam,21,0,0,W
+3,3,Wiener Jammers,4,0,0,L,Space Jam,21,0,1,W
+3,4,Wiener Jammers,19,0,0,L,Space Jam,21,0,0,W
+3,1,Harvaяd Cossacks,17,2,,L,Bluevale bullies!,21,3,,W
+3,2,Harvaяd Cossacks,21,3,,OTL,Bluevale bullies!,21,3,,OTW
+3,3,Harvaяd Cossacks,15,3,,L,Bluevale bullies!,21,4,,W
+3,4,Harvaяd Cossacks,14,3,,L,Bluevale bullies!,21,4,,W
+3,1,Deaner Dunglers,21,4,0,W,Frisbeers,13,1,0,L
+3,2,Deaner Dunglers,26,3,0,OTW,Frisbeers,24,2,0,OTL
+3,3,Deaner Dunglers,21,5,0,W,Frisbeers,12,2,0,L
+3,4,Deaner Dunglers,21,5,1,W,Frisbeers,9,1,0,L
+4,1,Harvaяd Cossacks,19,3,0,L,Deaner Dunglers,21,5,0,W
+4,2,Harvaяd Cossacks,28,7,0,OTL,Deaner Dunglers,31,7,0,OTW
+4,3,Harvaяd Cossacks,23,6,0,OTL,Deaner Dunglers,24,7,0,OTW
+4,4,Harvaяd Cossacks,21,5,0,OTL,Deaner Dunglers,27,7,0,OTW
+4,1,Dallas Cowboys,21,4,0,W,Pavy Petunias,11,1,0,L
+4,2,Dallas Cowboys,20,5,0,L,Pavy Petunias,21,3,0,W
+4,3,Dallas Cowboys,31,5,0,OTW,Pavy Petunias,29,4,0,OTL
+4,4,Dallas Cowboys,19,6,0,L,Pavy Petunias,21,4,0,W
+4,5,Dallas Cowboys,19,1,0,L,Pavy Petunias,21,4,0,W
+4,6,Dallas Cowboys,21,4,0,W,Pavy Petunias,19,2,0,L
+4,7,Dallas Cowboys,21,4,0,W,Pavy Petunias,16,3,0,L
+4,1,Wiener Jammers,21,0,1,W,The Disc Heads,6,0,0,L
+4,2,Wiener Jammers,11,0,0,L,The Disc Heads,21,0,0,W
+4,3,Wiener Jammers,14,0,0,L,The Disc Heads,21,0,0,W
+4,4,Wiener Jammers,11,0,0,L,The Disc Heads,21,0,0,W
+4,5,Wiener Jammers,19,0,0,L,The Disc Heads,21,0,0,W
+4,1,Bluevale bullies!,16,2,0,L,Frisbeers,21,2,0,W
+4,2,Bluevale bullies!,21,6,0,W,Frisbeers,20,5,0,L
+4,3,Bluevale bullies!,26,5,0,OTL,Frisbeers,27,6,0,OTW
+4,4,Bluevale bullies!,26,6,0,OTW,Frisbeers,25,4,0,OTL
+4,5,Bluevale bullies!,16,4,0,L,Frisbeers,21,5,0,W
+4,6,Bluevale bullies!,15,3,0,L,Frisbeers,21,7,0,W
+5,1,Bluevale bullies!,21,3,0,W,Dallas Cowboys,19,3,0,L
+5,2,Bluevale bullies!,21,5,0,W,Dallas Cowboys,15,2,0,L
+5,3,Bluevale bullies!,16,3,0,L,Dallas Cowboys,21,3,0,W
+5,4,Bluevale bullies!,31,5,0,OTW,Dallas Cowboys,23,3,0,OTL
+5,5,Bluevale bullies!,11,3,0,L,Dallas Cowboys,21,2,1,W
+5,6,Bluevale bullies!,18,3,0,L,Dallas Cowboys,21,6,0,W
+5,7,Bluevale bullies!,21,6,0,W,Dallas Cowboys,19,3,0,L
+5,1,Space Jam,16,2,0,L,Deaner Dunglers,21,4,0,W
+5,2,Space Jam,13,3,0,L,Deaner Dunglers,21,5,0,W
+5,3,Space Jam,25,2,0,OTW,Deaner Dunglers,21,4,0,OTL
+5,4,Space Jam,15,3,0,L,Deaner Dunglers,21,5,0,W
+5,5,Space Jam,17,2,0,L,Deaner Dunglers,21,4,0,W
+5,1,Pavy Petunias,21,0,1,W,The Disc Heads,10,0,0,L
+5,2,Pavy Petunias,11,0,0,L,The Disc Heads,21,0,0,W
+5,3,Pavy Petunias,21,0,1,W,The Disc Heads,10,0,0,L
+5,4,Pavy Petunias,15,0,0,L,The Disc Heads,21,0,1,W
+5,5,Pavy Petunias,21,0,0,OTL,The Disc Heads,22,0,0,OTW
+5,6,Pavy Petunias,13,0,0,L,The Disc Heads,21,0,1,W
+5,1,Frisbeers,21,5,0,W,Pavy Petunias,18,3,0,L
+5,2,Frisbeers,21,5,0,W,Pavy Petunias,10,2,0,L
+5,3,Frisbeers,21,4,0,W,Pavy Petunias,15,2,0,L
+5,4,Frisbeers,19,4,0,L,Pavy Petunias,21,4,0,W
+5,5,Frisbeers,43,11,0,OTW,Pavy Petunias,39,6,0,OTL
+5,1,Harvaяd Cossacks,21,5,0,OTW,Wiener Jammers,20,0,0,OTL
+5,2,Harvaяd Cossacks,21,5,0,W,Wiener Jammers,10,0,0,L
+5,3,Harvaяd Cossacks,21,5,0,W,Wiener Jammers,13,3,0,L
+5,4,Harvaяd Cossacks,12,3,0,L,Wiener Jammers,21,6,0,W
+5,5,Harvaяd Cossacks,19,4,0,L,Wiener Jammers,21,7,0,W
+5,6,Harvaяd Cossacks,21,6,0,W,Wiener Jammers,15,4,0,L

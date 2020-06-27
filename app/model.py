@@ -199,12 +199,13 @@ class Match(DB.Model):
     status = DB.Column(DB.String(120))
 
     def __init__(self, home_team: Team, away_team: Team, session: Session,
-                 date: datetime, status: str = None):
+                 date: datetime, field: Field, status: str = None):
         self.home_team_id = home_team.id
         self.away_team_id = away_team.id
         self.session_id = session.id
         self.date = date
         self.status = status
+        self.field_id = field.id
 
     def json(self) -> dict:
         home_team = "TBD" if self.home_team is None else self.home_team.name
@@ -267,7 +268,7 @@ class Sheet(DB.Model):
         if self.home_slot:
             return WhichTeam.HOME_TEAM
         elif self.away_slot:
-            return WhichTeam.HOME_TEAM
+            return WhichTeam.AWAY_TEAM
         elif self.home_score > self.away_score:
             return WhichTeam.HOME_TEAM
         elif self.home_score < self.away_score:
