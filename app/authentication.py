@@ -113,8 +113,6 @@ def get_user_info(blueprint: Blueprint) -> UserInfo:
     resp = None
     if blueprint.name == FACEBOOK:
         resp = blueprint.session.get("/me?fields=id,email")
-        print(resp)
-        print(resp.json())
     elif blueprint.name == GOOGLE:
         resp = blueprint.session.get("/oauth2/v1/userinfo")
     elif blueprint.name == GITHUB:
