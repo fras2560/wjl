@@ -4,6 +4,7 @@ from datetime import datetime
 from flask_login import UserMixin
 from flask_dance.consumer.storage.sqla import OAuthConsumerMixin
 from flask_sqlalchemy import SQLAlchemy
+from app.errors import NotFoundException
 
 """ The score limit of a standard game."""
 STANDARD_SCORE_LIMIT = 21
@@ -18,11 +19,11 @@ class TeamSheet(TypedDict):
     dingers: int
     deuces: int
     jams: int
-    SCORE = "SCORE"
-    SLOT = "SLOT"
-    DINGERS = "DINGERS"
-    JAMS = "JAMS"
-    DEUCES = "DEUCES"
+    SCORE = "score"
+    SLOT = "slot"
+    DINGERS = "dingers"
+    JAMS = "jams"
+    DEUCES = "deuces"
 
     @staticmethod
     def empty_sheet() -> 'TeamSheet':
@@ -34,6 +35,26 @@ class TeamSheet(TypedDict):
             TeamSheet.DEUCES: 0,
             TeamSheet.JAMS: 0
         }
+
+    @staticmethod
+    def from_json(sheet: dict, team: 'WhichTeam') -> 'TeamSheet':
+        """Returns an empty team sheet"""
+        if team == WhichTeam.HOME_TEAM:
+            return {
+                TeamSheet.SCORE: sheet.get("home_score"),
+                TeamSheet.SLOT: sheet.get("home_slot"),
+                TeamSheet.DINGERS: sheet.get("home_dingers"),
+                TeamSheet.DEUCES: sheet.get("home_deuces"),
+                TeamSheet.JAMS: sheet.get("home_jams")
+            }
+        else:
+            return {
+                TeamSheet.SCORE: sheet.get("away_score"),
+                TeamSheet.SLOT: sheet.get("away_slot"),
+                TeamSheet.DINGERS: sheet.get("away_dingers"),
+                TeamSheet.DEUCES: sheet.get("away_deuces"),
+                TeamSheet.JAMS: sheet.get("away_jams")
+            }
 
 
 class WhichTeam(Enum):
@@ -224,7 +245,8 @@ class Match(DB.Model):
             "field": field,
             "date": self.date.strftime("%Y-%m-%d"),
             "time": self.date.strftime("%H:%M"),
-            "datetime": self.date.strftime("%Y-%m-%d %H:%M")
+            "datetime": self.date.strftime("%Y-%m-%d %H:%M"),
+            "id": self.id
         }
 
     def has_sheets(self) -> bool:
@@ -254,26 +276,60 @@ class Sheet(DB.Model):
     def __init__(self, match: Match,
                  home_sheet: TeamSheet, away_sheet: TeamSheet):
         self.match_id = match.id
-        self.home_score = home_sheet.get(TeamSheet.SCORE)
-        self.home_slot = home_sheet.get(TeamSheet.SLOT)
-        self.home_dingers = home_sheet.get(TeamSheet.DINGERS)
-        self.home_deuces = home_sheet.get(TeamSheet.DEUCES)
-        self.home_jams = home_sheet.get(TeamSheet.JAMS)
-        self.away_score = away_sheet.get(TeamSheet.SCORE)
-        self.away_slot = away_sheet.get(TeamSheet.SLOT)
-        self.away_dingers = away_sheet.get(TeamSheet.DINGERS)
-        self.away_deuces = away_sheet.get(TeamSheet.DEUCES)
-        self.away_jams = away_sheet.get(TeamSheet.JAMS)
+        self.set_awaysheet(away_sheet)
+        self.set_homesheet(home_sheet)
+
+    @staticmethod
+    def from_json(sheet) -> 'Sheet':
+        if "id" in sheet.keys() and sheet["id"] is not None:
+            # load the original sheet and updates it values
+            original_sheet = Sheet.query.get(sheet["id"])
+            home_sheet = TeamSheet.from_json(sheet, WhichTeam.HOME_TEAM)
+            away_sheet = TeamSheet.from_json(sheet, WhichTeam.AWAY_TEAM)
+            original_sheet.set_awaysheet(away_sheet)
+            original_sheet.set_homesheet(home_sheet)
+            match_id = sheet.get("match_id")
+            match = Match.query.get(match_id)
+            if match is None:
+                raise NotFoundException(f"Unable to find match: {match_id}")
+            original_sheet.match_id = match_id
+            return original_sheet
+        else:
+            home_sheet = TeamSheet.from_json(sheet, WhichTeam.HOME_TEAM)
+            away_sheet = TeamSheet.from_json(sheet, WhichTeam.AWAY_TEAM)
+            match_id = sheet.get("match_id")
+            match = Match.query.get(match_id)
+            if match is None:
+                raise NotFoundException(f"Unable to find match: {match_id}")
+            return Sheet(match, home_sheet, away_sheet)
 
     def json(self) -> dict:
         return {
             "home_score": self.home_score,
             "home_slot": self.home_slot,
             "home_jams": self.home_jams,
+            "home_dingers": self.home_dingers,
+            "home_deuces": self.home_deuces,
             "away_score": self.away_score,
             "away_slot": self.away_slot,
-            "away_jams": self.away_jams
+            "away_jams": self.away_jams,
+            "away_dingers": self.away_dingers,
+            "away_deuces": self.away_deuces
         }
+
+    def set_homesheet(self, sheet: TeamSheet) -> None:
+        self.home_score = sheet.get(TeamSheet.SCORE)
+        self.home_slot = sheet.get(TeamSheet.SLOT)
+        self.home_dingers = sheet.get(TeamSheet.DINGERS)
+        self.home_deuces = sheet.get(TeamSheet.DEUCES)
+        self.home_jams = sheet.get(TeamSheet.JAMS)
+
+    def set_awaysheet(self, sheet: TeamSheet) -> None:
+        self.away_score = sheet.get(TeamSheet.SCORE)
+        self.away_slot = sheet.get(TeamSheet.SLOT)
+        self.away_dingers = sheet.get(TeamSheet.DINGERS)
+        self.away_deuces = sheet.get(TeamSheet.DEUCES)
+        self.away_jams = sheet.get(TeamSheet.JAMS)
 
     def who_won(self) -> WhichTeam:
         """Return who won the given sheet."""

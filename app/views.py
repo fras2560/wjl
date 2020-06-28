@@ -1,6 +1,6 @@
 from typing import TypedDict
 from flask_login import logout_user, login_required
-from flask import render_template, redirect, url_for, Response
+from flask import render_template, redirect, url_for, Response, request
 from flask_login import current_user
 from sqlalchemy import func, asc, or_
 from datetime import datetime
@@ -196,7 +196,26 @@ def submit_sheet(match_id: int):
     return render_template("submit_sheet.html",
                            base_data=get_base_data(),
                            match=match.json(),
-                           match_link=url_for('match', match_id=match.id))
+                           match_link=url_for('match', match_id=match.id),
+                           save_link=url_for("save_sheet"))
+
+
+@wjl_app.route("/save_sheet", methods=["POST"])
+@login_required
+def save_sheet():
+    try:
+        sheet = request.get_json(silent=True)
+        print(sheet)
+        print(request.json)
+        saved_sheet = Sheet.from_json(sheet)
+        print(saved_sheet)
+        DB.session.add(saved_sheet)
+        DB.session.commit()
+        return Response(json.dumps(saved_sheet.json()),
+                        status=200, mimetype="application/json")
+    except NotFoundException as error:
+        return Response(json.dumps(error),
+                        status=404, mimetype="application/json")
 
 
 @wjl_app.route("/match/<int:match_id>")

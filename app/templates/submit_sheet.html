@@ -384,7 +384,8 @@ function startApp(match) {
             active_sheet: newSheet(match),
             hammer: whoHasHammer(match),
             previous_states: [],
-            overtime_method: 0
+            overtime_method: 0,
+            saving_sheet: false,
         },
         delimiters: ['[[', ']]'],
         methods: {
@@ -454,17 +455,28 @@ function startApp(match) {
 
             /** Submit the sheet to the backend and move on to next game.*/
             submitSheet: function() {
-                this.saveSheet(this.active_sheet);
-                this.match.sheets.push(this.active_sheet);
-                this.active_sheet = window.newSheet(this.match);
-                this.previous_states = [];
-                this.switchHammar();
-            },
-
-            /** Save the sheet to the backend.*/
-            saveSheet: function(sheet){
-                console.log("TODO: save sheet");
-                console.log(sheet);
+                const self = this;
+                this.saving_sheet = true;
+                console.log(self.active_sheet.match_id);
+                $.ajax({
+                        type: "POST",
+                        data: JSON.stringify(self.active_sheet),
+                        url: "{{save_link}}",
+                        contentType: "application/json",
+                        dataType: "json",
+                        async: true,
+                        success: function(saved_sheet) {
+                            self.match.sheets.push(self.active_sheet);
+                            self.active_sheet = window.newSheet(self.match);
+                            self.previous_states = [];
+                            self.switchHammar();
+                            self.saving_sheet = false;
+                        }, error: function(request, error) {
+                            alert("Something went wrong, write down your score");
+                            console.error(request);
+                            console.error(error);
+                        }
+                    });
             },
 
             /** Switch the hammer to the other team.*/
@@ -491,6 +503,10 @@ function startApp(match) {
 
             /** Returns whether the given team controls should be enabled or disabled.*/
             teamControlsEnabled: function(team_id) {
+                if (this.saving_sheet) {
+                    // disable everything while saving
+                    return false;
+                }
                 const have_hammer = team_id == this.hammer;
                 const my_score = (team_id == this.match.home_team_id)
                     ? this.active_sheet.home_score : this.active_sheet.away_score;
@@ -537,6 +553,10 @@ function startApp(match) {
 
             /**Determine whether need to ask for overtime method.*/
             askForOvertimeMethod: function() {
+                if (this.saving_sheet) {
+                    // disable everything while saving
+                    return false;
+                }
                 if (this.overtime_method == SUDDEN_DEATH) {
                     // once sudden death then never going to change
                     // back to first to ten
@@ -570,6 +590,10 @@ function startApp(match) {
 
             /**Any undos available. */
             undoEnabled: function() {
+                if (this.saving_sheet) {
+                    // disable everything while saving
+                    return false;
+                }
                 return this.previous_states.length > 0;
             },
 
