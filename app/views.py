@@ -205,10 +205,7 @@ def submit_sheet(match_id: int):
 def save_sheet():
     try:
         sheet = request.get_json(silent=True)
-        print(sheet)
-        print(request.json)
         saved_sheet = Sheet.from_json(sheet)
-        print(saved_sheet)
         DB.session.add(saved_sheet)
         DB.session.commit()
         return Response(json.dumps(saved_sheet.json()),

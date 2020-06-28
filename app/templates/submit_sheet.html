@@ -341,7 +341,6 @@ function ready() {
         dataType: "json",
         async: true,
         success: function(match) {
-            console.log(match);
             startApp(match);
         }, error: function(request, error) {
             console.error(request);
@@ -457,7 +456,6 @@ function startApp(match) {
             submitSheet: function() {
                 const self = this;
                 this.saving_sheet = true;
-                console.log(self.active_sheet.match_id);
                 $.ajax({
                         type: "POST",
                         data: JSON.stringify(self.active_sheet),
