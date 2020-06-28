@@ -1,6 +1,7 @@
 from typing import TypedDict
 from flask_login import logout_user, login_required
-from flask import render_template, redirect, url_for, Response, request
+from flask import render_template, redirect, url_for, Response, request,\
+    session
 from flask_login import current_user
 from sqlalchemy import func, asc, or_
 from datetime import datetime
@@ -10,6 +11,7 @@ from app.errors import NotFoundException, LackScorePermissionException
 from app.authentication import get_login_email, are_logged_in,\
     is_facebook_supported, is_github_supported, is_gmail_supported
 from app.helpers import is_date_between_range, tomorrow_date
+from app.logging import LOGGER
 import json
 
 
@@ -70,7 +72,7 @@ class TeamRecord(TypedDict):
 
 @wjl_app.route("/schedule")
 def schedule():
-    league_sessions = [session.json() for session in Session.query.all()]
+    league_sessions = [sesh.json() for sesh in Session.query.all()]
     active_session = get_active_session()
     active_session = (active_session
                       if active_session is not None
@@ -84,8 +86,10 @@ def schedule():
 
 @wjl_app.route("/schedule/<int:session_id>")
 def schedule_table(session_id):
-    session = Session.query.get(session_id)
-    if session is None:
+    sesh = Session.query.get(session_id)
+    if sesh is None:
+        LOGGER.warning(
+            f"{current_user} looking at schedule session {session_id} dne")
         return Response(None, status=404, mimetype="application/json")
     matches = Match.query.filter(
         Match.session_id == session_id).order_by(asc(Match.date)).all()
@@ -97,7 +101,7 @@ def schedule_table(session_id):
 
 @wjl_app.route("/standings")
 def standings():
-    league_sessions = [session.json() for session in Session.query.all()]
+    league_sessions = [sesh.json() for sesh in Session.query.all()]
     active_session = get_active_session()
     active_session = (active_session
                       if active_session is not None
@@ -110,8 +114,10 @@ def standings():
 
 @wjl_app.route("/standings/<int:session_id>")
 def standing_table(session_id: int):
-    session = Session.query.get(session_id)
-    if session is None:
+    sesh = Session.query.get(session_id)
+    if sesh is None:
+        LOGGER.warning(
+            f"{current_user} looking at standings session {session_id} dne")
         return Response(None, status=404, mimetype="application/json")
     matches = Match.query.filter(Match.session_id == session_id).all()
     teams = {}
@@ -150,7 +156,7 @@ def standing_table(session_id: int):
 def match_result(match_id: int):
     match = Match.query.get(match_id)
     if match is None:
-        raise NotFoundException("Sorry, match not found")
+        raise NotFoundException(f"Sorry, match not found - {match_id}")
     sheets = [sheet.json() for sheet in match.sheets]
     return render_template("match_results.html",
                            base_data=get_base_data(),
@@ -190,9 +196,10 @@ def submit_sheet(match_id: int):
     """A route to submit a gamesheet for some match."""
     match = Match.query.get(match_id)
     if match is None:
-        raise NotFoundException("Unable to find match")
+        raise NotFoundException(f"Unable to find match - {match_id}")
     if not current_user.can_submit_scores(match):
-        raise LackScorePermissionException("Not part of team")
+        raise LackScorePermissionException(
+            f"Not part of either team - {match_id}")
     return render_template("submit_sheet.html",
                            base_data=get_base_data(),
                            match=match.json(),
@@ -203,14 +210,19 @@ def submit_sheet(match_id: int):
 @wjl_app.route("/save_sheet", methods=["POST"])
 @login_required
 def save_sheet():
+    sheet = None
     try:
         sheet = request.get_json(silent=True)
         saved_sheet = Sheet.from_json(sheet)
         DB.session.add(saved_sheet)
         DB.session.commit()
+        LOGGER.info(
+            f"{current_user} saved sheet {sheet}")
         return Response(json.dumps(saved_sheet.json()),
                         status=200, mimetype="application/json")
     except NotFoundException as error:
+        LOGGER.warning(
+            f"{current_user} tried saving sheet for match that d.n.e {sheet}")
         return Response(json.dumps(error),
                         status=404, mimetype="application/json")
 
@@ -219,6 +231,8 @@ def save_sheet():
 def match(match_id):
     match = Match.query.get(match_id)
     if match is None:
+        LOGGER.warning(
+            f"{current_user} tried accessing non-existent match {match_id}")
         return Response(None, status=404, mimetype="application/json")
     match_data = match.json()
     sheets = []
@@ -235,7 +249,7 @@ def edit_sheet(match_id: int):
     """A route to edit a match's gamesheets."""
     match = Match.query.get(match_id)
     if match is None:
-        raise NotFoundException("Unable to find match")
+        raise NotFoundException("Unable to find match {match_id}")
     if not current_user.can_submit_scores(match):
         raise LackScorePermissionException("Not part of team")
     return render_template("edit_sheet.html",
@@ -246,6 +260,11 @@ def edit_sheet(match_id: int):
 @wjl_app.route("/")
 def homepage():
     """A route for the homepage."""
+    next_page = session.get("next", None)
+    if next_page is not None:
+        # remove it so can return to homepage again
+        session.pop("next")
+        return redirect(next_page)
     return render_template("index.html",
                            base_data=get_base_data(),)
 
@@ -256,7 +275,7 @@ def field(field_id: int):
     """A route to view the given field."""
     field = Field.query.get(field_id)
     if field is None:
-        raise NotFoundException("Sorry, field not found")
+        raise NotFoundException(f"Sorry, field not found - {field_id}")
     return render_template("field.html",
                            field=field.json(),
                            base_data=get_base_data(),)
@@ -268,7 +287,7 @@ def team(team_id: int):
     """A route to view the given team."""
     team = Team.query.get(team_id)
     if team is None:
-        raise NotFoundException("Sorry, field not found")
+        raise NotFoundException(f"Sorry, team not found - {team_id}")
     return render_template("team.html",
                            team=team.json(),
                            base_data=get_base_data())
@@ -299,8 +318,8 @@ def loginpage():
 @login_required
 def logout():
     """A route to log out the user."""
+    LOGGER.info(f"{current_user} has logged out")
     logout_user()
-    print("You have logged out")
     return redirect(url_for("homepage"))
 
 
@@ -330,7 +349,7 @@ def get_base_data() -> WebsiteData:
 
 
 def get_active_session() -> Session:
-    """Get the active session out of the list of sessions.
+    """Get the active league session.
 
     Returns:
         Session: the current active session otherwise None
@@ -340,8 +359,8 @@ def get_active_session() -> Session:
     sessions = DB.session.query(start_date, end_date,
                                 Match.session_id).group_by(Match.session_id)
     current = datetime.now()
-    for session in sessions:
-        if is_date_between_range(current, session[0], session[1]):
-            print(f"Active session {session}")
-            return Session.query.get(session[2])
+    for sesh in sessions:
+        if is_date_between_range(current, sesh[0], sesh[1]):
+            LOGGER.debug(f"Active session is {sesh}")
+            return Session.query.get(sesh[2])
     return None

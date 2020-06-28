@@ -10,6 +10,7 @@ from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy import func
 from app.errors import OAuthException, NotPartOfLeagueException
 from app.model import DB, Player, OAuth
+from app.logging import LOGGER
 import os
 
 
@@ -43,6 +44,7 @@ class UserInfo(TypedDict):
 def oauth_service_provider_logged_in(blueprint: Blueprint, token: str):
     # ensure the token is correct
     if not token:
+        LOGGER.warning(f"{blueprint.name} did not send token: {token}")
         raise OAuthException("Failed to log in")
 
     # get the user info
@@ -53,7 +55,7 @@ def oauth_service_provider_logged_in(blueprint: Blueprint, token: str):
     oauth = get_oauth(blueprint.name, user_id, token)
     if oauth.player:
         login_user(oauth.player)
-        print("Successfully signed in.")
+        LOGGER.info(f"{oauth.player} signed in")
     else:
         # see if they part of the legaue
         player = find_player(user_info)
@@ -61,7 +63,7 @@ def oauth_service_provider_logged_in(blueprint: Blueprint, token: str):
         oauth.player = player
         DB.session.add(oauth)
         DB.session.commit()
-        print("Successfully signed in.")
+        LOGGER.info(f"{player} has joined the app")
     # Disable Flask-Dance's default behavior for saving the OAuth token
     return False
 
@@ -69,6 +71,7 @@ def oauth_service_provider_logged_in(blueprint: Blueprint, token: str):
 @oauth_error.connect_via(facebook_blueprint)
 def oauth_service_provider_error(blueprint, message: str, response):
     msg = f"{blueprint.name}! message={message} response={response}"
+    LOGGER.error(msg)
     raise OAuthException(msg)
 
 
@@ -118,8 +121,11 @@ def get_user_info(blueprint: Blueprint) -> UserInfo:
     elif blueprint.name == GITHUB:
         resp = blueprint.session.get("user")
     if resp is None:
+        LOGGER.error(f"Unsupported oauth blueprint: {blueprint.name}")
         raise OAuthException(f"Unsupported oauth blueprint: {blueprint.name}")
     if not resp.ok:
+        LOGGER.error(resp)
+        LOGGER.error(f"Unable to fetch user using {blueprint.name}")
         raise OAuthException(
             f"Failed to get user info oauth blueprint: {blueprint.name}")
     return resp.json()
@@ -141,6 +147,7 @@ def find_player(user_info: UserInfo) -> Player:
     players = DB.session.query(Player).filter(
         func.lower(Player.email) == email.lower()).all()
     if len(players) == 0:
+        LOGGER.info(f"{email} is not part of league right now")
         raise NotPartOfLeagueException(
             "Sorry, looks like you are not in the league")
     return players[0]

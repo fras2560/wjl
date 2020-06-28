@@ -16,3 +16,4 @@ class Config(object):
     GITHUB_OAUTH_CLIENT_ID = os.environ.get("GITHUB_OAUTH_CLIENT_ID", "")
     GITHUB_OAUTH_CLIENT_SECRET = os.environ.get(
         "GITHUB_OAUTH_CLIENT_SECRET", "")
+    USE_SESSION_FOR_NEXT = True
