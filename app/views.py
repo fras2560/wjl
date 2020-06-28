@@ -306,8 +306,15 @@ def logout():
 
 @wjl_app.route("/privacy")
 def privacy_policy():
-    """A route for the privacy policy"""
+    """A route for the privacy policy."""
     return render_template("privacy_policy.html", base_data=get_base_data())
+
+
+@wjl_app.route("/terms-and-conditions")
+def terms_and_conditions():
+    """A route for the terms and conditions."""
+    return render_template("terms_and_conditions.html",
+                           base_data=get_base_data())
 
 
 def get_base_data() -> WebsiteData:
