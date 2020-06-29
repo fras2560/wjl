@@ -111,7 +111,7 @@ class Player(UserMixin, DB.Model):
 
     def can_submit_scores(self, match: 'Match') -> bool:
         """Tells whether the player can submit scores for the given match."""
-        if self.convenor:
+        if self.is_convenor:
             # convenor can submit scores for anyone
             return True
         elif not self.submit_scores:

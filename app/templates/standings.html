@@ -139,11 +139,9 @@ function renderTeamLink(data, type, row, meta) {
 
 /**Render the winning percentage. */
 function renderWinPercentage(data, type, row, meta) {
-  console.log(type);
   if (type === 'display' || type === 'sort' || type == 'filter') {
     const gp = Math.max(row.games_played, 1);
     data = parseFloat((row.wins / gp).toFixed(3));
-    console.log(data); 
   }
   return data;
 }

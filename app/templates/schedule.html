@@ -69,9 +69,15 @@
 $(document).ready(ready());
 function ready() {
     // plug-in code for jumping a page with a certain value
-    jQuery.fn.dataTable.Api.register( 'page.jumpToData()', function ( data, column ) {
-        var pos = this.column(column, {order:'current'}).data().indexOf( data );
-     
+    jQuery.fn.dataTable.Api.register( 'page.jumpToDate()', function ( date, column ) {
+        var data = this.column(column, {order:'current'}).data();
+        let pos = 0;
+        for(let index = 0; index <= data.length; index++) {
+            if (Date.parse(date) <= Date.parse(data[index])){
+                pos = index;
+                break;
+            }
+        }
         if ( pos >= 0 ) {
             var page = Math.floor( pos / this.page.info().length );
             this.page( page ).draw( false );
@@ -119,8 +125,7 @@ function display_table(schedule, selector) {
                   ]
   });
   // jump to todays date
-  console.log("{{today}}");
-  table.page.jumpToData("{{today}}", 0);
+  table.page.jumpToDate("{{today}}", 0);
 }
 
 /** Renders a team link*/
