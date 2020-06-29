@@ -339,6 +339,11 @@ def join_league():
     league_request = LeagueRequest(email, request.form.get("name", None), team)
     DB.session.add(league_request)
     DB.session.commit()
+    return redirect(url_for("league_request_sent"))
+
+
+@wjl_app.route("/request_sent", methods=["GET"])
+def league_request_sent():
     message = ("Submitted request to join."
                " Please wait until a convenor responds")
     return render_template("error.html",
