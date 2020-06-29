@@ -1,5 +1,5 @@
 from typing import TypedDict
-from flask_login import logout_user, login_required
+from flask_login import logout_user, login_required, login_user
 from flask import render_template, redirect, url_for, Response, request,\
     session
 from flask_login import current_user
@@ -9,7 +9,7 @@ from app import wjl_app
 from app.model import Field, Team, Session, Match, Sheet, WhichTeam,\
     DB, LeagueRequest, Player
 from app.errors import NotFoundException, LackScorePermissionException,\
-    OAuthException, NotConvenorException
+    OAuthException, NotConvenorException, HaveLeagueRequestException
 from app.authentication import get_login_email, are_logged_in,\
     is_facebook_supported, is_github_supported, is_gmail_supported
 from app.helpers import is_date_between_range, tomorrow_date
@@ -317,7 +317,16 @@ def join_league():
         # it should have been stored after authenicating
         message = "Sorry, the authentication provider did not give an email"
         raise OAuthException(message)
-
+    # double check the player email has not be taken
+    player = Player.query.filter(Player.email == email).first()
+    if player is not None:
+        login_user(player)
+        return redirect(url_for("homepage"))
+    # double check this is not  refresh page issue
+    pending_request = LeagueRequest.query.filter(
+        LeagueRequest.email == email).first()
+    if pending_request is not None:
+        raise HaveLeagueRequestException("Double submit on form")
     # ensure the selected team exists
     team_id = request.form.get("team", None)
     if team_id is None:
