@@ -72,6 +72,7 @@ def oauth_service_provider_logged_in(blueprint: Blueprint, token: str):
         DB.session.add(oauth)
         DB.session.commit()
         LOGGER.info(f"{player} has joined the app")
+        login_user(oauth.player)
     # Disable Flask-Dance's default behavior for saving the OAuth token
     return False
 
