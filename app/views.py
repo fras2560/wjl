@@ -34,14 +34,21 @@ class ScheduleRecord(TypedDict):
     field: str
     field_link: str
     result_link: str
+    status: str
 
     @staticmethod
     def create_schedule_record(match: Match) -> "ScheduleRecord":
         record = match.json()
         record["result_link"] = (url_for("match_result", match_id=match.id)
                                  if match.has_sheets() else None)
-        record["home_team_link"] = url_for("team", team_id=match.home_team_id)
-        record["away_team_link"] = url_for("team", team_id=match.away_team_id)
+        record["home_team_link"] = (None
+                                    if match.home_team_id is None
+                                    else url_for("team",
+                                                 team_id=match.home_team_id))
+        record["away_team_link"] = (None
+                                    if match.away_team_id is None
+                                    else url_for("team",
+                                                 team_id=match.away_team_id))
         record["field_link"] = url_for("field", field_id=match.field_id)
         return record
 

@@ -51,6 +51,9 @@
                       <th data-priority="5">
                         Results
                       </th>
+                      <th data-priority="6">
+                          Status
+                      </th>
                   </tr>
               </thead>
               <tbody>
@@ -121,7 +124,8 @@ function display_table(schedule, selector) {
                       {"data": "field", "render": renderFieldLink},
                       {"data": "home_team", "render": renderHomeTeamLink},
                       {"data": "away_team", "render": renderAwayTeamLink},
-                      {"data": "result_link", "render": renderResults}
+                      {"data": "result_link", "render": renderResults},
+                      {"data": "status"}
                   ]
   });
   // jump to todays date
@@ -151,7 +155,11 @@ function renderFieldLink(data, type, row, meta) {
 /** Renders a home team link*/
 function renderHomeTeamLink(data, type, row, meta) {
     if (type === 'display') {
-        data = '<a href="' + row.home_team_link + '">' + row.home_team + '</a>';
+        if (row.home_team_link != null) {
+            data = '<a href="' + row.home_team_link + '">' + row.home_team + '</a>';
+        } else {
+            data = "TBD";
+        }
     }
     return data;
 }
@@ -159,7 +167,11 @@ function renderHomeTeamLink(data, type, row, meta) {
 /** Renders an away team link*/
 function renderAwayTeamLink(data, type, row, meta) {
     if (type === 'display') {
-        data = '<a href="' + row.away_team_link + '">' + row.away_team + '</a>';
+        if (row.home_team_link != null) {
+            data = '<a href="' + row.away_team_link + '">' + row.away_team + '</a>';
+        } else {
+            data = "TBD";
+        }
     }
     return data;
 }

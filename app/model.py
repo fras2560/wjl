@@ -307,7 +307,8 @@ class Match(DB.Model):
             "date": self.date.strftime("%Y-%m-%d"),
             "time": self.date.strftime("%H:%M"),
             "datetime": self.date.strftime("%Y-%m-%d %H:%M"),
-            "id": self.id
+            "id": self.id,
+            "status": self.status
         }
 
     def has_sheets(self) -> bool:
