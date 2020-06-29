@@ -71,6 +71,11 @@
               <li class="nav-item">
                 <a class="nav-link" href="{{url_for('submit_score') }}">Gamesheet</a>
               </li>
+              {% if base_data.is_convenor %}
+              <li class="nav-item">
+                <a class="nav-link" href="{{url_for('check_league_requests') }}">Requests</a>
+              </li>
+              {% endif %}
             </ul>
           </div>
         </nav>

@@ -6,8 +6,10 @@ from flask_login import current_user
 from sqlalchemy import func, asc, or_
 from datetime import datetime
 from app import wjl_app
-from app.model import Field, Team, Session, Match, Sheet, WhichTeam, DB
-from app.errors import NotFoundException, LackScorePermissionException
+from app.model import Field, Team, Session, Match, Sheet, WhichTeam,\
+    DB, LeagueRequest, Player
+from app.errors import NotFoundException, LackScorePermissionException,\
+    OAuthException, NotConvenorException
 from app.authentication import get_login_email, are_logged_in,\
     is_facebook_supported, is_github_supported, is_gmail_supported
 from app.helpers import is_date_between_range, tomorrow_date
@@ -70,6 +72,26 @@ class TeamRecord(TypedDict):
         }
 
 
+class PendingRequest(TypedDict):
+    team: str
+    email: str
+    name: str
+    accept_link: str
+    reject_link: str
+    id: int
+
+    @staticmethod
+    def get_request(league_request: LeagueRequest) -> "PendingRequest":
+        data = league_request.json()
+        data["accept_link"] = url_for("league_request_decision",
+                                      request_id=league_request.id,
+                                      decision="accept")
+        data["reject_link"] = url_for("league_request_decision",
+                                      request_id=league_request.id,
+                                      decision="reject")
+        return data
+
+
 @wjl_app.route("/schedule")
 def schedule():
     league_sessions = [sesh.json() for sesh in Session.query.all()]
@@ -82,6 +104,49 @@ def schedule():
                            league_sessions=league_sessions,
                            active_session=active_session,
                            today=datetime.now().strftime("%Y-%m-%d"))
+
+
+@wjl_app.route("/pending_requests")
+@login_required
+def check_league_requests():
+    if not current_user.is_convenor:
+        raise NotConvenorException("not a convenor")
+    pending_requests = [PendingRequest.get_request(pending)
+                        for pending in LeagueRequest.query.filter(
+                            LeagueRequest.pending == True).all()]
+    return render_template("league_requests.html",
+                           base_data=get_base_data(),
+                           pending_requests=pending_requests)
+
+
+@wjl_app.route("/pending_requests/<int:request_id>/<decision>")
+@login_required
+def league_request_decision(request_id: int, decision: str):
+    if not current_user.is_convenor:
+        LOGGER.warning(
+            f"{current_user} pretending to be a convenor")
+        return Response(None, status=401, mimetype="application/json")
+    league_request = LeagueRequest.query.get(request_id)
+    if league_request is None:
+        LOGGER.warning(
+            f"{current_user} looking at league request {request_id} dne")
+        return Response(None, status=404, mimetype="application/json")
+    if decision.lower().strip() == "accept":
+        team = Team.query.get(league_request.team_id)
+        if team is None:
+            msg = f"Team does not exist {league_request.team_id}"
+            LOGGER.warning(
+                f"{current_user} {msg}")
+            return Response(msg, status=400, mimetype="application/json")
+        player = Player(league_request.email, league_request.name)
+        team.add_player(player)
+        DB.session.delete(league_request)
+        DB.session.commit()
+    else:
+        # decline the request and save to database
+        league_request.decline_request()
+        DB.session.commit()
+    return Response(json.dumps(None), status=200, mimetype="application/json")
 
 
 @wjl_app.route("/schedule/<int:session_id>")
@@ -243,6 +308,35 @@ def match(match_id):
                     status=200, mimetype="application/json")
 
 
+@wjl_app.route("/join_league", methods=["POST"])
+def join_league():
+    """A form submission to ask to join the league."""
+    # ensure given an email
+    email = session.get("oauth_email", None)
+    if email is None:
+        # it should have been stored after authenicating
+        message = "Sorry, the authentication provider did not give an email"
+        raise OAuthException(message)
+
+    # ensure the selected team exists
+    team_id = request.form.get("team", None)
+    if team_id is None:
+        raise NotFoundException(f"Team does not exist - {team_id}")
+    team = Team.query.get(team_id)
+    if team is None:
+        raise NotFoundException(f"Team does not exist - {team_id}")
+
+    # save the request
+    league_request = LeagueRequest(email, request.form.get("name", None), team)
+    DB.session.add(league_request)
+    DB.session.commit()
+    message = ("Submitted request to join."
+               " Please wait until a convenor responds")
+    return render_template("error.html",
+                           base_data=get_base_data(),
+                           message=message)
+
+
 @wjl_app.route("/edit_sheet/<int:match_id>")
 @login_required
 def edit_sheet(match_id: int):
@@ -342,9 +436,12 @@ def get_base_data() -> WebsiteData:
     Returns:
         WebsiteData: the base website data needed to render the page
     """
+    if are_logged_in():
+        print(f"Convenor: {current_user.is_convenor}")
     return {
         "logged_in": are_logged_in(),
-        "email": get_login_email()
+        "email": get_login_email(),
+        "is_convenor": are_logged_in() and current_user.is_convenor
     }
 
 

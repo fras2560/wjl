@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>
+    Requests to join the league
+</h1>
+
+<ul>
+    {% for league_request in pending_requests %}
+    <li id="request{{league_request.id}}">
+        {{league_request.name}} ({{league_request.email}})
+        join {{league_request.team.name}}
+        <button type="button" class="btn btn-success" title="Accept"
+             onclick="saveDecision('{{league_request.accept_link}}', '#request{{league_request.id}}');">
+            <i class="fa fa-check" aria-hidden="true"></i>
+        </button>
+        <button type="button" class="btn btn-danger" title="Reject" onclick="saveDecision('{{league_request.reject_link}}', '#request{{league_request.id}}');">
+            <i class="fa fa-times" aria-hidden="true"></i>
+        </button>
+        
+    </li>
+    {% endfor %}
+</ul>
+
+{% endblock %}
+{% block script %}
+<script>
+    function saveDecision(url, elementId) {
+        $.ajax({
+            type: "GET",
+            url: url,
+            contentType: "application/json",
+            dataType: "json",
+            async: true,
+            success: function(result) {
+                console.log(result)
+                $(elementId).remove();
+            }, error: function(request, error) {
+                alert("Unable to deal with request - check logs");
+                console.error(request);
+                console.error(error);
+                $(elementId).remove();
+            }
+        });
+    }
+</script>
+{% endblock %}

@@ -1,5 +1,5 @@
 from typing import TypedDict
-from flask import Blueprint
+from flask import Blueprint, session
 from flask_dance.contrib.github import make_github_blueprint
 from flask_dance.contrib.facebook import make_facebook_blueprint
 from flask_dance.contrib.google import make_google_blueprint
@@ -8,8 +8,9 @@ from flask_dance.consumer import oauth_authorized, oauth_error
 from flask_login import LoginManager, current_user, login_user
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy import func
-from app.errors import OAuthException, NotPartOfLeagueException
-from app.model import DB, Player, OAuth
+from app.errors import OAuthException, NotPartOfLeagueException,\
+    HaveLeagueRequestException
+from app.model import DB, Player, OAuth, LeagueRequest
 from app.logging import LOGGER
 import os
 
@@ -57,6 +58,13 @@ def oauth_service_provider_logged_in(blueprint: Blueprint, token: str):
         login_user(oauth.player)
         LOGGER.info(f"{oauth.player} signed in")
     else:
+        # remember their email in session in case they want to join
+        session["oauth_email"] = user_info["email"]
+        # check if they have a pending request
+        is_pending = LeagueRequest.query.filter(
+            LeagueRequest.email == session["oauth_email"]).first()
+        if is_pending is not None:
+            raise HaveLeagueRequestException()
         # see if they part of the legaue
         player = find_player(user_info)
         # associated the player with this oauth

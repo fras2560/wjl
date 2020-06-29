@@ -16,3 +16,13 @@ class NotFoundException(Exception):
 class LackScorePermissionException(Exception):
     """An exception when trying to submit score for team not part of."""
     pass
+
+
+class HaveLeagueRequestException(Exception):
+    """When a player is  authenticating but have a rejected/pending request."""
+    pass
+
+
+class NotConvenorException(Exception):
+    """When a player is trying to be a convenor."""
+    pass

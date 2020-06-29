@@ -78,6 +78,9 @@ class Player(UserMixin, DB.Model):
         Columns:
             id: the unique id
             email: the email associated with the user
+            name: the name of the player
+            convenor: whether has convenor privileges
+            submit_scores: whether able to submit scores
     """
     id = DB.Column(DB.Integer, primary_key=True)
     email = DB.Column(DB.String(256), unique=True)
@@ -86,10 +89,15 @@ class Player(UserMixin, DB.Model):
                               secondary=roster,
                               backref=DB.backref('teamsplayers',
                                                  lazy='dynamic'))
+    is_convenor = DB.Column(DB.Boolean)
+    submit_scores = DB.Column(DB.Boolean)
 
-    def __init__(self, email: str, name: str = None):
+    def __init__(self, email: str, name: str = None, is_convenor: bool = False,
+                 submit_scores: bool = True):
         self.email = email
         self.name = name
+        self.is_convenor = is_convenor
+        self.submit_scores = submit_scores
 
     def json(self) -> dict:
         return {
@@ -103,8 +111,17 @@ class Player(UserMixin, DB.Model):
 
     def can_submit_scores(self, match: 'Match') -> bool:
         """Tells whether the player can submit scores for the given match."""
-        team_ids = [team.id for team in self.teams]
-        return match.away_team_id in team_ids or match.home_team_id in team_ids
+        if self.convenor:
+            # convenor can submit scores for anyone
+            return True
+        elif not self.submit_scores:
+            # submitting scores has been revoked due to abuse
+            return False
+        else:
+            # check if they are part of team
+            team_ids = [team.id for team in self.teams]
+            return (match.away_team_id in team_ids or
+                    match.home_team_id in team_ids)
 
 
 class OAuth(OAuthConsumerMixin, DB.Model):
@@ -152,7 +169,7 @@ class Team(DB.Model):
 
     """
     id = DB.Column(DB.Integer, primary_key=True)
-    name = DB.Column(DB.String(120), unique=True)
+    name = DB.Column(DB.String(120), unique=True, nullable=False)
     home_field_id = DB.Column(DB.Integer, DB.ForeignKey('field.id'))
     home_field = DB.relationship(Field)
     players = DB.relationship('Player',
@@ -175,8 +192,52 @@ class Team(DB.Model):
             "homefield": field
         }
 
+    def add_player(self, player: Player) -> None:
+        """Add the given player to the team"""
+        if player is None:
+            raise NotFoundException(
+                f"Trying to add non-existent player to team - {self.id}")
+        self.players.append(player)
+
     def __str__(self) -> str:
         return self.name
+
+
+class LeagueRequest(DB.Model):
+    """
+        A class used to store requests to join the league.
+        Columns:
+            team_id: the team they want to join
+            name: the name they want to use
+            email: the email from the Oauth provider
+            pending: whether waiting for the outcome of the request
+    """
+    id = DB.Column(DB.Integer, primary_key=True)
+    team_id = DB.Column(DB.Integer, DB.ForeignKey(Team.id), nullable=False)
+    team = DB.relationship(Team)
+    email = DB.Column(DB.String(120), unique=True, nullable=False)
+    name = DB.Column(DB.String(120), nullable=False)
+    pending = DB.Column(DB.Boolean)
+
+    def __init__(self, email: str, name: str, team: Team):
+        self.email = email
+        self.name = name
+        if team is None:
+            raise NotFoundException("Given team does not exist")
+        self.team_id = team.id
+        self.pending = True
+
+    def decline_request(self):
+        self.pending = False
+
+    def json(self):
+        return {
+            "team": self.team.json(),
+            "email": self.email,
+            "id": self.id,
+            "pending": self.pending,
+            "name": self.name
+        }
 
 
 class Session(DB.Model):
