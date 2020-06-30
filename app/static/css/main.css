@@ -44,3 +44,7 @@ button.scoreAppButton:disabled {
 .helpLink {
     margin-bottom: 40px;
 }
+
+div.left-align {
+    text-align: left;
+}
