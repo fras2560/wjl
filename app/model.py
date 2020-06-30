@@ -184,7 +184,7 @@ class Team(DB.Model):
         players = [player.json() for player in self.players]
         field = ("No homefield"
                  if self.home_field is None
-                 else self.home_field)
+                 else self.home_field.name)
         return {
             "id": self.id,
             "name": self.name,
@@ -260,6 +260,9 @@ class Session(DB.Model):
             "name": self.name
         }
 
+    def __str__(self) -> str:
+        return self.name
+
 
 class Match(DB.Model):
     """
@@ -287,8 +290,8 @@ class Match(DB.Model):
 
     def __init__(self, home_team: Team, away_team: Team, session: Session,
                  date: datetime, field: Field, status: str = None):
-        self.home_team_id = home_team.id
-        self.away_team_id = away_team.id
+        self.home_team_id = None if home_team is None else home_team.id
+        self.away_team_id = None if away_team is None else away_team.id
         self.session_id = session.id
         self.date = date
         self.status = status
@@ -304,12 +307,70 @@ class Match(DB.Model):
             "away_team": away_team,
             "away_team_id": self.away_team_id,
             "field": field,
+            "field_id": self.field_id,
             "date": self.date.strftime("%Y-%m-%d"),
             "time": self.date.strftime("%H:%M"),
             "datetime": self.date.strftime("%Y-%m-%d %H:%M"),
+            "session": str(self.session),
+            "session_id": self.session_id,
             "id": self.id,
             "status": self.status
         }
+
+    @staticmethod
+    def find_given_team(team_id) -> Team:
+        """Find the team associated with the given team_id if it not None"""
+        if team_id is None:
+            return None
+        team = Team.query.get(team_id)
+        if team is None:
+            raise NotFoundException(f"Team not found - {team_id}")
+        return team
+
+    @staticmethod
+    def from_json(data) -> "Match":
+        # ensure if given a team it is exists
+        home_team = Match.find_given_team(data.get("home_team_id"))
+        away_team = Match.find_given_team(data.get("away_team_id"))
+
+        # ensure the field exists
+        field_id = data.get("field_id", None)
+        field = None if field_id is None else Field.query.get(field_id)
+        if field is None:
+            raise NotFoundException(f"Field not found - {field_id}")
+
+        # ensure the session exists
+        sesh_id = data.get("session_id", None)
+        sesh = None if sesh_id is None else Session.query.get(sesh_id)
+        if sesh is None:
+            raise NotFoundException(f"Session not found - {sesh_id}")
+
+        # try parsing date
+        raw_date = data.get("datetime")
+        date = None
+        try:
+            date = datetime.strptime(raw_date, '%Y-%m-%d %H:%M')
+        except ValueError:
+            raise NotFoundException(f"Unable to handle date: {raw_date}")
+
+        match_id = data.get("id", None)
+        if match_id is not None:
+            # updating an match
+            match = Match.query.get(match_id)
+            if match is None:
+                raise NotFoundException(f"Match not found - {sesh_id}")
+            match.date = date
+            match.session_id = sesh.id
+            match.status = data.get("status")
+            match.away_team_id = None if away_team is None else away_team.id
+            match.home_team_id = None if home_team is None else home_team.id
+            match.field_id = field.id
+            print(match.home_team_id)
+            return match
+        else:
+            # creating a match
+            return Match(home_team, away_team, sesh, date,
+                         status=data.get("status"))
 
     def has_sheets(self) -> bool:
         for sheet in self.sheets:
