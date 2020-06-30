@@ -3,7 +3,7 @@ from flask_login import logout_user, login_required, login_user
 from flask import render_template, redirect, url_for, Response, request,\
     session
 from flask_login import current_user
-from sqlalchemy import func, asc, or_
+from sqlalchemy import func, asc, or_, not_
 from datetime import datetime
 from app import wjl_app
 from app.model import Field, Team, Session, Match, Sheet, WhichTeam,\
@@ -113,6 +113,85 @@ def schedule():
                            today=datetime.now().strftime("%Y-%m-%d"))
 
 
+@wjl_app.route("/edits_games")
+@login_required
+def pick_session_to_edit():
+    if not current_user.is_convenor:
+        raise NotConvenorException("not a convenor")
+    sessions = [sesh.json() for sesh in Session.query.all()]
+    return render_template("select_session.html",
+                           base_data=get_base_data(),
+                           sessions=sessions)
+
+
+@wjl_app.route("/edits_games/<int:session_id>")
+@login_required
+def edit_games_in_session(session_id):
+    if not current_user.is_convenor:
+        raise NotConvenorException("not a convenor")
+    sesh = Session.query.get(session_id)
+    if sesh is None:
+        raise NotFoundException("Sorry, session not found - {session_id}")
+    match_link = url_for("get_matches_in_session", session_id=sesh.id)
+    return render_template("edit_matches_in_session.html",
+                           base_data=get_base_data(),
+                           session=sesh,
+                           fields_link=url_for("get_all_fields"),
+                           matches_link=match_link,
+                           teams_link=url_for("get_all_teams"),
+                           save_match_link=url_for("save_match"))
+
+
+@wjl_app.route("/api/teams")
+def get_all_teams():
+    teams = [team.json() for team in Team.query.all()]
+    return Response(json.dumps(teams), status=200, mimetype="application/json")
+
+
+@wjl_app.route("/api/fields")
+def get_all_fields():
+    fields = [field.json() for field in Field.query.all()]
+    return Response(json.dumps(fields), status=200,
+                    mimetype="application/json")
+
+
+@wjl_app.route("/api/session/<int:session_id>/matches")
+def get_matches_in_session(session_id):
+    sesh = Session.query.get(session_id)
+    if sesh is None:
+        return Response(json.dumps(None), status=404,
+                        mimetype="application/json")
+    matches = (Match.query
+               .filter(Match.session_id == session_id)
+               .order_by(asc(Match.date)).all())
+    matches_data = [ScheduleRecord.create_schedule_record(match)
+                    for match in matches]
+    return Response(json.dumps(matches_data), status=200,
+                    mimetype="application/json")
+
+
+@wjl_app.route("/api/match/save", methods=["POST"])
+def save_match():
+    match = None
+    try:
+        match = request.get_json(silent=True)
+        LOGGER.debug(f"Update match {match}")
+        saved_match = Match.from_json(match)
+        if match.get("id", None) is None:
+            DB.session.add(saved_match)
+        DB.session.commit()
+        LOGGER.info(
+            f"{current_user} saved sheet {match}")
+        return Response(json.dumps(saved_match.json()),
+                        status=200, mimetype="application/json")
+    except NotFoundException as error:
+        msg = str(error)
+        LOGGER.warning(
+            f"{current_user} tried saving match but issue {msg}")
+        return Response(json.dumps(msg),
+                        status=404, mimetype="application/json")
+
+
 @wjl_app.route("/pending_requests")
 @login_required
 def check_league_requests():
@@ -132,12 +211,14 @@ def league_request_decision(request_id: int, decision: str):
     if not current_user.is_convenor:
         LOGGER.warning(
             f"{current_user} pretending to be a convenor")
-        return Response(None, status=401, mimetype="application/json")
+        return Response(json.dumps(None), status=401,
+                        mimetype="application/json")
     league_request = LeagueRequest.query.get(request_id)
     if league_request is None:
         LOGGER.warning(
             f"{current_user} looking at league request {request_id} dne")
-        return Response(None, status=404, mimetype="application/json")
+        return Response(json.dumps(None), status=404,
+                        mimetype="application/json")
     if decision.lower().strip() == "accept":
         team = Team.query.get(league_request.team_id)
         if team is None:
@@ -190,8 +271,12 @@ def standing_table(session_id: int):
     if sesh is None:
         LOGGER.warning(
             f"{current_user} looking at standings session {session_id} dne")
-        return Response(None, status=404, mimetype="application/json")
-    matches = Match.query.filter(Match.session_id == session_id).all()
+        return Response(json.dumps(None), status=404,
+                        mimetype="application/json")
+    matches = (Match.query
+               .filter(Match.session_id == session_id)
+               .filter(not_(or_(Match.away_team_id == None,
+                            Match.home_team_id == None))).all())
     teams = {}
     for match in matches:
         if match.away_team_id not in teams.keys():
@@ -240,12 +325,16 @@ def match_result(match_id: int):
 @login_required
 def submit_score():
     """A route to get matches that one can submit scores for."""
-    team_ids = [team.id for team in current_user.teams]
     all_matches = (Match.query
-                   .filter(or_(Match.away_team_id.in_(team_ids),
-                               Match.home_team_id.in_(team_ids)))
                    .filter(Match.date <= tomorrow_date())
-                   .all())
+                   .filter(not_(or_(Match.away_team_id == None,
+                                    Match.home_team_id == None))))
+    if not current_user.is_convenor:
+        team_ids = [team.id for team in current_user.teams]
+        all_matches = (all_matches.filter(or_(
+                Match.away_team_id.in_(team_ids),
+                Match.home_team_id.in_(team_ids))))
+    all_matches = all_matches.all()
     submitted_matches = []
     outstanding_matches = []
     for match in all_matches:
@@ -457,8 +546,6 @@ def get_base_data() -> WebsiteData:
     Returns:
         WebsiteData: the base website data needed to render the page
     """
-    if are_logged_in():
-        print(f"Convenor: {current_user.is_convenor}")
     return {
         "logged_in": are_logged_in(),
         "email": get_login_email(),
