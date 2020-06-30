@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>
+    Pick Session to edit games for
+</h1>
+<ul>
+    {% for session in sessions %}
+        <a href="{{url_for('edit_games_in_session', session_id=session.id)}}">
+            {{session.name}}
+        </a>
+    {% endfor %}
+</ul>
+
+{% endblock %}

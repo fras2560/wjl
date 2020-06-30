@@ -1,0 +1,225 @@
+{% extends "base.html" %}
+{% block content %}
+<div id="editMatchesApp">
+    <h1>
+        Submit Match Scores
+    </h1>
+    <match-component
+        :match="match"
+        :teams="teams"
+        :fields="fields"
+        v-for="match in matches">
+
+    </match-component>
+</div>
+
+
+{% endblock %}
+
+{% block script %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.27.0/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+<script>
+$(document).ready(ready());
+function ready() {
+    $.ajax({
+        type: "GET",
+        url: "{{matches_link}}",
+        contentType: "application/json",
+        dataType: "json",
+        async: true,
+        success: function(matches) {
+            $.ajax({
+                type: "GET",
+                url: "{{teams_link}}",
+                contentType: "application/json",
+                dataType: "json",
+                async: true,
+                success: function(teams) {
+                    $.ajax({
+                        type: "GET",
+                        url: "{{fields_link}}",
+                        contentType: "application/json",
+                        dataType: "json",
+                        async: true,
+                        success: function(fields) {
+                            console.log({
+                                prompt: "Starting app",
+                                matches: matches,
+                                teams: teams,
+                                fields: fields
+                            });
+                            startApp(matches, teams, fields);
+                        }, error: function(request, error) {
+                            console.error(request);
+                            console.error(error);
+                        }
+                    });
+
+                }, error: function(request, error) {
+                    console.error(request);
+                    console.error(error);
+                }
+            });
+        }, error: function(request, error) {
+            console.error(request);
+            console.error(error);
+        }
+    });
+
+}
+
+
+
+/** Returns a new the match for the session.*/
+function newMatch(match) {
+    return {
+        "id": null,
+        "date": null,
+        "home_team_id": null,
+        "away_team_id": null,
+        "session_id": {{session.id}},
+        "status": null
+    }
+}
+
+function startApp(matches, teams, fields) {
+    Vue.component('match-component', {
+        props: {
+            match: Object,
+            teams: Array,
+            fields: Array
+        },
+        template: `
+        <div class="row left-align border-top my-3">
+            <div class="col-12 col-sm-6 col-md-3">
+                <label>Home team:</label>
+                <select class="form-control" v-model="match.home_team_id" >
+                    <option value="null">
+                        TBD
+                    </option>
+                    <option
+                        v-for="team in teams"
+                        v-bind:value="team.id">
+                        [[team.name]]
+                    </option>
+                </select>    
+            </div>
+            <div class="col-12 col-sm-6 col-md-3">
+                <label>Away Team:</label>
+                <select class="form-control" v-model="match.away_team_id">
+                    <option value="null">
+                        TBD
+                    </option>
+                    <option
+                        v-for="team in teams"
+                        v-bind:value="team.id">
+                        [[team.name]]
+                    </option>
+                </select>
+            </div>
+            <div class="col-12 col-sm-6 col-md-2">
+                <label>Field:</label>
+                <select class="form-control" v-model="match.field_id">
+                    <option
+                        v-for="field in fields"
+                        v-bind:value="field.id">
+                        [[field.name]]
+                    </option>
+                </select>
+            </div>
+            <div class="col-12 col-sm-6 col-md-2">
+                <label>Date:</label>
+                <input v-model="match.datetime" placeholder="Match Date" class="form-control"  v-bind:class="dateValid" >
+            </div>
+            <div class="col-12 col-sm-6 col-md-2">
+                <label>Status:</label>
+                <input v-model="match.status" placeholder="Match Status" class="form-control">
+            </div>
+            <hr/>
+        </div>
+        `,
+        delimiters: ['[[', ']]'],
+        
+        watch: {
+            match: {
+                handler: function(newValue, oldValue) {
+                    if (!this.validateMatch(newValue)) {
+                        alert("Invalid change");
+                        this.match = oldValue;
+                    }
+                    if (this.validateDate(newValue.datetime)) {
+                        // if date is valid then go ahead and save it
+                        // otherwise wait until it is
+                        this.saveMatch(newValue);
+                    }
+            },
+                deep: true
+            }
+        },
+        computed: {
+            dateValid: function() {
+                return {
+                    'text-danger': !this.validateDate(this.match.datetime),
+                    'form-class': true
+                }
+            }
+        },
+        methods: {
+            /** Validate the date is the right format. */
+            validateDate: function(date) {
+                return moment(date, 'YYYY-MM-DD HH:mm').format('YYYY-MM-DD HH:mm') == date;
+            },
+            /** Validate the match has the correctdate is the right format. */
+            validateMatch: function(match) {
+                // ensure picked a team or left as TBD
+                if (teams.filter(team => team.id === match.away_team_id).length === 0 &&
+                    match.away_team_id !== null) {
+                    return false;
+                }
+                if (teams.filter(team => team.id === match.home_team_id).length === 0 &&
+                    match.home_team_id !== null) {
+                    return false;
+                }
+                // picked a field
+                if (fields.filter(field => field.id === match.field_id).length === 0) {
+                    return false;
+                }
+                return true;
+            },
+            /** Save the match to a database. */
+            saveMatch: function(match) {
+                const current_date = moment(match.datetime, 'YYYY-MM-DD HH:mm').toDate();
+                match.datetime =  moment(current_date).format('YYYY-MM-DD HH:mm');
+                match.status = (match.status == '') ? null : match.status; 
+                $.ajax({
+                        type: "POST",
+                        data: JSON.stringify(match),
+                        url: "{{save_match_link}}",
+                        contentType: "application/json",
+                        dataType: "json",
+                        async: true,
+                        success: function(saved_match) {
+                        }, error: function(request, error) {
+                            alert("Something went wrong, write down your score");
+                            console.error(request);
+                            console.error(error);
+                        }
+                    });
+            }
+
+        }
+    });
+    const app = new Vue({
+        el: '#editMatchesApp',
+        data: {
+            matches: matches,
+            teams: teams,
+            fields: fields
+        },
+        delimiters: ['[[', ']]']
+    });
+}
+</script>
+
+{% endblock %}
