@@ -73,8 +73,12 @@
                 <a class="nav-link" href="{{url_for('submit_score') }}">Gamesheet</a>
               </li>
               {% if base_data.is_convenor %}
-              <li class="nav-item">
-                <a class="nav-link" href="{{url_for('check_league_requests') }}">Requests</a>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Admin</a>
+                <div class="dropdown-menu">
+                  <a class="nav-link" href="{{url_for('check_league_requests') }}">Requests</a>
+                  <a class="nav-link" href="{{url_for('pick_session_to_edit') }}">Matches</a>
+                </div>
               </li>
               {% endif %}
             </ul>
