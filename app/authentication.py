@@ -129,6 +129,8 @@ def get_user_info(blueprint: Blueprint) -> UserInfo:
         resp = blueprint.session.get("/oauth2/v1/userinfo")
     elif blueprint.name == GITHUB:
         resp = blueprint.session.get("user")
+        print(resp)
+        print(resp.json())
     if resp is None:
         LOGGER.error(f"Unsupported oauth blueprint: {blueprint.name}")
         raise OAuthException(f"Unsupported oauth blueprint: {blueprint.name}")
