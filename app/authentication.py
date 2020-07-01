@@ -129,8 +129,6 @@ def get_user_info(blueprint: Blueprint) -> UserInfo:
         resp = blueprint.session.get("/oauth2/v1/userinfo")
     elif blueprint.name == GITHUB:
         resp = blueprint.session.get("user")
-        print(resp)
-        print(resp.json())
     if resp is None:
         LOGGER.error(f"Unsupported oauth blueprint: {blueprint.name}")
         raise OAuthException(f"Unsupported oauth blueprint: {blueprint.name}")
@@ -141,8 +139,15 @@ def get_user_info(blueprint: Blueprint) -> UserInfo:
             f"Failed to get user info oauth blueprint: {blueprint.name}")
     user_info = resp.json()
     if user_info.get("email") is None:
-        raise OAuthException(
-            f"Failed to get email from provider {user_info}: {blueprint.name}")
+        
+        msg = (
+            f"Provider did not give email: {blueprint.name}."
+            " Double check your permission from the app."
+            " If using Github ensure your email is public."
+        )
+        LOGGER.error(msg)
+        LOGGER.error(user_info)
+        raise OAuthException(msg)
     return user_info
 
 
