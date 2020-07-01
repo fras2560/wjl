@@ -31,7 +31,7 @@ def handle_not_part_of_league():
 @wjl_app.route("/something_went_wrong")
 def handle_generic_error():
     """Handle generic errors"""
-    message = str(session.get("runtimeException",
+    message = str(session.pop("runtimeException",
                               "Sorry, something went wrong"))
     LOGGER.warning(f"{current_user}: {message}")
     return render_template("error.html",
