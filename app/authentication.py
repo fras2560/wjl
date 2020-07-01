@@ -139,7 +139,11 @@ def get_user_info(blueprint: Blueprint) -> UserInfo:
         LOGGER.error(f"Unable to fetch user using {blueprint.name}")
         raise OAuthException(
             f"Failed to get user info oauth blueprint: {blueprint.name}")
-    return resp.json()
+    user_info = resp.json()
+    if user_info.get("email") is None:
+        raise OAuthException(
+            f"Failed to get email from provider {user_info}: {blueprint.name}")
+    return user_info
 
 
 def find_player(user_info: UserInfo) -> Player:
