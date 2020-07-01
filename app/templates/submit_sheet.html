@@ -468,6 +468,7 @@ function startApp(match) {
                             self.active_sheet = window.newSheet(self.match);
                             self.previous_states = [];
                             self.switchHammar();
+                            self.overtime_method = null;
                             self.saving_sheet = false;
                         }, error: function(request, error) {
                             alert("Something went wrong, write down your score");
