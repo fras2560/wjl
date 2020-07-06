@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+"""Holds views that are used by an administrator."""
 from flask import render_template, url_for, Response
 from flask_login import login_required, current_user
 from app import wjl_app

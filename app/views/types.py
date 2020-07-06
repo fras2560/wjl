@@ -26,6 +26,7 @@ class ScheduleRecord(TypedDict):
 
     @staticmethod
     def create_schedule_record(match: Match) -> "ScheduleRecord":
+        """Create a schedule record for the given match."""
         record = match.json()
         record["result_link"] = (url_for("match_result", match_id=match.id)
                                  if match.has_sheets() else None)
@@ -54,6 +55,7 @@ class TeamRecord(TypedDict):
 
     @staticmethod
     def empty_record(team_id: int, team_name: str) -> "TeamRecord":
+        """Generate an empty record for the given team."""
         return {
             "id": team_id,
             "name": team_name,
@@ -68,6 +70,7 @@ class TeamRecord(TypedDict):
 
 
 class PendingRequest(TypedDict):
+    """A pending request to join the league."""
     team: str
     email: str
     name: str
@@ -77,6 +80,7 @@ class PendingRequest(TypedDict):
 
     @staticmethod
     def get_request(league_request: LeagueRequest) -> "PendingRequest":
+        """Generates a pending request from a league request."""
         data = league_request.json()
         data["accept_link"] = url_for("league_request_decision",
                                       request_id=league_request.id,

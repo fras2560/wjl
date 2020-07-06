@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+"""Holds general helper functions."""
 from datetime import datetime, timedelta
 
 

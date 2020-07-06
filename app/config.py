@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+"""Holds configuration for the app."""
 import os
 from uuid import uuid1
 

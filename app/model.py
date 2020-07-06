@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+"""Holds a database model for the application."""
 from typing import TypedDict
 from enum import Enum
 from datetime import datetime

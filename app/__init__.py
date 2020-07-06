@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+"""The main entry into the website"""
 from flask import Flask
 from app.authentication import github_blueprint, facebook_blueprint,\
     google_blueprint, login_manager

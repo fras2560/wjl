@@ -1,4 +1,5 @@
-
+# -*- coding: utf-8 -*-
+"""Holds error handling for exceptions raised."""
 from flask import render_template, session, url_for, redirect
 from flask_login import current_user
 from app import wjl_app

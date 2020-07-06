@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+"""Holds helper functions for other views."""
 from flask_login import current_user
 from datetime import datetime
 from sqlalchemy import func

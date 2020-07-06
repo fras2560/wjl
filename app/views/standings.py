@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+"""Holds views that are related to the standings page."""
 from flask import render_template, Response
 from flask_login import current_user
 from sqlalchemy import or_, not_

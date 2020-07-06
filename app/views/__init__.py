@@ -1,8 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Website views
-
-Holds all website the views.
-"""
+"""Holds all website the views."""
 __all__ = []
 from flask import session, redirect, render_template
 from app import wjl_app

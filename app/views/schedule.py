@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+"""Holds views that are related to the schedule page."""
 from flask import Response, render_template
 from flask_login import current_user
 from sqlalchemy import asc
