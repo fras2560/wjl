@@ -1,0 +1,60 @@
+{
+  "name": "cypress-testing",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "compile": "tsc --noEmit",
+    "open": "cypress open",
+    "test": "cypress run -e TAGS='(@OnCommit or @Nightly) and not (@ignore or @Ignore)' --spec \"**/*.feature\"",
+    "test:chrome": "cypress run -e TAGS='(@OnCommit or @Nightly) and not (@ignore or @Ignore)' --browser chrome --headless --spec \"**/*.feature\"",
+    "test:firefox": "cypress run -e TAGS='(@OnCommit or @Nightly) and not (@ignore or @Ignore)' --browser firefox --headless --spec \"**/*.feature\"",
+    "docs": "typedoc --stripInternal",
+    "full-docs": "typedoc",
+    "checkLint": "eslint '*/**/*.{js,ts,tsx}'",
+    "lint": "tsc --noEmit && eslint '*/**/*.{js,ts,tsx}' --quiet --fix"
+  },
+  "keywords": [
+    "mobius",
+    "digital education",
+    "cypress",
+    "cucumber",
+    "testing"
+  ],
+  "author": "Dallas Fraser",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/core": "^7.9.0",
+    "@cypress/webpack-preprocessor": "^4.0.2",
+    "@types/node": "^13.9.8",
+    "@typescript-eslint/eslint-plugin": "^2.26.0",
+    "@typescript-eslint/parser": "^2.26.0",
+    "babel-eslint": "^10.0.3",
+    "babel-plugin-module-resolver": "^4.0.0",
+    "cypress": "^4.3.0",
+    "cypress-cucumber-preprocessor": "^2.2.0",
+    "cypress-file-upload": "^3.5.3",
+    "cypress-pipe": "^1.5.0",
+    "eslint": "^6.6.0",
+    "eslint-config-prettier": "^6.10.1",
+    "eslint-plugin-prettier": "^3.1.2",
+    "prettier": "^2.0.2",
+    "ts-loader": "^5.3.1",
+    "typescript": "^3.2.1",
+    "webpack": "^4.28.2"
+  },
+  "cypress-cucumber-preprocessor": {
+    "nonGlobalStepDefinitions": true,
+    "step_definitions": "cypress/features"
+  },
+  "dependencies": {
+    "@types/cypress-cucumber-preprocessor": "^1.14.1",
+    "@types/uuid": "^7.0.2",
+    "install": "^0.13.0",
+    "md5-base64": "0.0.3",
+    "npm": "^6.14.4",
+    "oauth-1.0a": "^2.2.6",
+    "typedoc": "^0.17.3",
+    "uuid": "^3.4.0"
+  }
+}
