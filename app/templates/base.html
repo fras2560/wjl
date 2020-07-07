@@ -54,30 +54,48 @@
           <div class="collapse navbar-collapse" id="navbarSupportedContent" data-cy="navigationBar">
             <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
               <li class="nav-item active">
-                <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
+                <a class="nav-link" href="/" data-cy="home">
+                  Home <span class="sr-only">(current)</span>
+                </a>
               </li>
               <li class="nav-item">
                 {% if base_data.logged_in %}
-                <a class="nav-link" href="{{ url_for('logout') }}" title="{{base_data.email}}">Logout</a>
+                <a class="nav-link" href="{{ url_for('logout') }}" title="{{base_data.email}}" data-cy="logout">
+                  Logout
+                </a>
                 {% else %}
-                <a class="nav-link" href="{{url_for('loginpage') }}">Login</a>
+                <a class="nav-link" href="{{url_for('loginpage') }}" data-cy="login">
+                  Login
+                </a>
                 {% endif %}
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="{{url_for('schedule') }}">Schedule</a>
+                <a class="nav-link" href="{{url_for('schedule') }}" data-cy="schedule">
+                  Schedule
+                </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="{{url_for('standings') }}">Standings</a>
+                <a class="nav-link" href="{{url_for('standings') }}" data-cy="standings">
+                  Standings
+                </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="{{url_for('submit_score') }}">Gamesheet</a>
+                <a class="nav-link" href="{{url_for('submit_score') }}" data-cy="gamesheet">
+                  Gamesheet
+                </a>
               </li>
               {% if base_data.is_convenor %}
               <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Admin</a>
+                <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false" data-cy="admin">
+                  Admin
+                </a>
                 <div class="dropdown-menu">
-                  <a class="nav-link" href="{{url_for('check_league_requests') }}">Requests</a>
-                  <a class="nav-link" href="{{url_for('pick_session_to_edit') }}">Matches</a>
+                  <a class="nav-link" href="{{url_for('check_league_requests') }}" data-cy="requests">
+                    Requests
+                  </a>
+                  <a class="nav-link" href="{{url_for('pick_session_to_edit') }}" data-cy="matches">
+                    Matches
+                  </a>
                 </div>
               </li>
               {% endif %}
