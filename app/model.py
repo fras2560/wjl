@@ -265,6 +265,17 @@ class Session(DB.Model):
     def __str__(self) -> str:
         return self.name
 
+    @staticmethod
+    def from_json(data) -> 'Session':
+        session_id = data.get("id")
+        if session_id is not None:
+            sesh = Session.query.get(session_id)
+            if sesh is None:
+                raise NotFoundException(f"Session not found: {session_id}")
+            sesh.name = data.get("name")
+            return sesh
+        return Session(data.get("name"))
+
 
 class Match(DB.Model):
     """
