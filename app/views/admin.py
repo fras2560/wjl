@@ -3,8 +3,9 @@
 from flask import render_template, url_for, Response
 from flask_login import login_required, current_user
 from app import wjl_app
+from app.authentication import admin_required, api_admin_required
 from app.model import Session, Player, Team, LeagueRequest, DB
-from app.errors import NotConvenorException, NotFoundException
+from app.errors import NotFoundException
 from app.logging import LOGGER
 from app.views.helper import get_base_data
 from app.views.types import PendingRequest
@@ -13,9 +14,8 @@ import json
 
 @wjl_app.route("/edits_games")
 @login_required
+@admin_required
 def pick_session_to_edit():
-    if not current_user.is_convenor:
-        raise NotConvenorException("not a convenor")
     sessions = [sesh.json() for sesh in Session.query.all()]
     return render_template("select_session.html",
                            base_data=get_base_data(),
@@ -24,9 +24,8 @@ def pick_session_to_edit():
 
 @wjl_app.route("/edits_games/<int:session_id>")
 @login_required
+@admin_required
 def edit_games_in_session(session_id):
-    if not current_user.is_convenor:
-        raise NotConvenorException("not a convenor")
     sesh = Session.query.get(session_id)
     if sesh is None:
         raise NotFoundException("Sorry, session not found - {session_id}")
@@ -42,9 +41,8 @@ def edit_games_in_session(session_id):
 
 @wjl_app.route("/pending_requests")
 @login_required
+@admin_required
 def check_league_requests():
-    if not current_user.is_convenor:
-        raise NotConvenorException("not a convenor")
     pending_requests = [PendingRequest.get_request(pending)
                         for pending in LeagueRequest.query.filter(
                             LeagueRequest.pending == True).all()]
@@ -54,13 +52,8 @@ def check_league_requests():
 
 
 @wjl_app.route("/pending_requests/<int:request_id>/<decision>")
-@login_required
+@api_admin_required
 def league_request_decision(request_id: int, decision: str):
-    if not current_user.is_convenor:
-        LOGGER.warning(
-            f"{current_user} pretending to be a convenor")
-        return Response(json.dumps(None), status=401,
-                        mimetype="application/json")
     league_request = LeagueRequest.query.get(request_id)
     if league_request is None:
         LOGGER.warning(
