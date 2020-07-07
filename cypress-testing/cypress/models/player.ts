@@ -7,17 +7,17 @@ export class Player {
     /** The name of the player. */
     name: string;
     /** Whether the player is a convenor or not. */
-    is_convenor: boolean;
+    isConvenor: boolean;
 
     /**
      * Constructrs a player object.
      * @param email the email of the player
      * @param name the name of the player
-     * @param is_convenor whether they are a convenor or not (default=False)
+     * @param isConvenor whether they are a convenor or not (default=False)
      */
-    constructor(email: string, name: string, is_convenor = false) {
+    constructor(email: string, name: string, isConvenor = false) {
         this.email = email;
         this.name = name;
-        this.is_convenor = is_convenor;
+        this.isConvenor = isConvenor;
     }
 }

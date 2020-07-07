@@ -14,7 +14,7 @@
  * @packageDocumentation
  */
 
-import { Player } from "@Models/player";
+import { Player } from '@Models/player';
 
 /**
  * Logout the user.
@@ -46,7 +46,7 @@ const login = (player: Player): void => {
     cy.request({
         url: 'testing/api/create_and_login',
         method: 'POST',
-        body: player
+        body: player,
     });
 };
 Cypress.Commands.add('login', login);

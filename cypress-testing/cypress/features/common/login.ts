@@ -27,9 +27,9 @@ export function randomEmail(): string {
 }
 
 const login = (): void => {
-    const player = new Player(randomEmail(), randomName())
+    const player = new Player(randomEmail(), randomName());
     cy.login(player);
-    cy.wrap(player).as("current_player");
+    cy.wrap(player).as('current_player');
 };
 
-Given("I am logged in", login);
+Given('I am logged in', login);
