@@ -4,6 +4,7 @@ from flask import render_template, Response, request, url_for
 from flask_login import login_required, current_user
 from sqlalchemy import not_, or_
 from app import wjl_app
+from app.authentication import api_score_required
 from app.views.helper import get_base_data
 from app.errors import NotFoundException, LackScorePermissionException
 from app.model import Match, Sheet, DB
@@ -55,12 +56,12 @@ def submit_sheet(match_id: int):
     return render_template("submit_sheet.html",
                            base_data=get_base_data(),
                            match=match.json(),
-                           match_link=url_for('match', match_id=match.id),
+                           match_link=url_for('get_match', match_id=match.id),
                            save_link=url_for("save_sheet"))
 
 
 @wjl_app.route("/save_sheet", methods=["POST"])
-@login_required
+@api_score_required
 def save_sheet():
     """Save the given gamesheet."""
     sheet = None
