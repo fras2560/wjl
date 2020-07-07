@@ -23,9 +23,9 @@ def submit_score():
                                     Match.home_team_id == None))))
     if not current_user.is_convenor:
         team_ids = [team.id for team in current_user.teams]
-        all_matches = (all_matches.filter(or_(
-                Match.away_team_id.in_(team_ids),
-                Match.home_team_id.in_(team_ids))))
+        condition = or_(Match.away_team_id.in_(team_ids),
+                        Match.home_team_id.in_(team_ids))
+        all_matches = all_matches.filter(condition)
     all_matches = all_matches.all()
     submitted_matches = []
     outstanding_matches = []
