@@ -1,4 +1,4 @@
-name: MLSB Pull-Request Reviews
+name: WJL Pull-Request Reviews
 
 on:
   pull_request:
