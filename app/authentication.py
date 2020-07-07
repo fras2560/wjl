@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 """Holds authenication a user using OAuth providers."""
+
 from typing import TypedDict
-from flask import Blueprint, session
+from functools import wraps
+from flask import Blueprint, session, Response
 from flask_dance.contrib.github import make_github_blueprint
 from flask_dance.contrib.facebook import make_facebook_blueprint
 from flask_dance.contrib.google import make_google_blueprint
@@ -11,7 +13,7 @@ from flask_login import LoginManager, current_user, login_user
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy import func
 from app.errors import OAuthException, NotPartOfLeagueException,\
-    HaveLeagueRequestException
+    HaveLeagueRequestException, NotConvenorException
 from app.model import DB, Player, OAuth, LeagueRequest
 from app.logging import LOGGER
 import os
@@ -224,3 +226,43 @@ def is_github_supported() -> bool:
 def is_facebook_supported() -> bool:
     """Returns whether current setup support Facebook authentication."""
     return os.environ.get("FACEBOOK_OAUTH_CLIENT_ID", "") != ""
+
+
+def api_player_required(f):
+    """A decorator for APIs that require a logged-in player."""
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        if not are_logged_in():
+            return Response("API requires logged-in user", 401)
+        return f(*args, **kwargs)
+    return decorated
+
+
+def api_score_required(f):
+    """A decorator for APIs that require a player with score permissions ."""
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        if not are_logged_in() or not current_user.submit_scores:
+            return Response("API requires a player with score permission", 401)
+        return f(*args, **kwargs)
+    return decorated
+
+
+def api_admin_required(f):
+    """A decorator for APIs that require a player with score permissions ."""
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        if not are_logged_in() or not current_user.is_convenor:
+            return Response("API requires user to be convenor", 401)
+        return f(*args, **kwargs)
+    return decorated
+
+
+def admin_required(f):
+    """A decorator for APIs that require a player with score permissions ."""
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        if not are_logged_in() or not current_user.is_convenor:
+            raise NotConvenorException("Not a convenor")
+        return f(*args, **kwargs)
+    return decorated
