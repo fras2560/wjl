@@ -17,7 +17,7 @@
 // Import commands.js using ES2015 syntax:
 import './commands';
 import 'cypress-pipe';
-
+import { Player } from '@Models/player';
 
 declare global {
     namespace Cypress {
@@ -32,6 +32,7 @@ declare global {
              * ```
              */
             logout(): void;
+            login(player: Player): void;
         }
     }
 }

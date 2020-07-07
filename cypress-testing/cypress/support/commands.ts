@@ -14,6 +14,8 @@
  * @packageDocumentation
  */
 
+import { Player } from "@Models/player";
+
 /**
  * Logout the user.
  * @example
@@ -25,9 +27,26 @@
 const logout = (): void => {
     // clear the cookies to act as if logged out
     cy.request({
-        url: 'logout.do',
+        url: 'logout',
         method: 'GET',
     });
 };
 Cypress.Commands.add('logout', logout);
 
+/**
+ * Login the user.
+ * @example
+ * ```
+ * // Logout the current user
+ * cy.login(new Player("someEmail@wjl.ca", "name"));
+ * ```
+ */
+const login = (player: Player): void => {
+    // clear the cookies to act as if logged out
+    cy.request({
+        url: 'testing/api/create_and_login',
+        method: 'POST',
+        body: player
+    });
+};
+Cypress.Commands.add('login', login);
