@@ -1,0 +1,35 @@
+[
+    {
+       "id":1,
+       "name":"Team One",
+       "wins":10,
+       "losses":0,
+       "games_played":10,
+       "points_scored":210,
+       "jams":50,
+       "slots":2,
+       "team_link":"/team/1"
+    },
+    {
+       "id":2,
+       "name":"Team Two",
+       "wins":5,
+       "losses":5,
+       "games_played":10,
+       "points_scored":110,
+       "jams":10,
+       "slots":1,
+       "team_link":"/team/2"
+    },
+    {
+       "id":3,
+       "name":"Team 3",
+       "wins":0,
+       "losses":10,
+       "games_played":10,
+       "points_scored":1,
+       "jams":0,
+       "slots":0,
+       "team_link":"/team/3"
+    }
+ ]
