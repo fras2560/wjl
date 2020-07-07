@@ -19,3 +19,4 @@ class Config(object):
     GITHUB_OAUTH_CLIENT_SECRET = os.environ.get(
         "GITHUB_OAUTH_CLIENT_SECRET", "")
     USE_SESSION_FOR_NEXT = True
+    ARE_TESTING = os.environ.get("ARE_TESTING", False)
