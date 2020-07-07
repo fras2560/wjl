@@ -12,7 +12,7 @@ from app.authentication import api_admin_required, api_player_required
 import json
 
 
-@wjl_app.route("/api/session/save", methods=["POST"])
+@wjl_app.route("/api/session/save", methods=["POST", "PUT"])
 @api_admin_required
 def save_session():
     sesh = None
@@ -35,7 +35,7 @@ def save_session():
                         status=404, mimetype="application/json")
 
 
-@wjl_app.route("/api/match/save", methods=["POST"])
+@wjl_app.route("/api/match/save", methods=["POST", "PUT"])
 @api_admin_required
 def save_match():
     match = None
