@@ -28,7 +28,7 @@
   {% if url_for(request.endpoint) | replace('/', '') | replace('_', '') | length %}
     <body title="{{ url_for(request.endpoint) | replace('/', '') | replace('_', '')}}">
   {% else %}
-    <body title="homepage">
+    <body title="home">
   {% endif %}
     <div class="d-flex" id="wrapper">
   
@@ -83,7 +83,7 @@
                   Standings
                 </a>
               </li>
-              <li class="nav-item" title="submit score">
+              <li class="nav-item" title="gamesheet">
                 <a class="nav-link" href="{{url_for('submit_score') }}" data-cy="gamesheet">
                   Gamesheet
                 </a>
@@ -93,11 +93,11 @@
                 <a id="adminNav" class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false" data-cy="admin">
                   Admin
                 </a>
-                <div class="dropdown-menu" role="listitem" aria-labelledby="adminNav">
-                  <a class="nav-link" href="{{url_for('check_league_requests') }}" data-cy="requests">
+                <div class="dropdown-menu" role="list" aria-labelledby="adminNav">
+                  <a class="nav-link" role="listitem" href="{{url_for('check_league_requests') }}" data-cy="requests" title="Requests">
                     Requests
                   </a>
-                  <a class="nav-link" href="{{url_for('pick_session_to_edit') }}" data-cy="matches">
+                  <a class="nav-link" role="listitem" href="{{url_for('pick_session_to_edit') }}" data-cy="matches" title="Matches">
                     Matches
                   </a>
                 </div>
