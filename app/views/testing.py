@@ -2,10 +2,11 @@
 """Holds views that are only used for testing."""
 from flask import Response, request
 from flask_login import login_user
+from functools import wraps
 from app import wjl_app
 from app.model import Player, DB
 from app.logging import LOGGER
-from functools import wraps
+import json
 
 
 def requires_testing(f):
@@ -22,13 +23,14 @@ def requires_testing(f):
 @wjl_app.route("/testing/api/create_and_login", methods=["POST"])
 @requires_testing
 def create_and_login():
-    print(request.form)
     player_info = request.get_json(silent=True)
+    convenor = (player_info.get("is_convenor", False) or
+                player_info.get("isConvenor", False))
     LOGGER.info(f"Adding player to league: {player_info}")
     player = Player(player_info.get("email"),
                     name=player_info.get("name", None),
-                    is_convenor=player_info.get("is_convenor", False))
+                    is_convenor=convenor)
     DB.session.add(player)
     DB.session.commit()
     login_user(player)
-    return Response(player.id, 200)
+    return Response(json.dumps(player.id), 200)

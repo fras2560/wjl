@@ -9,7 +9,7 @@
  */
 const globalAfter = (): void => {
     cy.request({
-        url: 'logout.do',
+        url: 'logout',
         method: 'GET',
     });
     cy.log('Completed logging out');
