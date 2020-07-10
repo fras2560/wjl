@@ -12,3 +12,9 @@ Scenario: The homepage works as expected
     When I visit the homepage
     Then I am welcomed
      And I see option to logout
+
+Scenario: Homepage redirects to page previously accessing before logging in
+    Given I am not logged in
+    When I try to submit a score
+     And I login
+    Then I see list of games needing scores
