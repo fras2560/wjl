@@ -12,7 +12,7 @@ from app.views.types import PendingRequest
 import json
 
 
-@wjl_app.route("/edits_games")
+@wjl_app.route("/edit_games")
 @login_required
 @admin_required
 def pick_session_to_edit():
@@ -22,7 +22,7 @@ def pick_session_to_edit():
                            sessions=sessions)
 
 
-@wjl_app.route("/edits_games/<int:session_id>")
+@wjl_app.route("/edit_games/<int:session_id>")
 @login_required
 @admin_required
 def edit_games_in_session(session_id):
