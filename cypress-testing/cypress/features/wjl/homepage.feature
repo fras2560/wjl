@@ -18,3 +18,8 @@ Scenario: Homepage redirects to page previously accessing before logging in
     When I try to submit a score
      And I login
     Then I see list of games needing scores
+
+Scenario: Homepage does not continually redirect
+    Given I was redirected after logging in
+    When I visit the homepage
+    Then I am welcomed

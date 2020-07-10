@@ -27,7 +27,7 @@ export function randomEmail(): string {
 }
 
 /** A function that logs in the user. */
-const login = (): void => {
+export const login = (): void => {
     const player = new Player(randomEmail(), randomName());
     cy.login(player);
     cy.wrap(player).as('current_player');
