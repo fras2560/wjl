@@ -40,7 +40,7 @@ jobs:
         # now run the cypres tests against it
         cd cypress-testing
         npm install
-        npx cypress run --record --key ${{ secrets.CYPRESS_KEY }} --spec "**/*.features" --env ARE_TESTING=true
+        npx cypress run --record --key ${{ secrets.CYPRESS_KEY }} --spec "**/*.feature" --env ARE_TESTING=true
     - name: Upload Video Run
       uses: actions/upload-artifact@v1
       with:
