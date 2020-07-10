@@ -1,4 +1,4 @@
-import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
+import { Given, Then } from 'cypress-cucumber-preprocessor/steps';
 import { defineParameterType } from 'cypress-cucumber-preprocessor/steps';
 
 /** Defines the a gherkin parameter type called Role. */
@@ -30,12 +30,6 @@ const mockTeams = (teamPosition: TeamPlace, myTeamName = 'My Team' as string): v
     });
 };
 Given(`my team is {TeamPlace} in the place`, mockTeams);
-
-/** Navigate to the standings page. */
-const navigateToStandings = (): void => {
-    cy.visit('standings');
-};
-When(`I navigate to the standings page`, navigateToStandings);
 
 /** Assert team at top of standings. */
 const topOfStandings = (): void => {

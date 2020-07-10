@@ -33,13 +33,21 @@ export const login = (): void => {
     cy.wrap(player).as('current_player');
     cy.visit('');
 };
-
 Given('I am logged in', login);
 When('I login', login);
 
+/** A function that logs as an convenor. */
+export const convenorLogin = (): void => {
+    const player = new Player(randomEmail(), randomName(), true);
+    cy.login(player);
+    cy.wrap(player).as('current_player');
+    cy.visit('');
+};
+Given('I am convenor', convenorLogin);
+
 /** A unfciton the guarantees currently logged out */
 const loggedOut = (): void => {
-    cy.logout();
+    cy.clearCookies();
 };
 
 Given('I am not logged in', loggedOut);
