@@ -27,7 +27,7 @@ Note: When running the tests from command line it will not run any with @ignore.
 # Environment Variables
 The following variables are used by Cypress during testing:
 
-* `CYPRESS_baseUrl` : the URL of the Möbius instance under test (requied, example: `http://localhost:8080/webapp/` )
+* `CYPRESS_baseUrl` : the URL of the Möbius instance under test (requied, example: `http://localhost:5000` )
 
 # Path Aliases
 To avoid long relative paths like `../../../models` as set of aliases can be used. The following are the current aliases setup:
@@ -51,7 +51,7 @@ To get a better understanding of typedoc read abouts its supported tag [here](ht
 This project uses a [cucumber plugin](https://github.com/TheBrainFamily/cypress-cucumber-preprocessor#readme). The config file for the plugin is inside `package.json`. The big difference with the current setup is that steps are only scoped for each feature file. So for example `login.feature` will only look for step definitions inside the folder login. The only exception is that the common folders holds global step definitions. 
 
 # Smart Tagging
-All of our tests are tagged using the following [convention](https://digitaled.atlassian.net/wiki/spaces/MO/pages/579829800/Acceptance+Test+Tags). However, if a feature file is large and are only interested in one scenario one can use `@focus`. 
+If a feature file is large and are only interested in one scenario one can use `@focus`. 
 
 # Tips and Tricks
 TODO
@@ -60,11 +60,6 @@ TODO
 * Cypress does not support IE
 * Cypress does not support multiple windows [never allowed](https://docs.cypress.io/guides/references/trade-offs.html#Multiple-tabs)
 * Cypress only allows test to visit [one domain](https://docs.cypress.io/guides/references/trade-offs.html#Same-origin)
-
-# Github Actions
-```
-cypress run --record --key a53263c3-4f63-40e6-b0bc-0c0fd894940c
-```
 
 # Additional Sources
  * [Cypress](https://docs.cypress.io/guides/overview/why-cypress.html#In-a-nutshell) - documentation for Cypress

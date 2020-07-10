@@ -10,6 +10,8 @@ This repository is for the Waterloo Jam League. A fun little Kan Jam league due 
 ```
     # install all python requirements
     pip install -r requirements.txt
+    # export following if plan on testing locally
+    export ARE_TESTING=True
     # allow for oauth from http
     export OAUTHLIB_INSECURE_TRANSPORT=1
     export OAUTHLIB_RELAX_TOKEN_SCOPE=1
@@ -27,6 +29,7 @@ The following variables are used by wjl and the defaults are in brackets:
 * FACEBOOK_OAUTH_CLIENT_SECRET:  the Facebook OAuth client secret (default off)
 * GITHUB_OAUTH_CLIENT_ID:  the Github OAuth client id (default off)
 * GITHUB_OAUTH_CLIENT_SECRET:  the Github OAuth client secret (default off)
+* ARE_TESTING:  True if testing using Cypress (default False)
 
 The various OAuth providers are off by default and one has to setup the client/secret
 for their local development.
@@ -56,6 +59,31 @@ I was unable to get this working locally. See [here](https://github.com/singingw
 
 ### Facebook
 I was unable to get this working locally. See [here](https://github.com/singingwolfboy/flask-dance-facebook-sqla) for how it was setup in production
+
+
+# Github Actions
+When doing a pull-request to the master branch some checks are
+executed using Github actions. These actions are to ensure
+the changes in the PR do not break anything. The following is executed:
+1. Check the Python code for any flake8 issues
+2. Run the webapp
+3. Run the Cypress tests against the webapp
+
+## Cypress Testing Locally
+**TLDR**
+```
+    cd cypress-testing
+    # install all dependencies
+    npm install
+    # set application URL
+    export CYPRESS_baseUrl=<Application URL: http://localhost:5000>
+    # run the cypress app then choose test
+    npm run open
+    # run all tests
+    npm run test
+```
+See the Readme in cypress-testing folder for more details.
+
 
 # Additional Sources
 ## Python Resources
