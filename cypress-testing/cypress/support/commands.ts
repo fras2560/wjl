@@ -15,6 +15,7 @@
  */
 
 import { Player } from '@Models/player';
+import '@testing-library/cypress/add-commands';
 
 /**
  * Logout the user.
