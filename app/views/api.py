@@ -87,6 +87,13 @@ def get_matches_in_session(session_id):
                     mimetype="application/json")
 
 
+@wjl_app.route("/api/session")
+def get_all_sessions():
+    seshes = [sesh.json() for sesh in Session.query.all()]
+    return Response(json.dumps(seshes), status=200,
+                    mimetype="application/json")
+
+
 @wjl_app.route("/api/match/<int:match_id>")
 def get_match(match_id):
     match = Match.query.get(match_id)
