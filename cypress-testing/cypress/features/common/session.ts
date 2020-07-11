@@ -1,10 +1,10 @@
+/* eslint-disable @typescript-eslint/camelcase */
 import { Given } from 'cypress-cucumber-preprocessor/steps';
 import { randomName, randomEmail } from './login';
-import { Session } from '@Models/session';
-import { Player } from '@Models/player';
+import { Session } from '@Interfaces/session';
 
 const createLeagueSession = (): void => {
-    cy.login(new Player(randomEmail(), randomName(), true));
+    cy.login({ email: randomEmail(), name: randomName(), is_convenor: true });
     const sesh = new Session(randomName());
     cy.request({
         url: 'api/session/save',

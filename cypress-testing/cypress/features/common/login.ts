@@ -1,5 +1,5 @@
+/* eslint-disable @typescript-eslint/camelcase */
 import { Given, When } from 'cypress-cucumber-preprocessor/steps';
-import { Player } from '@Models/player';
 import uuidv4 from 'uuid/v4';
 
 /**
@@ -28,7 +28,7 @@ export function randomEmail(): string {
 
 /** A function that logs in the user. */
 export const login = (): void => {
-    const player = new Player(randomEmail(), randomName());
+    const player = { email: randomEmail(), name: randomName(), is_convenor: false };
     cy.login(player);
     cy.wrap(player).as('current_player');
     cy.visit('');
@@ -38,7 +38,7 @@ When('I login', login);
 
 /** A function that logs as an convenor. */
 export const convenorLogin = (): void => {
-    const player = new Player(randomEmail(), randomName(), true);
+    const player = { email: randomEmail(), name: randomName(), is_convenor: true };
     cy.login(player);
     cy.wrap(player).as('current_player');
     cy.visit('');

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-namespace */
 // ***********************************************************
 // This example support/index.js is processed and
@@ -17,7 +18,7 @@
 // Import commands.js using ES2015 syntax:
 import './commands';
 import 'cypress-pipe';
-import { Player } from '@Models/player';
+import { Player } from '@Interfaces/player';
 
 declare global {
     namespace Cypress {

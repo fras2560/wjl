@@ -1,6 +1,6 @@
 import { When, Then } from 'cypress-cucumber-preprocessor/steps';
 import { defineParameterType } from 'cypress-cucumber-preprocessor/steps';
-import { Player } from '@Models/player';
+import { Player } from 'cypress/interfaces/player';
 
 /** The name of the link. */
 export type LinkName =

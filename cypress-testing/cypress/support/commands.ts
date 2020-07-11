@@ -14,7 +14,7 @@
  * @packageDocumentation
  */
 
-import { Player } from '@Models/player';
+import { Player } from 'cypress/interfaces/player';
 import '@testing-library/cypress/add-commands';
 
 /**

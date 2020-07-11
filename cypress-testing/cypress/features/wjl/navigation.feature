@@ -57,7 +57,7 @@ Scenario Outline: All private links work when logged in
         |  link       |       page     |
         |  gamesheet  |  submit score  |
 
-Scenario Outline: All admin links are visible and accessible
+Scenario Outline: All admin links work when logged in as convenor
     # accessible based upon how query selectors
     Given I am convenor
       And on the home page
