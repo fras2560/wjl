@@ -57,7 +57,6 @@ Scenario Outline: All private links work when logged in
         |  link       |       page     |
         |  gamesheet  |  submit score  |
 
-@focus
 Scenario Outline: All admin links are visible and accessible
     # accessible based upon how query selectors
     Given I am convenor
