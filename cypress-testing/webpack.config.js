@@ -10,7 +10,7 @@ module.exports = {
     resolve: {
         extensions: ['.ts', '.js'],
         alias: {
-            '@Models': path.resolve(__dirname, 'cypress/models'),
+            '@Interfaces': path.resolve(__dirname, 'cypress/interfaces'),
             '@Pages': path.resolve(__dirname, 'cypress/pages'),
             '@Support': path.resolve(__dirname, 'cypress/support'),
             '@Common': path.resolve(__dirname, 'cypress/features/common'),
