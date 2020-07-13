@@ -23,8 +23,6 @@ const standingsHook = (): void => {
         url: 'api/session',
         method: 'GET',
     }).then((sessions) => {
-        cy.log('Got all sessions');
-        cy.log(sessions.body);
         sessions.body.forEach((element: SessionInterface) => {
             cy.wrap(element).as(`session${element.id}`);
             cy.route('GET', `/standings/${element.id}`).as(`standings${element.id}`);
@@ -132,23 +130,13 @@ const clickOnTeam = (): void => {
             const standings = xhr.responseBody as Array<TeamRecord>;
             const someTeam = standings[0];
             cy.findByRole('link', { name: RegExp(someTeam.name, 'i') }).click();
-            cy.wrap(someTeam).as('team');
+            cy.wrap(someTeam.name).as('team');
         });
     });
 };
 When(`click on a team link`, clickOnTeam);
 
-
-
-/** Assert that on a team page for some team. */
-const assertTeamPage = (): void => {
-    cy.get<TeamRecord>('@team').then((team) => {
-        cy.findByRole('heading', { name: RegExp(team.name, 'i') }).should('be.visible');
-    });
-};
-Then(`I see more information about the team`, assertTeamPage);
-
-/** Assert that no team  is visible other than team that was searcheed. */
+/** Assert that no team is visible other than team that was searcheed. */
 const assertNoOtherTeamVisisble = (): void => {
     cy.get<Array<TeamRecord>>(`@standings`).then((standings) => {
         cy.get<TeamRecord>('@search_team').then((searchTeam) => {
