@@ -44,9 +44,7 @@ When(`click on a team link`, clickOnTeam);
 const clickOnField = (): void => {
     getActiveSession();
     cy.get<Field>('@search_field').then((field) => {
-        cy.findAllByRole('link', { name: RegExp(field.name, 'i') })
-            .eq(1)
-            .click();
+        cy.findAllByRole('link', { name: field.name }).eq(1).click();
         cy.wrap(field).as('field');
     });
 };
@@ -73,9 +71,9 @@ const searchForField = (): void => {
     cy.get<SessionInterface>('@active_session').then((session) => {
         cy.wait(`@schedule${session.id}`).then((xhr) => {
             const schedule = xhr.responseBody as Array<ScheduledGame>;
-            const someField = schedule[1].field;
+            const someField = schedule[0].field;
             cy.findByRole('searchbox', { name: /search/i }).type(someField);
-            const fieldInterface: Field = { id: schedule[1].field_id, name: someField, description: null, link: null };
+            const fieldInterface: Field = { id: schedule[0].field_id, name: someField, description: null, link: null };
             cy.wrap(fieldInterface).as('search_field');
             cy.wrap(schedule).as('schedule');
         });
