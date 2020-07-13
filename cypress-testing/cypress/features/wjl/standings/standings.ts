@@ -66,10 +66,13 @@ Then(`the teams are ordered by win percentage`, orderByWins);
 /** Click the column header. */
 const clickColumnHeading = (column: StandingsColumn): void => {
     // click the column header twice so decending order
-    const clickElement = ($el: JQuery<any>): Cypress.Chainable<JQuery<any>> => cy.wrap($el).click();
+    const click = ($el: JQuery<HTMLElement>): JQuery<HTMLElement> => {
+        $el.click();
+        return $el;
+    };
 
     cy.findByRole('columnheader', { name: RegExp(column, 'i') })
-        .pipe(clickElement)
+        .pipe(click)
         .should('have.class', 'sorting_asc');
     cy.findByRole('columnheader', { name: RegExp(column, 'i') }).click();
 };
