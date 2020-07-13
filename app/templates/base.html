@@ -26,7 +26,7 @@
     <![endif]-->
   </head>
   {% if request.url_rule.endpoint | length%}
-    <body title="{{ request.url_rule.endpoint | replace('/', '') | replace('_', '') | replace('homepage', 'home')}}">
+    <body title="{{ request.url_rule.endpoint | replace('/', '') | replace('_', '') | replace('page', '')}}">
   {% else %}
     <body title="home">
   {% endif %}
