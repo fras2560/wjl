@@ -17,3 +17,10 @@ Scenario: Team links work
      And I search for a team
      And click on a team link
     Then I see more information about the team
+
+Scenario: Field links work
+    Given I am logged in
+    When I visit the schedule page
+     And I search for a field
+     And click on a field link
+    Then see details about the field

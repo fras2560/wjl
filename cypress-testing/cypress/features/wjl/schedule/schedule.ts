@@ -1,5 +1,6 @@
 import { Then, When } from 'cypress-cucumber-preprocessor/steps';
 import { SessionInterface } from '@Interfaces/session';
+import { Field } from '@Interfaces/field';
 import { ScheduledGame } from '@Interfaces/schedule';
 
 /** Store all the schedules tables data as it is requested. */
@@ -39,6 +40,18 @@ const clickOnTeam = (): void => {
 };
 When(`click on a team link`, clickOnTeam);
 
+/** Click on field link. */
+const clickOnField = (): void => {
+    getActiveSession();
+    cy.get<Field>('@search_field').then((field) => {
+        cy.findAllByRole('link', { name: RegExp(field.name, 'i') })
+            .eq(1)
+            .click();
+        cy.wrap(field).as('field');
+    });
+};
+When(`click on a field link`, clickOnField);
+
 /** Search for some team. */
 const searchForTeam = (): void => {
     getActiveSession();
@@ -53,6 +66,22 @@ const searchForTeam = (): void => {
     });
 };
 When(`I search for a team`, searchForTeam);
+
+/** Search for some field. */
+const searchForField = (): void => {
+    getActiveSession();
+    cy.get<SessionInterface>('@active_session').then((session) => {
+        cy.wait(`@schedule${session.id}`).then((xhr) => {
+            const schedule = xhr.responseBody as Array<ScheduledGame>;
+            const someField = schedule[1].field;
+            cy.findByRole('searchbox', { name: /search/i }).type(someField);
+            const fieldInterface: Field = { id: schedule[1].field_id, name: someField, description: null, link: null };
+            cy.wrap(fieldInterface).as('search_field');
+            cy.wrap(schedule).as('schedule');
+        });
+    });
+};
+When(`I search for a field`, searchForField);
 
 /** Assert schedule is displayed. */
 const assertScheduleDisplayed = (): void => {
