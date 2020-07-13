@@ -33,4 +33,4 @@ def create_and_login():
     DB.session.add(player)
     DB.session.commit()
     login_user(player)
-    return Response(json.dumps(player.id), 200)
+    return Response(json.dumps(player.json()), 200)
