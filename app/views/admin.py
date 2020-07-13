@@ -15,7 +15,7 @@ import json
 @wjl_app.route("/edit_games")
 @login_required
 @admin_required
-def pick_session_to_edit():
+def edit_games():
     sessions = [sesh.json() for sesh in Session.query.all()]
     return render_template("select_session.html",
                            base_data=get_base_data(),
@@ -42,7 +42,7 @@ def edit_games_in_session(session_id):
 @wjl_app.route("/pending_requests")
 @login_required
 @admin_required
-def check_league_requests():
+def pending_requests():
     pending_requests = [PendingRequest.get_request(pending)
                         for pending in LeagueRequest.query.filter(
                             LeagueRequest.pending == True).all()]
@@ -53,7 +53,7 @@ def check_league_requests():
 
 @wjl_app.route("/pending_requests/<int:request_id>/<decision>")
 @api_admin_required
-def league_request_decision(request_id: int, decision: str):
+def pending_requests_decision(request_id: int, decision: str):
     league_request = LeagueRequest.query.get(request_id)
     if league_request is None:
         LOGGER.warning(
