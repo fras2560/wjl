@@ -8,7 +8,7 @@ Scenario: Anonymous cannot view fields
     When I try to access the field
     Then I am on the login page
 
-Scenario: Anonymous cannot view fields
+Scenario: Players can view field details
     Given a field exists
      And I am logged in
     When I try to access the field

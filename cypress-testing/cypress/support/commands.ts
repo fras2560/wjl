@@ -48,6 +48,9 @@ const login = (player: Player): void => {
         url: 'testing/api/create_and_login',
         method: 'POST',
         body: player,
+    }).then((xhr) => {
+        const player: Player = xhr.body;
+        cy.wrap(player).as('player');
     });
 };
 Cypress.Commands.add('login', login);

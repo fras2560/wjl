@@ -28,7 +28,7 @@ export function randomEmail(): string {
 
 /** A function that logs in the user. */
 export const login = (): void => {
-    const player = { email: randomEmail(), name: randomName(), is_convenor: false };
+    const player = { email: randomEmail(), name: randomName(), is_convenor: false, id: null };
     cy.login(player);
     cy.wrap(player).as('current_player');
     cy.visit('');
@@ -38,7 +38,7 @@ When('I login', login);
 
 /** A function that logs as an convenor. */
 export const convenorLogin = (): void => {
-    const player = { email: randomEmail(), name: randomName(), is_convenor: true };
+    const player = { email: randomEmail(), name: randomName(), is_convenor: true, id: null };
     cy.login(player);
     cy.wrap(player).as('current_player');
     cy.visit('');
