@@ -22,3 +22,9 @@ Scenario: Able to search for a given team
      And I search for a team
     Then the team is visible
      And no other team is visible
+
+Scenario: Team links work
+    Given I am logged in
+    When I visit the standings page
+     And click on a team link
+    Then I see more information about the team

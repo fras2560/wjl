@@ -124,6 +124,30 @@ const assertSearchTeamVisisble = (): void => {
 };
 Then(`the team is visible`, assertSearchTeamVisisble);
 
+/** Click on some team. */
+const clickOnTeam = (): void => {
+    getActiveSession();
+    cy.get<SessionInterface>('@active_session').then((session) => {
+        cy.wait(`@standings${session.id}`).then((xhr) => {
+            const standings = xhr.responseBody as Array<TeamRecord>;
+            const someTeam = standings[0];
+            cy.findByRole('link', { name: RegExp(someTeam.name, 'i') }).click();
+            cy.wrap(someTeam).as('team');
+        });
+    });
+};
+When(`click on a team link`, clickOnTeam);
+
+
+
+/** Assert that on a team page for some team. */
+const assertTeamPage = (): void => {
+    cy.get<TeamRecord>('@team').then((team) => {
+        cy.findByRole('heading', { name: RegExp(team.name, 'i') }).should('be.visible');
+    });
+};
+Then(`I see more information about the team`, assertTeamPage);
+
 /** Assert that no team  is visible other than team that was searcheed. */
 const assertNoOtherTeamVisisble = (): void => {
     cy.get<Array<TeamRecord>>(`@standings`).then((standings) => {
