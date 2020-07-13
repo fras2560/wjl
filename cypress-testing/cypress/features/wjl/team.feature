@@ -8,7 +8,6 @@ Scenario: Anonymous cannot view team
     When I try to access the team
     Then I am on the login page
 
-@focus
 Scenario: Players can view other teams
     Given a team exists
      And I am logged in
