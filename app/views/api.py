@@ -9,7 +9,39 @@ from app.model import Session, Match, Team, Field, DB
 from app.logging import LOGGER
 from app.views.types import ScheduleRecord
 from app.authentication import api_admin_required, api_player_required
+from sqlalchemy.exc import IntegrityError
+
 import json
+
+
+@wjl_app.route("/api/team/save", methods=["POST", "PUT"])
+@api_admin_required
+def save_team():
+    team = None
+    try:
+        team = request.get_json(silent=True)
+        LOGGER.debug(f"Save/Update team {team}")
+        saved_team = Team.from_json(team)
+        if team.get("id", None) is None:
+            DB.session.add(saved_team)
+        DB.session.commit()
+        LOGGER.info(
+            f"{current_user} saved team {team}")
+        return Response(json.dumps(saved_team.json()),
+                        status=200, mimetype="application/json")
+    except NotFoundException as error:
+        msg = str(error)
+        LOGGER.warning(
+            f"{current_user} tried saving team but issue {msg}")
+        return Response(json.dumps(msg),
+                        status=404, mimetype="application/json")
+    except IntegrityError as error:
+        DB.session.rollback()
+        msg = str(error)
+        LOGGER.warning(
+            f"{current_user} tried saving team but issue {msg}")
+        return Response(json.dumps(msg),
+                        status=400, mimetype="application/json")
 
 
 @wjl_app.route("/api/session/save", methods=["POST", "PUT"])
@@ -33,6 +65,13 @@ def save_session():
             f"{current_user} tried saving session but issue {msg}")
         return Response(json.dumps(msg),
                         status=404, mimetype="application/json")
+    except IntegrityError as error:
+        DB.session.rollback()
+        msg = str(error)
+        LOGGER.warning(
+            f"{current_user} tried saving session but issue {msg}")
+        return Response(json.dumps(msg),
+                        status=400, mimetype="application/json")
 
 
 @wjl_app.route("/api/match/save", methods=["POST", "PUT"])
@@ -56,6 +95,13 @@ def save_match():
             f"{current_user} tried saving match but issue {msg}")
         return Response(json.dumps(msg),
                         status=404, mimetype="application/json")
+    except IntegrityError as error:
+        DB.session.rollback()
+        msg = str(error)
+        LOGGER.warning(
+            f"{current_user} tried saving match but issue {msg}")
+        return Response(json.dumps(msg),
+                        status=400, mimetype="application/json")
 
 
 @wjl_app.route("/api/teams")
@@ -93,6 +139,13 @@ def save_field():
             f"{current_user} tried saving field but issue {msg}")
         return Response(json.dumps(msg),
                         status=404, mimetype="application/json")
+    except IntegrityError as error:
+        DB.session.rollback()
+        msg = str(error)
+        LOGGER.warning(
+            f"{current_user} tried saving field but issue {msg}")
+        return Response(json.dumps(msg),
+                        status=400, mimetype="application/json")
 
 
 @wjl_app.route("/api/session/<int:session_id>/matches")
