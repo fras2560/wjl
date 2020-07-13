@@ -159,6 +159,21 @@ class Field(DB.Model):
             "link": self.link
         }
 
+    @staticmethod
+    def from_json(data) -> 'Field':
+        field_id = data.get("id")
+        if field_id is not None:
+            field = Field.query.get(field_id)
+            if field is None:
+                raise NotFoundException(f"Field not found: {field_id}")
+            field.name = data.get("name")
+            field.description = data.get("description")
+            field.link = data.get("link")
+            return field
+        return Field(data.get("name"),
+                     description=data.get("description"),
+                     link=data.get("link"))
+
     def __str__(self) -> str:
         return self.name
 
