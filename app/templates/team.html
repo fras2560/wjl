@@ -13,9 +13,11 @@
 <h2>
 Players
 </h2>
-<ul>
+<ul title="Players">
     {% for player in team.players %}
-        <li> {{ player.name }} </li>
+        <li title="{{ player.name }}">
+            {{ player.name }}
+        </li>
     {% endfor %}
 </ul>
 
