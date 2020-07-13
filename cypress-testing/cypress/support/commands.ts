@@ -13,7 +13,7 @@
  * </ul>
  * @packageDocumentation
  */
-
+import 'cypress-pipe';
 import { Player } from 'cypress/interfaces/player';
 import '@testing-library/cypress/add-commands';
 
