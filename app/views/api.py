@@ -18,7 +18,7 @@ def save_session():
     sesh = None
     try:
         sesh = request.get_json(silent=True)
-        LOGGER.debug(f"Update session {sesh}")
+        LOGGER.debug(f"Save/Update session {sesh}")
         saved_session = Session.from_json(sesh)
         if sesh.get("id", None) is None:
             DB.session.add(saved_session)
@@ -41,7 +41,7 @@ def save_match():
     match = None
     try:
         match = request.get_json(silent=True)
-        LOGGER.debug(f"Update match {match}")
+        LOGGER.debug(f"Save/Update match {match}")
         saved_match = Match.from_json(match)
         if match.get("id", None) is None:
             DB.session.add(saved_match)
@@ -70,6 +70,29 @@ def get_all_fields():
     fields = [field.json() for field in Field.query.all()]
     return Response(json.dumps(fields), status=200,
                     mimetype="application/json")
+
+
+@wjl_app.route("/api/field/save", methods=["POST", "PUT"])
+@api_player_required
+def save_field():
+    field = None
+    try:
+        field = request.get_json(silent=True)
+        LOGGER.debug(f"Save/Update field {field}")
+        saved_field = Field.from_json(field)
+        if field.get("id", None) is None:
+            DB.session.add(saved_field)
+        DB.session.commit()
+        LOGGER.info(
+            f"{current_user} saved field {field}")
+        return Response(json.dumps(saved_field.json()),
+                        status=200, mimetype="application/json")
+    except NotFoundException as error:
+        msg = str(error)
+        LOGGER.warning(
+            f"{current_user} tried saving field but issue {msg}")
+        return Response(json.dumps(msg),
+                        status=404, mimetype="application/json")
 
 
 @wjl_app.route("/api/session/<int:session_id>/matches")
