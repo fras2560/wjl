@@ -1,5 +1,4 @@
-import { Then, When, then } from 'cypress-cucumber-preprocessor/steps';
-import { defineParameterType } from 'cypress-cucumber-preprocessor/steps';
+import { Then, When } from 'cypress-cucumber-preprocessor/steps';
 import { SessionInterface } from '@Interfaces/session';
 import { ScheduledGame } from '@Interfaces/schedule';
 

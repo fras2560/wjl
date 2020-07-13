@@ -2,6 +2,6 @@
 export interface Field {
     name: string;
     id: number;
-    link: string,
-    description: 
+    link: string;
+    description: string;
 }
