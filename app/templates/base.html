@@ -25,8 +25,8 @@
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
   </head>
-  {% if request.url_rule.endpoint | length %}
-    <body title="{{ request.url_rule.endpoint | replace('/', '') | replace('_', '')}}">
+  {% if request.url_rule.endpoint | length%}
+    <body title="{{ request.url_rule.endpoint | replace('/', '') | replace('_', '') | replace('homepage', 'home')}}">
   {% else %}
     <body title="home">
   {% endif %}
