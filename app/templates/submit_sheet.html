@@ -31,12 +31,12 @@
         </div>
     </div>
     <div class="row align-items-center">
-        <div class="col-6 col-sm-4">
+        <div class="col-6 col-sm-4" data-cy="homeScore">
             [[ active_sheet.home_score ]]
         </div>
         <div class="col-md-4 d-none d-sm-block" >
         </div>
-        <div class="col-6 col-sm-4">
+        <div class="col-6 col-sm-4" data-cy="awayScore">
             [[ active_sheet.away_score ]]
         </div>
     </div>
@@ -47,7 +47,7 @@
                 v-if="teamControlsEnabled(match.home_team_id)"
                 v-on:click="hitSlot(match.home_team_id)"
                 class="btn btn-danger scoreAppButton"
-                title="Hit a slot">
+                title="Home team hit a slot">
                 <i class="fa fa-bullseye fa-button" aria-hidden="true"></i> - [[ (active_sheet.home_slot) ? "yes" : "no" ]]
             </button>
             <button
@@ -66,7 +66,7 @@
                 v-if="teamControlsEnabled(match.away_team_id)"
                 v-on:click="hitSlot(match.away_team_id)"
                 class="btn btn-danger scoreAppButton"
-                title="Hit a slot">
+                title="Away team hit a slot">
                 <i class="fa fa-bullseye fa-button" aria-hidden="true"></i> - [[ (active_sheet.away_slot) ? "yes" : "no" ]]
             </button>
             <button
@@ -86,14 +86,14 @@
                 v-if="teamControlsEnabled(match.home_team_id)"
                 v-on:click="addScore(match.home_team_id, 3)"
                 class="btn btn-warning scoreAppButton"
-                title="Jammed">
+                title="Home jam">
                 <i class="fa fa-trash fa-button" aria-hidden="true"></i>  - [[ active_sheet.home_jams ]]
             </button>
             <button
                 type="button"
                 v-else
                 class="btn btn-secondary scoreAppButton" disabled
-                title="Reached score"> 
+                title="Reached score - home jam"> 
                 <i class="fa fa-trash fa-button" aria-hidden="true"></i>  - [[ active_sheet.home_jams ]]
             </button>
         </div>
@@ -105,14 +105,14 @@
                 v-if="teamControlsEnabled(match.away_team_id)"
                 v-on:click="addScore(match.away_team_id, 3)"
                 class="btn btn-warning scoreAppButton"
-                title="Jammed">
+                title="Away jam">
                 <i class="fa fa-trash fa-button" aria-hidden="true"></i> - [[ active_sheet.away_jams ]]
             </button>
             <button
                 type="button"
                 v-else
                 class="btn btn-secondary scoreAppButton" disabled
-                title="Reached score">
+                title="Reached score - away jam">
                 <i class="fa fa-trash fa-button" aria-hidden="true"></i> - [[ active_sheet.away_jams ]]
             </button>
         </div>
@@ -124,14 +124,14 @@
                 v-if="teamControlsEnabled(match.home_team_id)"
                 v-on:click="addScore(match.home_team_id, 2)"
                 class="btn btn-success scoreAppButton"
-                title="Deuce">
+                title="Home deuce">
                 <i class="fa fa-hand-peace-o fa-button" aria-hidden="true"></i> - [[ active_sheet.home_deuces ]]
             </button>
             <button
                 type="button"
                 v-else
                 class="btn btn-secondary scoreAppButton" disabled
-                title="Reached score">
+                title="Reached score - home deuce">
                 <i class="fa fa-hand-peace-o fa-button" aria-hidden="true"></i> - [[ active_sheet.home_deuces ]]
             </button>
         </div>
@@ -143,14 +143,14 @@
                 v-if="teamControlsEnabled(match.away_team_id)"
                  v-on:click="addScore(match.away_team_id, 2)"
                  class="btn btn-success scoreAppButton"
-                 title="Deuce">
+                 title="Away deuce">
                 <i class="fa fa-hand-peace-o fa-button" aria-hidden="true"></i> - [[ active_sheet.away_deuces ]]
             </button>
             <button
                 type="button"
                 v-else
                 class="btn btn-secondary scoreAppButton" disabled
-                title="Reached score">
+                title="Reached score - away deuce">
                 <i class="fa fa-hand-peace-o fa-button" aria-hidden="true"></i> - [[ active_sheet.away_deuces ]]
             </button>
         </div>
@@ -162,14 +162,14 @@
                 v-if="teamControlsEnabled(match.home_team_id)"
                 v-on:click="addScore(match.home_team_id, 1)"
                 class="btn btn-info scoreAppButton"
-                title="Dinger">
+                title="Home dinger">
                 <i class="fa fa-hand-o-up fa-button" aria-hidden="true"></i> - [[ active_sheet.home_dingers ]]
             </button>
             <button
                 type="button"
                 v-else
                 class="btn btn-secondary scoreAppButton" disabled
-                title="Reached score">
+                title="Reached score - home dinger">
                 <i class="fa fa-hand-o-up fa-button" aria-hidden="true"></i> - [[ active_sheet.home_dingers ]]
             </button>
         </div>
@@ -181,14 +181,14 @@
                 v-if="teamControlsEnabled(match.away_team_id)"
                 v-on:click="addScore(match.away_team_id, 1)"
                 class="btn btn-info scoreAppButton"     
-                title="Dinger">
+                title="Away dinger">
                 <i class="fa fa-hand-o-up fa-button" aria-hidden="true"></i> - [[ active_sheet.away_dingers ]]
             </button>
             <button
                 type="button"
                 v-else
                 class="btn btn-secondary scoreAppButton" disabled
-                title="Reached score">
+                title="Reached score - away dinger">
                 <i class="fa fa-hand-o-up fa-button" aria-hidden="true"></i> - [[ active_sheet.away_dingers ]]
             </button>
         </div>
@@ -342,6 +342,7 @@ function ready() {
         async: true,
         success: function(match) {
             startApp(match);
+            window.appReady = true;
         }, error: function(request, error) {
             console.error(request);
             console.error(error);
@@ -465,11 +466,8 @@ function startApp(match) {
                         async: true,
                         success: function(saved_sheet) {
                             self.match.sheets.push(self.active_sheet);
-                            self.active_sheet = window.newSheet(self.match);
-                            self.previous_states = [];
+                            self.reset();
                             self.switchHammar();
-                            self.overtime_method = null;
-                            self.saving_sheet = false;
                         }, error: function(request, error) {
                             alert("Something went wrong, write down your score");
                             console.error(request);
@@ -477,7 +475,13 @@ function startApp(match) {
                         }
                     });
             },
-
+            /** Reset the current sheet. */
+            reset: function() {
+                this.active_sheet = window.newSheet(this.match);
+                this.previous_states = [];
+                this.overtime_method = null;
+                this.saving_sheet = false;
+            },
             /** Switch the hammer to the other team.*/
             switchHammar: function() {
                 this.hammer = (this.hammer == this.match.home_team_id)
@@ -604,6 +608,9 @@ function startApp(match) {
             }
         }
     });
+    if (window.Cypress) {
+        window.scoreApp = app;
+    }
 }
 </script>
 
