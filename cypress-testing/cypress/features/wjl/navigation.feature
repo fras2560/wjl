@@ -13,7 +13,7 @@ Scenario: All admin links are visible and accessible
     When I visit the home page
     Then all convenor links are visible
 
-Scenario Outline: All public links work and see option to login
+Scenario Outline: All resources that are protected work and see option to login
     Given on the home page
     When I click <link>
     Then I am on the <link> page
@@ -24,7 +24,7 @@ Scenario Outline: All public links work and see option to login
         |  schedule   |
         |  standings  |
 
-Scenario Outline: All public links work when logged-in and see option to logout
+Scenario Outline: All resources that are protected work when logged-in and see option to logout
     Given I am logged in
       And on the home page
      When I click <link>
