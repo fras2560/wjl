@@ -4,5 +4,5 @@ export interface Team {
     id: number | null;
     name: string;
     players: Array<Player>;
-    homefield: Field;
+    homefield: Field | null;
 }
