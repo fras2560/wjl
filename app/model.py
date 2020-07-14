@@ -249,7 +249,10 @@ class Team(DB.Model):
     @staticmethod
     def from_json(data) -> 'Team':
         team_id = data.get("id")
-        field = Field.from_json(data.get('homefield'))
+        if data.get('homefield') is not None:
+            field = Field.from_json(data.get('homefield'))
+        else:
+            field = None
         if team_id is not None:
             team = Team.query.get(team_id)
             if team is None:
@@ -444,7 +447,7 @@ class Match(DB.Model):
             return match
         else:
             # creating a match
-            return Match(home_team, away_team, sesh, date,
+            return Match(home_team, away_team, sesh, date, field,
                          status=data.get("status"))
 
     def has_sheets(self) -> bool:
