@@ -9,15 +9,19 @@ import { Team } from '@Interfaces/team';
 const FIELD_LINK = `https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1447.8584120111693!2d-80.53118577391533!3d43.4665087914418!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x882bf405af73801f%3A0x27310fca90b0ddb!2sWaterloo%20Park!5e0!3m2!1sen!2sca!4v1594648738206!5m2!1sen!2sca`;
 
 /** Create a session. */
-export const createSession = (): Cypress.Chainable<JQuery<HTMLElement>> => {
-    const sesh: SessionInterface = { name: randomName(), id: null };
+export const createSession = (): Cypress.Chainable<SessionInterface> => {
+    const name = randomName();
+    const sesh: SessionInterface = { name: name, id: null };
     cy.request({
         url: 'api/session/save',
         method: 'POST',
         body: sesh,
+    }).then((xhr) => {
+        const session = xhr.body;
+        expect(session).to.have.property('name', name);
+        cy.wrap(session).as('current_session');
     });
-    cy.wrap(sesh).as('current_session');
-    return cy.get('@current_session');
+    return cy.get<SessionInterface>('@current_session');
 };
 
 /** A step for creating a league session. */
@@ -29,7 +33,7 @@ const createSessionStep = (): void => {
 Given(`there is a league session`, createSessionStep);
 
 /** A function that creates a field. */
-export const createField = (): Cypress.Chainable<JQuery<HTMLElement>> => {
+export const createField = (): Cypress.Chainable<Field> => {
     const fieldName = `Field ${randomName()}`;
     const field: Field = { id: null, name: fieldName, description: `Testing field`, link: FIELD_LINK };
     cy.request({
@@ -41,7 +45,7 @@ export const createField = (): Cypress.Chainable<JQuery<HTMLElement>> => {
         expect(field).to.have.property('name', fieldName);
         cy.wrap(field).as('field');
     });
-    return cy.get('@field');
+    return cy.get<Field>('@field');
 };
 
 /** A step that creates a field. */
