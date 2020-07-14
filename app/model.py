@@ -249,7 +249,6 @@ class Team(DB.Model):
     @staticmethod
     def from_json(data) -> 'Team':
         team_id = data.get("id")
-        print(data.get('homefield'))
         field = Field.from_json(data.get('homefield'))
         if team_id is not None:
             team = Team.query.get(team_id)
@@ -442,7 +441,6 @@ class Match(DB.Model):
             match.away_team_id = None if away_team is None else away_team.id
             match.home_team_id = None if home_team is None else home_team.id
             match.field_id = field.id
-            print(match.home_team_id)
             return match
         else:
             # creating a match
@@ -514,7 +512,9 @@ class Sheet(DB.Model):
             "away_slot": self.away_slot,
             "away_jams": self.away_jams,
             "away_dingers": self.away_dingers,
-            "away_deuces": self.away_deuces
+            "away_deuces": self.away_deuces,
+            "id": self.id,
+            "match_id": self.match_id
         }
 
     def set_homesheet(self, sheet: TeamSheet) -> None:
