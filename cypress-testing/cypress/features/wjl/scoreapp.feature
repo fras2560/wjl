@@ -8,12 +8,15 @@ Scenario Outline: Negative points for going over 21
     Given I am convenor
       And there is a game today
       And using the score App
-      And home team score is <starting_score>
-    When home team gets a <action>
-    Then home team score becomes <resulting_score>
+      And <team> team score is <starting_score>
+    When <team> team gets a <action>
+    Then <team> team score becomes <resulting_score>
 
     Examples:
-    |starting_score|  action  | resulting_score |
-    |      20      |   jam    |       17        |
-    |      20      |  deuce   |       18        |
-    |      19      |   jam    |       16        |
+    | team |starting_score|  action  | resulting_score |
+    | home |      20      |   jam    |       17        |
+    | home |      20      |  deuce   |       18        |
+    | home |      19      |   jam    |       16        |
+    | away |      20      |   jam    |       17        |
+    | away |      20      |  deuce   |       18        |
+    | away |      19      |   jam    |       16        |

@@ -40,7 +40,7 @@ defineParameterType({
  * @param awayTeam  the away team
  * @param session  the session that match occurs in
  * @param field the field the match is played on
- * @return the wrap match
+ * @return the wrapped match
  */
 const saveMatch = (
     homeTeam: Team,
@@ -141,11 +141,13 @@ const setScore = (team: WhichTeam, score: number): void => {
 };
 Given(`{WhichTeam} team score is {int}`, setScore);
 
+/** Simulate some action by a team. */
 const commitAction = (team: WhichTeam, action: Action) => {
     cy.findByRole('button', {name: RegExp(`${team}.*${action}`, 'i')}).click();
 }
 When(`{WhichTeam} team gets a {Action}`, commitAction);
 
+/** Assert the score of the team. */
 const assertTeamScore = (team: WhichTeam, score: number) => {
     if (team == "home") {
         cy.get('[data-cy=homeScore]').contains(score);
