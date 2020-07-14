@@ -7,7 +7,7 @@ import { TeamRecord } from '@Interfaces/teamRecord';
 /** The columns in the standings table. */
 type StandingsColumn = 'jams' | 'wins' | 'losses' | 'jams' | 'slots';
 
-/** Defines the a gherkin parameter type called Role. */
+/** Defines the a gherkin parameter type called StandingsColumn. */
 defineParameterType({
     name: 'StandingsColumn',
     regexp: new RegExp('jams|team|wins|losses|points|jams|slots'),

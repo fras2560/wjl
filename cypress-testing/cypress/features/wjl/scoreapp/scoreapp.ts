@@ -13,7 +13,7 @@ import { defineParameterType } from 'cypress-cucumber-preprocessor/steps';
 /** Which team are we talking about. */
 type WhichTeam = 'home' | 'away';
 
-/** Defines the a gherkin parameter type called Role. */
+/** Defines the a gherkin parameter type called WhichTeam. */
 defineParameterType({
     name: 'WhichTeam',
     regexp: RegExp('home|away'),
@@ -25,7 +25,7 @@ defineParameterType({
 /** The actions that can occur */
 type Action = 'jam' | 'dinger' | 'deuce' | 'slot';
 
-/** Defines the a gherkin parameter type called Role. */
+/** Defines the a gherkin parameter type called Action. */
 defineParameterType({
     name: 'Action',
     regexp: RegExp('jam|dinger|deuce|slot'),

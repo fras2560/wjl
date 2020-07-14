@@ -20,7 +20,7 @@ const standardLinks = ['home', 'schedule', 'standings', 'gamesheet'];
 /** The admin navigation links. */
 const adminLinks = ['requests', 'matches'];
 
-/** Defines the a gherkin parameter type called Role. */
+/** Defines the a gherkin parameter type called LinkName. */
 defineParameterType({
     name: 'LinkName',
     regexp: RegExp('home|login|logout|schedule|standings|gamesheet|admin|requests|matches'),
