@@ -326,7 +326,7 @@ Then(`{WhichTeam} team has the hammer`, assertWhichTeamHasHammer);
 const assertGamesheetSaved = (): void => {
     cy.wait('@savedGamesheet').then((xhr) => {
         expect(xhr.status).to.be.eq(200);
-        const sheet: Sheet = xhr.responseBody as Sheet; 
+        const sheet: Sheet = xhr.responseBody as Sheet;
         cy.log(`Id of saved sheet: ${sheet.id}`);
         expect(sheet).to.haveOwnProperty('id');
         expect(sheet.id).to.not.be.null;
@@ -341,7 +341,7 @@ const assertGamesheetSaved = (): void => {
 Then(`gamesheet is saved`, assertGamesheetSaved);
 
 /** Assert that app was reset for the next game. */
-const assertAppReset = () => {
+const assertAppReset = (): void => {
     cy.window().its('scoreApp').invoke('whichOvertimeMethod').should('be.null');
     assertTeamControls('home', true);
     assertTeamControls('away', true);
