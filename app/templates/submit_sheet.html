@@ -10,23 +10,37 @@
     <div class="row align-items-center">
         <div class="col-6 col-md-4 ">
             [[ match.home_team ]]
-            <i v-if="hammer == match.home_team_id" v-on:click="switchHammar" class="fa fa-gavel clickableIcon" aria-hidden="true"></i>
+            <button
+            type="button"
+            v-if="hammer == match.home_team_id"
+            v-on:click="switchHammar"
+            class="btn btn-link"
+            title="Switch home team hammer">
+                <i class="fa fa-gavel clickableIcon" aria-hidden="true"></i>
+            </button>
         </div>
         <div class="col-md-4 d-none d-sm-block" >
             VS
         </div>
         <div class="col-6 col-md-4 ">
             [[ match.away_team ]]
-            <i v-if="hammer == match.away_team_id" v-on:click="switchHammar" class="fa fa-gavel clickableIcon" aria-hidden="true"></i>
+            <button
+            type="button"
+            v-if="hammer == match.away_team_id"
+            v-on:click="switchHammar"
+            class="btn btn-link"
+            title="Switch away team hammer">
+                <i class="fa fa-gavel clickableIcon" aria-hidden="true"></i>
+            </button>
         </div>
     </div>
     <div class="row align-items-center">
-        <div class="col-6 col-sm-4">
+        <div class="col-6 col-sm-4" data-cy="home_wins">
             [[ howManyWins(match.home_team_id, match) ]] - <i class="fa fa-trophy clickableIcon" aria-hidden="true"></i> 
         </div>
         <div class="col-md-4 d-none d-sm-block" >
         </div>
-        <div class="col-6 col-sm-4">
+        <div class="col-6 col-sm-4" data-cy="away_wins">
             [[ howManyWins(match.away_team_id, match) ]] - <i class="fa fa-trophy clickableIcon" aria-hidden="true"></i>
         </div>
     </div>
@@ -54,7 +68,7 @@
                 type="button"
                 v-else
                 class="btn btn-secondary scoreAppButton" disabled
-                title="Reached score">
+                title="Reached score - home slot">
                 <i class="fa fa-bullseye fa-button" aria-hidden="true"></i> - [[ (active_sheet.home_slot) ? "yes" : "no" ]]
             </button>
         </div>
@@ -73,7 +87,7 @@
                 type="button"
                 v-else
                 class="btn btn-secondary scoreAppButton" disabled
-                title="Reached score">
+                title="Reached score - away slot">
                 <i class="fa fa-bullseye fa-button" aria-hidden="true"></i> - [[ (active_sheet.away_slot) ? "yes" : "no" ]]
             </button>
         </div>
@@ -333,6 +347,7 @@
 <script src="https://cdn.jsdelivr.net/npm/vue"></script>
 <script>
 $(document).ready(ready());
+window.appReady = false;
 function ready() {
     $.ajax({
         type: "GET",
@@ -579,7 +594,9 @@ function startApp(match) {
             pickOvertimeMethod: function(method) {
                 this.overtime_method = method;
             },
-
+            whichOvertimeMethod: function() {
+                return this.overtime_method;
+            },
             /** Determine if the player went over the correct score. */
             didGoOver: function (team_points, points) {
                 if (this.overtime_method == "sudden_death") {
