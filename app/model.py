@@ -243,6 +243,13 @@ class Team(DB.Model):
                 f"Trying to add non-existent player to team - {self.id}")
         self.players.append(player)
 
+    def remove_player(self, player: Player) -> None:
+        """Add the given player to the team"""
+        if player is None:
+            raise NotFoundException(
+                f"Trying to add non-existent player to team - {self.id}")
+        self.players.remove(player)
+
     def __str__(self) -> str:
         return self.name
 
