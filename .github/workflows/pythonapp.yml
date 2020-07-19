@@ -41,7 +41,7 @@ jobs:
         cd cypress-testing
         npm install
         npm run checkLint
-        npx cypress run --record --key ${{ secrets.CYPRESS_KEY }} --spec "**/*.features" --env ARE_TESTING=true
+        npm run test:all
     - name: Upload Video Run
       uses: actions/upload-artifact@v1
       with:
