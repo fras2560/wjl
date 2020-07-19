@@ -1,5 +1,3 @@
-/** A league session. */
-
 /** The league session interface for responses from API. */
 export interface SessionInterface {
     /** The name of the session. */
