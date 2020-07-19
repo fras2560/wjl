@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+"""Holds a logger for the application."""
 import os
 import logging
 import sys

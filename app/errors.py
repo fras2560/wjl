@@ -1,3 +1,7 @@
+# -*- coding: utf-8 -*-
+"""Holds exceptions for the application."""
+
+
 class OAuthException(Exception):
     """An exception while dealing with oauth provider."""
     pass

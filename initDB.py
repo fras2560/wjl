@@ -100,12 +100,18 @@ def add_sheets(file_path: str, match_lookup) -> None:
             DB.session.commit()
 
 
-with wjl_app.app_context():
-    DB.drop_all()
-    DB.create_all()
-    field_lookup = add_fields("data/fields.json")
-    team_lookup = add_teams("data/teams.json", field_lookup)
-    session = add_session()
-    match_lookup = add_matches("data/matches.json", session,
-                               field_lookup, team_lookup)
-    add_sheets("data/sheets.csv", match_lookup)
+def init_database():
+    """Initialize the database"""
+    with wjl_app.app_context():
+        DB.drop_all()
+        DB.create_all()
+        field_lookup = add_fields("data/fields.json")
+        team_lookup = add_teams("data/teams.json", field_lookup)
+        session = add_session()
+        match_lookup = add_matches("data/matches.json", session,
+                                   field_lookup, team_lookup)
+        add_sheets("data/sheets.csv", match_lookup)
+
+
+if __name__ == "__main__":
+    init_database()

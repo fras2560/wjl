@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+"""Holds configuration for the app."""
 import os
 from uuid import uuid1
 
@@ -17,3 +19,4 @@ class Config(object):
     GITHUB_OAUTH_CLIENT_SECRET = os.environ.get(
         "GITHUB_OAUTH_CLIENT_SECRET", "")
     USE_SESSION_FOR_NEXT = True
+    ARE_TESTING = os.environ.get("ARE_TESTING", False)

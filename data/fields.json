@@ -5,7 +5,7 @@
     },
     "Queen Mary": {
         "link": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2897.0635702935724!2d-80.50235688450915!3d43.43838827912935!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x882bf455e49a2759%3A0x6bab85680c58ba78!2s907%20Queen&#39;s%20Blvd%2C%20Kitchener%2C%20ON%20N2M%201B1!5e0!3m2!1sen!2sca!4v1593032271191!5m2!1sen!2sca",
-        "description": "Home of the Dallas Cowboys and known for lots of jams.Watch out for Romeo digging holes in the backyard.Usually a parking spot in the driveway."
+        "description": "Home of the Dallas Cowboys and known for lots of jams. Watch out for Romeo digging holes in the backyard. Usually a parking spot in the driveway."
     },
     "Harvaяd": {
         "link": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2894.921097813022!2d-80.50645758450779!3d43.483116979127445!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x882bf39ca2d3d267%3A0x98ab038cecb450fa!2s221%20Harvard%20Pl%2C%20Waterloo%2C%20ON%20N2J%204H9!5e0!3m2!1sen!2sca!4v1593019508525!5m2!1sen!2sca",
@@ -17,11 +17,15 @@
     },
     "Weinsteins": {
         "link": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1449.484318379015!2d-80.37498602394795!3d43.39858494362856!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x882b8a1bcc037c1f%3A0x9a1a73baea7092cf!2s311%20Shantz%20Hill%2C%20Cambridge%2C%20ON%20N3H%203A2!5e0!3m2!1sen!2sca!4v1593017359436!5m2!1sen!2sca",
-        "description": "Dont blink because you might miss the laneway. Lots of parking in the driveway but watch out for Tim's garden."
+        "description": "Don't blink because you might miss the laneway. Lots of parking in the driveway but watch out for Tim's garden."
     },
     "Deaner's Park": {
         "link": "https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d724.1511771623651!2d-80.5019309!3d43.4479711!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x882bf458d3fd325f%3A0xeabd4db89d108c74!2s54%20Park%20St%2C%20Kitchener%2C%20ON%20N2G%201M3!5e0!3m2!1sen!2sca!4v1593019452389!5m2!1sen!2sca",
         "description": "A nice fenced in backyard that likely smells like barbecue since Deane only eats off the grill. Lots of parking in the lot at the end of the street (Jubilee Dr)"
+    },
+    "Glendale Park": {
+        "link": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d609.0418197482697!2d-80.49748428930407!3d43.43747157053471!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x882bf4ff3c5715a7%3A0x779d580ccc7ab8bc!2sGlendale%20Park%2C%20Kitchener%2C%20ON!5e0!3m2!1sen!2sca!4v1593488672263!5m2!1sen!2sca",
+        "description": "The perfect park for a nice tournament. Just make sure to bring a traveler mug."
     }
 
 }

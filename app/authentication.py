@@ -1,5 +1,9 @@
+# -*- coding: utf-8 -*-
+"""Holds authenication a user using OAuth providers."""
+
 from typing import TypedDict
-from flask import Blueprint, session
+from functools import wraps
+from flask import Blueprint, session, Response
 from flask_dance.contrib.github import make_github_blueprint
 from flask_dance.contrib.facebook import make_facebook_blueprint
 from flask_dance.contrib.google import make_google_blueprint
@@ -9,7 +13,7 @@ from flask_login import LoginManager, current_user, login_user
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy import func
 from app.errors import OAuthException, NotPartOfLeagueException,\
-    HaveLeagueRequestException
+    HaveLeagueRequestException, NotConvenorException
 from app.model import DB, Player, OAuth, LeagueRequest
 from app.logging import LOGGER
 import os
@@ -34,7 +38,7 @@ GITHUB = "github"
 
 
 class UserInfo(TypedDict):
-    """The user info from a ouath provider"""
+    """The required user info from a ouath provider"""
     name: str
     email: str
 
@@ -42,7 +46,21 @@ class UserInfo(TypedDict):
 @oauth_authorized.connect_via(facebook_blueprint)
 @oauth_authorized.connect_via(github_blueprint)
 @oauth_authorized.connect_via(google_blueprint)
-def oauth_service_provider_logged_in(blueprint: Blueprint, token: str):
+def oauth_service_provider_logged_in(blueprint: Blueprint, token: str) -> bool:
+    """The handler for dealing when OAuth has logged someone in correctly
+
+    Args:
+        blueprint (Blueprint): the OAuth provider they logged into
+        token (str): the token received from provider
+
+    Raises:
+        OAuthException: when missing vital information like token or email
+        HaveLeagueRequestException: when they have already request to join
+
+    Returns:
+        bool: False - Disable Flask-Dance's default behavior for saving
+                      the OAuth token
+    """
     # ensure the token is correct
     if not token:
         LOGGER.warning(f"{blueprint.name} did not send token: {token}")
@@ -78,7 +96,19 @@ def oauth_service_provider_logged_in(blueprint: Blueprint, token: str):
 
 
 @oauth_error.connect_via(facebook_blueprint)
-def oauth_service_provider_error(blueprint, message: str, response):
+def oauth_service_provider_error(blueprint: Blueprint,
+                                 message: str,
+                                 response: dict):
+    """Got an error from the OAuth service provider
+
+    Args:
+        blueprint (Blueprint): the OAuth service provider
+        message (str): the message from the provider
+        response (dict): the response from the provider
+
+    Raises:
+        OAuthException: the exceptionr raised to be dealt with by application
+    """
     msg = f"{blueprint.name}! message={message} response={response}"
     LOGGER.error(msg)
     raise OAuthException(msg)
@@ -86,6 +116,7 @@ def oauth_service_provider_error(blueprint, message: str, response):
 
 @login_manager.user_loader
 def load_user(player_id: int) -> Player:
+    """Loads the logged in user based upon their id."""
     return Player.query.get(int(player_id))
 
 
@@ -139,7 +170,6 @@ def get_user_info(blueprint: Blueprint) -> UserInfo:
             f"Failed to get user info oauth blueprint: {blueprint.name}")
     user_info = resp.json()
     if user_info.get("email") is None:
-        
         msg = (
             f"Provider did not give email: {blueprint.name}."
             " Double check your permission from the app."
@@ -196,3 +226,43 @@ def is_github_supported() -> bool:
 def is_facebook_supported() -> bool:
     """Returns whether current setup support Facebook authentication."""
     return os.environ.get("FACEBOOK_OAUTH_CLIENT_ID", "") != ""
+
+
+def api_player_required(f):
+    """A decorator for APIs that require a logged-in player."""
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        if not are_logged_in():
+            return Response("API requires logged-in user", 401)
+        return f(*args, **kwargs)
+    return decorated
+
+
+def api_score_required(f):
+    """A decorator for APIs that require a player with score permissions ."""
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        if not are_logged_in() or not current_user.submit_scores:
+            return Response("API requires a player with score permission", 401)
+        return f(*args, **kwargs)
+    return decorated
+
+
+def api_admin_required(f):
+    """A decorator for APIs that require a player with score permissions ."""
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        if not are_logged_in() or not current_user.is_convenor:
+            return Response("API requires user to be convenor", 401)
+        return f(*args, **kwargs)
+    return decorated
+
+
+def admin_required(f):
+    """A decorator for APIs that require a player with score permissions ."""
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        if not are_logged_in() or not current_user.is_convenor:
+            raise NotConvenorException("Not a convenor")
+        return f(*args, **kwargs)
+    return decorated

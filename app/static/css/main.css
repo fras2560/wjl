@@ -5,8 +5,12 @@
 .fa.fa-button {
     font-size: 20px;
 }
+button.btn-link > .fa.clickableIcon{
+    color: #343a40;
+}
 
 .fa.clickableIcon {
+    
     font-size: 30px;
 }
 

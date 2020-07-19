@@ -1,9 +1,12 @@
+# -*- coding: utf-8 -*-
+"""Holds a database model for the application."""
 from typing import TypedDict
 from enum import Enum
 from datetime import datetime
 from flask_login import UserMixin
 from flask_dance.consumer.storage.sqla import OAuthConsumerMixin
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.orm.exc import NoResultFound
 from app.errors import NotFoundException
 
 """ The score limit of a standard game."""
@@ -103,7 +106,8 @@ class Player(UserMixin, DB.Model):
         return {
             "id": self.id,
             "email": self.email,
-            "name": self.name
+            "name": self.name,
+            "is_convenor": self.is_convenor
         }
 
     def __str__(self):
@@ -122,6 +126,21 @@ class Player(UserMixin, DB.Model):
             team_ids = [team.id for team in self.teams]
             return (match.away_team_id in team_ids or
                     match.home_team_id in team_ids)
+
+    @staticmethod
+    def from_json(data) -> 'Player':
+        player_id = data.get("id")
+        if player_id is not None:
+            player = Player.query.get(player_id)
+            if player is None:
+                raise NotFoundException(f"Player not found: {player_id}")
+            player.name = data.get("name")
+            player.email = data.get("email")
+            player.is_convenor = data.get("is_convenor")
+            return player
+        return Player(data.get("email"),
+                      name=data.get("name"),
+                      is_convenor=data.get("is_convenor"))
 
 
 class OAuth(OAuthConsumerMixin, DB.Model):
@@ -157,6 +176,28 @@ class Field(DB.Model):
             "link": self.link
         }
 
+    @staticmethod
+    def from_name(name) -> 'Field':
+        try:
+            return Field.query.filter_by(name=name).one()
+        except NoResultFound:
+            return None
+
+    @staticmethod
+    def from_json(data) -> 'Field':
+        field_id = data.get("id")
+        if field_id is not None:
+            field = Field.query.get(field_id)
+            if field is None:
+                raise NotFoundException(f"Field not found: {field_id}")
+            field.name = data.get("name")
+            field.description = data.get("description")
+            field.link = data.get("link")
+            return field
+        return Field(data.get("name"),
+                     description=data.get("description"),
+                     link=data.get("link"))
+
     def __str__(self) -> str:
         return self.name
 
@@ -189,7 +230,10 @@ class Team(DB.Model):
             "id": self.id,
             "name": self.name,
             "players": players,
-            "homefield": field
+            "homefield": {
+                "name": field,
+                "id": None if self.home_field is None else self.home_field.id
+            }
         }
 
     def add_player(self, player: Player) -> None:
@@ -201,6 +245,30 @@ class Team(DB.Model):
 
     def __str__(self) -> str:
         return self.name
+
+    @staticmethod
+    def from_json(data) -> 'Team':
+        team_id = data.get("id")
+        if data.get('homefield') is not None:
+            field = Field.from_json(data.get('homefield'))
+        else:
+            field = None
+        if team_id is not None:
+            team = Team.query.get(team_id)
+            if team is None:
+                raise NotFoundException(f"team not found: {team_id}")
+            team.name = data.get("name")
+            team.homefield = field
+            team.players = []
+            for player_info in data.get('players'):
+                player = Player.from_json(player_info)
+                team.add_player(player)
+            return team
+        team = Team(data.get("name"), home_field=field)
+        for player_info in data.get('players'):
+            player = Player.from_json(player_info)
+            team.add_player(player)
+        return team
 
 
 class LeagueRequest(DB.Model):
@@ -262,6 +330,17 @@ class Session(DB.Model):
 
     def __str__(self) -> str:
         return self.name
+
+    @staticmethod
+    def from_json(data) -> 'Session':
+        session_id = data.get("id")
+        if session_id is not None:
+            sesh = Session.query.get(session_id)
+            if sesh is None:
+                raise NotFoundException(f"Session not found: {session_id}")
+            sesh.name = data.get("name")
+            return sesh
+        return Session(data.get("name"))
 
 
 class Match(DB.Model):
@@ -365,11 +444,10 @@ class Match(DB.Model):
             match.away_team_id = None if away_team is None else away_team.id
             match.home_team_id = None if home_team is None else home_team.id
             match.field_id = field.id
-            print(match.home_team_id)
             return match
         else:
             # creating a match
-            return Match(home_team, away_team, sesh, date,
+            return Match(home_team, away_team, sesh, date, field,
                          status=data.get("status"))
 
     def has_sheets(self) -> bool:
@@ -437,7 +515,9 @@ class Sheet(DB.Model):
             "away_slot": self.away_slot,
             "away_jams": self.away_jams,
             "away_dingers": self.away_dingers,
-            "away_deuces": self.away_deuces
+            "away_deuces": self.away_deuces,
+            "id": self.id,
+            "match_id": self.match_id
         }
 
     def set_homesheet(self, sheet: TeamSheet) -> None:

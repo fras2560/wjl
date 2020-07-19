@@ -1,0 +1,14 @@
+{
+  "projectId": "sbi3ny",
+  "ignoreTestFiles": "*.js",
+  "testFiles": "**/*.{feature,features}",
+  "baseUrl": "http://localhost:5000/",
+  "integrationFolder": "cypress/features",
+  "$schema": "https://on.cypress.io/cypress.schema.json",
+  "commonPath": "cypress/features/common",
+  "supportFile": "cypress/support/index.ts",
+  "firefoxGcInterval": {
+    "runMode": null,
+    "openMode": null
+  }
+}

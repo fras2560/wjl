@@ -1,6 +1,11 @@
 import os
 from app import wjl_app
 if __name__ == "__main__":
+    if (os.environ.get("DATABASE_URL") == "" or
+            os.environ.get("DATABASE_URL") is None):
+        from initDB import init_database
+        print("Initializing database")
+        init_database()
     start = False
     port = os.environ.get("WJL_PORT", 5000)
     while not start and port < 5010:
