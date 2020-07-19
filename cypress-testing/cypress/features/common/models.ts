@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/camelcase */
 import { Given, Then } from 'cypress-cucumber-preprocessor/steps';
-import { randomName, randomEmail } from './login';
+import { randomName, randomEmail } from '@Common/helpers';
 import { SessionInterface } from '@Interfaces/session';
 import { Field } from '@Interfaces/field';
 import { Player } from '@Interfaces/player';

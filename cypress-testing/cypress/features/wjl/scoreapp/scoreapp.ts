@@ -6,7 +6,7 @@ import { Field } from '@Interfaces/field';
 import { SessionInterface } from '@Interfaces/session';
 import { Sheet } from '@Interfaces/sheet';
 import { Match } from '@Interfaces/match';
-import { randomName } from '@Common/login';
+import { randomName } from '@Common/helpers';
 import { createField, createSession } from '@Common/models';
 import { defineParameterType } from 'cypress-cucumber-preprocessor/steps';
 
