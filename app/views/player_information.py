@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """ Holds information that only players of the league can see."""
 from flask import render_template
-from flask_login import login_required
+from flask_login import login_required, current_user
 from app import wjl_app
 from app.views.helper import get_base_data
 from app.model import Field, Team
@@ -29,4 +29,5 @@ def team(team_id: int):
         raise NotFoundException(f"Sorry, team not found - {team_id}")
     return render_template("team.html",
                            team=team.json(),
+                           on_team=current_user in team.players,
                            base_data=get_base_data())
