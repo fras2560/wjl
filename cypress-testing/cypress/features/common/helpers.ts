@@ -1,4 +1,6 @@
+/* eslint-disable @typescript-eslint/camelcase */
 import uuidv4 from 'uuid/v4';
+import { Player } from '@Interfaces/player';
 
 /**
  * Creates a random name to use for testing.
@@ -22,4 +24,12 @@ export function randomName(): string {
  */
 export function randomEmail(): string {
     return randomName() + '-' + randomName() + '@wjl.ca';
+}
+
+/**
+ * Returns some player;
+ * @return some player
+ */
+export function somePlayer(): Player {
+    return { email: randomEmail(), name: randomName(), is_convenor: false, id: null } as Player;
 }

@@ -32,7 +32,7 @@ def registration_for_team():
                         mimetype="application/json")
     if joining:
         DB.session.add(
-            LeagueRequest(current_user.email, current_user.name, team))
+            LeagueRequest(player.email, player.name, team))
         msg = (f"{current_user} player {player.name}"
                f"requested to join team {team.name}")
         LOGGER.info(msg)

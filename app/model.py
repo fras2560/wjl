@@ -215,7 +215,8 @@ class Team(DB.Model):
     home_field = DB.relationship(Field)
     players = DB.relationship('Player',
                               secondary=roster,
-                              backref=DB.backref('teamsplayers', lazy='dynamic'))
+                              backref=DB.backref('teamsplayers',
+                                                 lazy='dynamic'))
 
     def __init__(self, name: str, home_field: Field = None):
         self.name = name

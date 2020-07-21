@@ -34,7 +34,7 @@ declare global {
              * ```
              */
             logout(): void;
-            login(player: Player): void;
+            login(player: Player): Cypress.Chainable<Player>;
         }
     }
 }
