@@ -25,6 +25,10 @@ Players
 <button class="btn btn-danger" onclick="makeTeamRequest({{team.id}}, {{current_user.id}}, false);">
     Leave team
 </button>
+{% elif made_request %}
+<p>
+    Request to join pending
+</p>
 {% else %}
 <button class="btn btn-success" onclick="makeTeamRequest({{team.id}}, {{current_user.id}}, true);">
     Join team

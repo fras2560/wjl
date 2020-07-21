@@ -5,7 +5,7 @@ from flask_login import current_user
 from sqlalchemy import asc
 from app import wjl_app
 from app.errors import NotFoundException
-from app.model import Session, Match, Team, Field, Player, DB
+from app.model import Session, Match, Team, Field, DB
 from app.logging import LOGGER
 from app.views.types import ScheduleRecord
 from app.authentication import api_admin_required, api_player_required
@@ -102,35 +102,6 @@ def save_match():
             f"{current_user} tried saving match but issue {msg}")
         return Response(json.dumps(msg),
                         status=400, mimetype="application/json")
-
-
-@wjl_app.route("/api/team/registration", methods=["POST"])
-@api_player_required
-def registration_for_team():
-    team_request = request.get_json(silent=True)
-    team = Team.query.get(team_request.get('team_id'))
-    player = Player.query.get(team_request.get('player_id'))
-    joining = team_request.get('register')
-    if team is None:
-        return Response(json.dumps(team_request.get('team_id')), status=404,
-                        mimetype="application/json")
-    elif player is None:
-        return Response(json.dumps(team_request.get('player_id')), status=404,
-                        mimetype="application/json")
-    # able to make request only for themself unless they are a convenor
-    if not current_user.is_convenor and player.id != current_user.id:
-        return Response(json.dumps("Unable to make request for other player"),
-                        status=401,
-                        mimetype="application/json")
-    if joining:
-        team.add_player(player)
-        LOGGER.info(f"{current_user} player {player.id} joined team {team.id}")
-    else:
-        team.remove_player(player)
-        LOGGER.info(f"{current_user} player {player.id} left team {team.id}")
-    DB.session.commit()
-    return Response(json.dumps(team.json()), status=200,
-                    mimetype="application/json")
 
 
 @wjl_app.route("/api/team/<int:team_id>")
