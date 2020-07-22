@@ -470,25 +470,27 @@ function startApp(match) {
 
             /** Submit the sheet to the backend and move on to next game.*/
             submitSheet: function() {
-                const self = this;
-                this.saving_sheet = true;
-                $.ajax({
-                        type: "POST",
-                        data: JSON.stringify(self.active_sheet),
-                        url: "{{save_link}}",
-                        contentType: "application/json",
-                        dataType: "json",
-                        async: true,
-                        success: function(saved_sheet) {
-                            self.match.sheets.push(self.active_sheet);
-                            self.reset();
-                            self.switchHammar();
-                        }, error: function(request, error) {
-                            alert("Something went wrong, write down your score");
-                            console.error(request);
-                            console.error(error);
-                        }
-                    });
+                if (!this.saving_sheet) {
+                    this.saving_sheet = true;
+                    const self = this;
+                    $.ajax({
+                            type: "POST",
+                            data: JSON.stringify(self.active_sheet),
+                            url: "{{save_link}}",
+                            contentType: "application/json",
+                            dataType: "json",
+                            async: true,
+                            success: function(saved_sheet) {
+                                self.match.sheets.push(self.active_sheet);
+                                self.reset();
+                                self.switchHammar();
+                            }, error: function(request, error) {
+                                alert("Something went wrong, write down your score");
+                                console.error(request);
+                                console.error(error);
+                            }
+                        });
+                }
             },
             /** Reset the current sheet. */
             reset: function() {
