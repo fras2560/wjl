@@ -43,6 +43,7 @@ jobs:
         npm run checkLint
         npm run test:all
     - name: Upload Video Run
+      if: ${{ always() }}
       uses: actions/upload-artifact@v1
       with:
         name: cypress-videos
