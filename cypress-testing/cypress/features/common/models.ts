@@ -5,6 +5,7 @@ import { SessionInterface } from '@Interfaces/session';
 import { Field } from '@Interfaces/field';
 import { Player } from '@Interfaces/player';
 import { Team } from '@Interfaces/team';
+import { TeamRequest } from '@Interfaces/teamRequest';
 /** A constant link to use when creating new field */
 const FIELD_LINK = `https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1447.8584120111693!2d-80.53118577391533!3d43.4665087914418!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x882bf405af73801f%3A0x27310fca90b0ddb!2sWaterloo%20Park!5e0!3m2!1sen!2sca!4v1594648738206!5m2!1sen!2sca`;
 
@@ -56,28 +57,78 @@ const createFieldStep = (): void => {
 };
 Given(`a field exists`, createFieldStep);
 
+/**
+ * Creates a team
+ * @param players the list of players on the team
+ * @param field the field of the team or null
+ */
+export const createTeam = (players: Array<Player>, field: Field | null): Cypress.Chainable<Team> => {
+    const teamName = `Team ${randomName()}`;
+    const team: Team = { id: null, name: teamName, homefield: field, players: players };
+    cy.request({
+        url: 'api/team/save',
+        method: 'POST',
+        body: team,
+    }).then((xhr) => {
+        const team = xhr.body;
+        expect(team).to.have.property('name', teamName);
+        cy.wrap(team).as('team');
+    });
+    return cy.get<Team>('@team');
+};
+
+/**
+ * Updates a team.
+ * @param team: the team to update
+ */
+export const updateTeam = (team: Team): Cypress.Chainable<Team> => {
+    cy.request({
+        url: 'api/team/save',
+        method: 'PUT',
+        body: team,
+    }).then((xhr) => {
+        const team = xhr.body;
+        expect(team).to.have.property('name', team.name);
+        cy.wrap(team).as('team');
+    });
+    return cy.get<Team>('@team');
+};
+
+/**
+ * Register or de-register a player for given team.
+ * @param player the player for who is registering/leaving
+ * @param team the team the request is for
+ * @param joining true if joining, false if leaving the team
+ */
+export const registerPlayerForTeam = (player: Player, team: Team, joining: boolean): void => {
+    const teamRequest = { team_id: team.id, player_id: player.id, register: joining } as TeamRequest;
+    cy.request({
+        url: `api/team/registration`,
+        method: 'POST',
+        body: teamRequest,
+    }).then((xhr) => {
+        expect(xhr.status).to.be.eq(200);
+        const team: Team = xhr.body as Team;
+        if (joining) {
+            expect(team.players).to.deep.include(player);
+        } else {
+            expect(team.players).to.not.deep.include(player);
+        }
+    });
+};
+
 /** Create some team. */
-const createTeam = (): void => {
+const createTeamStep = (): void => {
     cy.login({ email: randomEmail(), name: randomName(), is_convenor: true, id: null });
     createField();
     cy.get<Field>('@field').then((field) => {
         cy.get<Player>('@player').then((player) => {
-            const teamName = `Team ${randomName()}`;
-            const team: Team = { id: null, name: teamName, homefield: field, players: [player] };
-            cy.request({
-                url: 'api/team/save',
-                method: 'POST',
-                body: team,
-            }).then((xhr) => {
-                const team = xhr.body;
-                expect(team).to.have.property('name', teamName);
-                cy.wrap(team).as('team');
-            });
+            createTeam([player], field);
         });
     });
     cy.logout();
 };
-Given(`a team exists`, createTeam);
+Given(`a team exists`, createTeamStep);
 
 /** Assert that details about some field are displayed. */
 const assertDetailsAboutField = (): void => {

@@ -88,10 +88,10 @@ class Player(UserMixin, DB.Model):
     id = DB.Column(DB.Integer, primary_key=True)
     email = DB.Column(DB.String(256), unique=True)
     name = DB.Column(DB.String(256))
-    players = DB.relationship('Team',
-                              secondary=roster,
-                              backref=DB.backref('teamsplayers',
-                                                 lazy='dynamic'))
+    teams = DB.relationship('Team',
+                            secondary=roster,
+                            backref=DB.backref('playerteams',
+                                               lazy='dynamic'))
     is_convenor = DB.Column(DB.Boolean)
     submit_scores = DB.Column(DB.Boolean)
 
@@ -215,7 +215,8 @@ class Team(DB.Model):
     home_field = DB.relationship(Field)
     players = DB.relationship('Player',
                               secondary=roster,
-                              backref=DB.backref('teams', lazy='dynamic'))
+                              backref=DB.backref('teamsplayers',
+                                                 lazy='dynamic'))
 
     def __init__(self, name: str, home_field: Field = None):
         self.name = name
@@ -242,6 +243,13 @@ class Team(DB.Model):
             raise NotFoundException(
                 f"Trying to add non-existent player to team - {self.id}")
         self.players.append(player)
+
+    def remove_player(self, player: Player) -> None:
+        """Add the given player to the team"""
+        if player is None:
+            raise NotFoundException(
+                f"Trying to add non-existent player to team - {self.id}")
+        self.players.remove(player)
 
     def __str__(self) -> str:
         return self.name

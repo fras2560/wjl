@@ -82,10 +82,10 @@ class PendingRequest(TypedDict):
     def get_request(league_request: LeagueRequest) -> "PendingRequest":
         """Generates a pending request from a league request."""
         data = league_request.json()
-        data["accept_link"] = url_for("league_request_decision",
+        data["accept_link"] = url_for("pending_requests_decision",
                                       request_id=league_request.id,
                                       decision="accept")
-        data["reject_link"] = url_for("league_request_decision",
+        data["reject_link"] = url_for("pending_requests_decision",
                                       request_id=league_request.id,
                                       decision="reject")
         return data

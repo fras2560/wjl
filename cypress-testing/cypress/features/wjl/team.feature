@@ -13,3 +13,16 @@ Scenario: Players can view other teams
      And I am logged in
     When I try to access the team
     Then see details about the team
+
+Scenario: Able to make a request to join a team
+    Given a team exists
+      And I am logged in
+     When I try to access the team
+      And request to join the team
+     Then my request is pending
+
+Scenario: Able to leave a team
+    Given I am part of some team
+     When I try to access the team
+      And request to leave the team
+     Then I am not on the team

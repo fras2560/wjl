@@ -26,11 +26,14 @@ def create_and_login():
     player_info = request.get_json(silent=True)
     convenor = (player_info.get("is_convenor", False) or
                 player_info.get("isConvenor", False))
-    LOGGER.info(f"Adding player to league: {player_info}")
-    player = Player(player_info.get("email"),
-                    name=player_info.get("name", None),
-                    is_convenor=convenor)
-    DB.session.add(player)
-    DB.session.commit()
+    player = Player.query.filter(
+        Player.email == player_info.get('email')).first()
+    if player is None:
+        LOGGER.info(f"Adding player to league: {player_info}")
+        player = Player(player_info.get("email"),
+                        name=player_info.get("name", None),
+                        is_convenor=convenor)
+        DB.session.add(player)
+        DB.session.commit()
     login_user(player)
     return Response(json.dumps(player.json()), 200)

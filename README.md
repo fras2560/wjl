@@ -1,5 +1,5 @@
 # Waterloo Jam League (wjl)
-This repository is for the Waterloo Jam League. A fun little Kan Jam league due to most sports being closed for the time being. This app was a repository I created to allow people to submit their game scores and to keep track of schedule/standings. Also I got to try some new things out.
+This repository is for the Waterloo Jam League. A fun little Kan Jam league due to most sports being closed for the time being. This app was a repository I created to allow people to submit their game scores and to keep track of schedule/standings. Also, I got to try some new things out.
 
 **Assumed Dependencies**:
 * python
@@ -55,10 +55,10 @@ export GITHUB_OUATH_CLIENT_SECRET=<YOUR SECRET HERE>
 ```
 
 ### Google
-I was unable to get this working locally. See [here](https://github.com/singingwolfboy/flask-dance-google-sqla) for how it was setup in production
+I was unable to get this working locally. See [here](https://github.com/singingwolfboy/flask-dance-google-sqla) for how it was setup in production.
 
 ### Facebook
-I was unable to get this working locally. See [here](https://github.com/singingwolfboy/flask-dance-facebook-sqla) for how it was setup in production
+I was unable to get this working locally. See [here](https://github.com/singingwolfboy/flask-dance-facebook-sqla) for how it was setup in production.
 
 
 # Github Actions

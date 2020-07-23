@@ -88,15 +88,19 @@
                   Gamesheet
                 </a>
               </li>
+              {% if base_data.logged_in %}
+              <li class="nav-item" title="requests">
+                <a class="nav-link" href="{{url_for('pending_requests') }}" data-cy="requests" title="Requests">
+                  Requests
+                </a>
+              </li>
+              {% endif %}
               {% if base_data.is_convenor %}
               <li class="nav-item dropdown">
                 <a id="adminNav" class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false" data-cy="admin">
                   Admin
                 </a>
                 <div class="dropdown-menu" role="list" aria-labelledby="adminNav">
-                  <a class="nav-link" role="listitem" href="{{url_for('pending_requests') }}" data-cy="requests" title="Requests">
-                    Requests
-                  </a>
                   <a class="nav-link" role="listitem" href="{{url_for('edit_games') }}" data-cy="matches" title="Matches">
                     Matches
                   </a>
@@ -106,7 +110,7 @@
             </ul>
           </div>
         </nav>
-        <div class="container-fluid mainContent">
+        <div class="container-fluid mainContent" role="main" title="main-content">
           {% block content %} {% endblock %}
         </div>
       </div>

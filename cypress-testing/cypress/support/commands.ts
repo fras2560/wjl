@@ -42,7 +42,7 @@ Cypress.Commands.add('logout', logout);
  * cy.login(new Player("someEmail@wjl.ca", "name"));
  * ```
  */
-const login = (player: Player): void => {
+const login = (player: Player): Cypress.Chainable<Player> => {
     // clear the cookies to act as if logged out
     cy.request({
         url: 'testing/api/create_and_login',
@@ -52,5 +52,6 @@ const login = (player: Player): void => {
         const player: Player = xhr.body;
         cy.wrap(player).as('player');
     });
+    return cy.get<Player>('@player');
 };
 Cypress.Commands.add('login', login);

@@ -1,12 +1,16 @@
 {% extends "base.html" %}
 {% block content %}
 <h1>
+    {% if base_data.is_convenor %}
     Requests to join the league
+    {% else %}
+    Requests to join your team
+    {% endif %}
 </h1>
 
-<ul>
+<ul role="list" title="requests">
     {% for league_request in pending_requests %}
-    <li id="request{{league_request.id}}">
+    <li id="request{{league_request.id}}" role="listitem" title="{{league_request.name}}">
         {{league_request.name}} ({{league_request.email}})
         join {{league_request.team.name}}
         <button type="button" class="btn btn-success" title="Accept"
