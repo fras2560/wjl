@@ -31,7 +31,8 @@ facebook_blueprint = make_facebook_blueprint(
     storage=SQLAlchemyStorage(OAuth, DB.session, user=current_user))
 google_blueprint = make_google_blueprint(
     scope=["profile", "email"],
-    storage=SQLAlchemyStorage(OAuth, DB.session, user=current_user))
+    storage=SQLAlchemyStorage(OAuth, DB.session, user=current_user),
+    offline=True)
 FACEBOOK = "facebook"
 GOOGLE = "google"
 GITHUB = "github"

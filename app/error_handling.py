@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Holds error handling for exceptions raised."""
+from oauthlib.oauth2 import InvalidClientIdError
 from flask import render_template, session, url_for, redirect
 from flask_login import current_user
 from app import wjl_app
@@ -63,3 +64,10 @@ def error_request_director(error):
         LOGGER.error(error)
         traceback.print_exc()
         return redirect(url_for("handle_generic_error"))
+
+
+@wjl_app.errorhandler(InvalidClientIdError)
+def handle_error(e):
+    session.clear()
+    LOGGER.error("Invalid client id error: returning to login page")
+    return redirect(url_for('loginpage'))
