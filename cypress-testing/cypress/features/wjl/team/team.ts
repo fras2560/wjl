@@ -79,8 +79,6 @@ Then(`I am {OnOrOffTeam} the team`, assertTeamStatus);
 
 /** Asserting that have a pending requests to join a team*/
 const assertPendingRequest = (): void => {
-    cy.findByRole('main', { name: /main-content/i }).within(() => {
-        cy.contains(/request.*pending/i);
-    });
+    cy.contains(/request.*pending/i).should('be.visible');
 };
 Then(`my request is pending`, assertPendingRequest);
