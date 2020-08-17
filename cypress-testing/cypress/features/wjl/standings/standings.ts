@@ -31,6 +31,16 @@ const standingsHook = (): void => {
 };
 beforeEach(standingsHook);
 
+/**
+ * Calculate the win percentage of the given record.
+ *
+ * @param record the team records
+ */
+const calculateWinPercentage = (record: TeamRecord): number => {
+    const winPercentage = record.wins / record.games_played;
+    return isNaN(winPercentage) ? 0 : winPercentage;
+};
+
 /** Find which session is active. */
 const getActiveSession = (): void => {
     cy.findAllByRole('tab').each((session) => {
@@ -50,8 +60,8 @@ const orderByWins = (): void => {
             let previousWins = 1.0;
             cy.findAllByRole('row').each((row, index) => {
                 if (index > 0) {
-                    const winPercentage = standings[index - 1].wins / standings[index - 1].games_played;
-                    expect(row.text()).to.contains(standings[index - 1].name);
+                    const winPercentage = calculateWinPercentage(standings[index - 1]);
+                    expect(row.text(), 'Expectining team name').to.contains(standings[index - 1].name);
                     expect(winPercentage).to.be.at.most(previousWins);
                     previousWins = winPercentage;
                 }
