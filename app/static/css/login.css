@@ -12,10 +12,10 @@
 body {
     font-family: 'Titillium Web', sans-serif; 
 }
-a {
+#wrapper a {
     color:#ff5400;
 }
-a:hover {
+#wrapper a:hover {
     opacity: 0.8;
     color:#ff5400;
     text-decoration:none;
@@ -25,11 +25,11 @@ a:hover {
     line-height: 300%;
 }
 
-.kpx_login .kpx_socialButtons a {
+#wrapper .kpx_login .kpx_socialButtons a {
     color: white;
     opacity:0.9;
 }
-.kpx_login .kpx_socialButtons a:hover {
+#wrapper .kpx_login .kpx_socialButtons a:hover {
     color: white;
     opacity: 1;
 }

@@ -9,13 +9,27 @@
 <h1>
     Schedule
 </h1>
-<ul class="nav nav-pills" id="listing">
+<ul class="nav nav-pills" id="listing" role="tablist">
     {% for session in league_sessions %}
-    <li class="nav-item">
+    <li class="nav-item" role="presentation">
         {% if session.id == active_session.id %}
-            <a class="nav-link active" aria-selected="true" id="sessionLink{{session.id}}" data-toggle="pill" role="tab" aria-controls="session{{session.id}}" href="#session{{session.id}}">
+            <a
+            class="nav-link active"
+            aria-selected="true"
+            id="sessionLink{{session.id}}"
+            data-toggle="pill"
+            role="tab"
+            aria-controls="session{{session.id}}"
+            href="#session{{session.id}}">
         {% else %}
-            <a class="nav-link" aria-selected="false" id="sessionLink{{session.id}}" data-toggle="pill" role="tab" aria-controls="session{{session.id}}" href="#session{{session.id}}">
+            <a
+            class="nav-link"
+            aria-selected="false"
+            id="sessionLink{{session.id}}"
+            data-toggle="pill"
+            role="tab"
+            aria-controls="session{{session.id}}"
+            href="#session{{session.id}}">
         {% endif %}
           {{session.name}}
         </a>

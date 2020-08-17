@@ -52,3 +52,45 @@ button.scoreAppButton:disabled {
 div.left-align {
     text-align: left;
 }
+
+a.btn:not([href]) {
+    outline: red solid 0.5em;
+    ERROR: In-accessible link styled as button;
+}
+
+#navbarSupportedContent li.nav-item a.nav-link {
+    color: black;
+}
+
+#wrapper a {
+    color : #005eff;
+}
+
+#wrapper .btn-link {
+    color : #005eff;
+}
+
+#wrapper a.nav-link.active {
+    color: white;
+    background-color: #005eff;
+}
+
+#wrapper .btn-link {
+    color : #005eff;
+}
+
+#wrapper .btn-success {
+    background-color: rgb(33, 136, 56);
+}
+
+#wrapper .btn-success:hover {
+    background-color: rgb(40, 167, 69);;
+}
+
+#wrapper .btn-info {
+    background-color: rgb(18, 123, 139);
+}
+
+#wrapper .btn-info:hover {
+    background-color: rgb(24, 162, 184);
+}
