@@ -69,7 +69,7 @@ interface Axe {
  *
  * @param axe the axe run information
  */
-const customViolationLogger = (axe: Axe): void => {
+const customViolationLogger = (axe: Axe): Cypress.Chainable<AxeRule[]> => {
     const violationData = axe.violations.map(({ id, impact, description, nodes }) => ({
         id,
         impact,
@@ -79,8 +79,16 @@ const customViolationLogger = (axe: Axe): void => {
     if (violationData.length > 0) {
         cy.task('table', violationData);
     }
-    // fail if there is any violations
-    expect(violationData.length).to.be.eq(0);
+    return cy.wrap(axe.violations, { log: false });
+};
+
+/**
+ * Logs any accessibility issues to the terminal.
+ *
+ * @param violations -
+ */
+const customViolationAsserter = (violations: Array<AxeRule>): void => {
+    expect(violations.length, 'Expecting no accessibility issues').to.be.eq(0);
 };
 
 /** Checks whether the page is accessible or not. */
@@ -92,6 +100,7 @@ const accessiblePage = (): void => {
     });
     cy.checkA11y(undefined, undefined, {
         logger: customViolationLogger,
+        asserter: customViolationAsserter,
     });
 };
 Then(`the page is accessible`, accessiblePage);
