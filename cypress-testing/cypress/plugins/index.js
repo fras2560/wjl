@@ -69,6 +69,16 @@ module.exports = (on, config) => {
         oauthSignature({ key, url, parameters }) {
             return signature({ key: key, url: url, parameters: parameters });
         },
+        log(message) {
+            console.log(message);
+
+            return '';
+        },
+        table(message) {
+            console.table(message);
+
+            return '';
+        },
     });
     on('before:browser:launch', (browser = {}, launchOptions) => {
         if (browser.name === 'chrome') {

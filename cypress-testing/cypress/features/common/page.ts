@@ -24,12 +24,72 @@ export const ensurePage = (page: Page): void => {
 };
 Given(`on the {} page`, ensurePage);
 
+/** Interface for a node in Axe model. */
+interface AxeNode {
+    impact: null | string;
+    html: string;
+}
+
+/** An Axe rule that been verified or violated. */
+interface AxeRule {
+    id: string;
+    nodes: Array<AxeNode>;
+    impact: string;
+    tags: Array<string>;
+    description: string;
+    help: string;
+    helpUrl: string;
+}
+
+/** Axe model for reporting. */
+interface Axe {
+    violations: Array<AxeRule>;
+    passes: Array<AxeRule>;
+    testEngine: {
+        name: string;
+        version: string;
+    };
+    testRunner: {
+        name: string;
+    };
+    testEnvironment: {
+        userAgent: string;
+        windowWidth: number;
+        windowHeight: number;
+        orientationAngle: 0;
+        orientationType: 'landscape-primary';
+    };
+    toolOptions: {
+        reprort: 'v1' | 'v2';
+    };
+    length: number;
+}
+/**
+ * Logs any accessibility issues to the terminal.
+ *
+ * @param axe the axe run information
+ */
+const customViolationLogger = (axe: Axe): void => {
+    const violationData = axe.violations.map(({ id, impact, description, nodes }) => ({
+        id,
+        impact,
+        description,
+        nodes: nodes.length,
+    }));
+    if (violationData.length > 0) {
+        cy.task('table', violationData);
+    }
+};
+
+/** Checks whether the page is accessible or not. */
 const accessiblePage = (): void => {
     cy.injectAxe();
     cy.configureAxe({
         reporter: 'v2',
         iframes: true,
     });
-    cy.checkA11y();
+    cy.checkA11y(undefined, undefined, {
+        logger: customViolationLogger,
+    });
 };
 Then(`the page is accessible`, accessiblePage);
