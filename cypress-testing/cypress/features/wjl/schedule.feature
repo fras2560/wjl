@@ -2,6 +2,10 @@ Feature: Schedule page
 
     The schedule page gives information about past and future games
 
+Scenario: The schedule page meets accessibility standards
+    When I visit the schedule page
+    Then the page is accessible
+
 Scenario: Able to view the schedule page for Summer 2020
     When I visit the schedule page
     Then the schedule is displayed

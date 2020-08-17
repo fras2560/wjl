@@ -1,4 +1,4 @@
-<html>
+<html lang="en">
   <head>
     {% if title %}
     <title>{{title}} - WJl</title>
@@ -28,7 +28,7 @@
   {% if request.url_rule.endpoint | length%}
     <body title="{{ request.url_rule.endpoint | replace('/', '') | replace('_', '') | replace('page', '')}}">
   {% else %}
-    <body title="home">
+    <body title="home" lang:>
   {% endif %}
     <div class="d-flex" id="wrapper">
   
@@ -56,16 +56,17 @@
   
           <div class="collapse navbar-collapse" id="navbarSupportedContent" data-cy="navigationBar">
             <ul class="navbar-nav ml-auto mt-2 mt-lg-0" title="NavigationItems">
-              <li class="nav-item active" title="home">
+              <li class="nav-item" title="home">
                 <a class="nav-link" href="/" data-cy="home">
                   Home <span class="sr-only">(current)</span>
                 </a>
               </li>
               {% if base_data.logged_in %}
-              <li class="nav-item" title="logout"></li>
+              <li class="nav-item" title="logout">
                 <a class="nav-link" href="{{ url_for('logout') }}" title="{{base_data.email}}" data-cy="logout">
                 Logout
-              </a>
+                </a>
+              </li>
               {% else %}
               <li class="nav-item" title="login">
               <a class="nav-link" href="{{url_for('loginpage') }}" data-cy="login">

@@ -13,11 +13,12 @@
     <li id="request{{league_request.id}}" role="listitem" title="{{league_request.name}}">
         {{league_request.name}} ({{league_request.email}})
         join {{league_request.team.name}}
-        <button type="button" class="btn btn-success" title="Accept"
+        <button type="button" class="btn btn-success" title="Accept" aria-label="Accept"
              onclick="saveDecision('{{league_request.accept_link}}', '#request{{league_request.id}}');">
             <i class="fa fa-check" aria-hidden="true"></i>
         </button>
-        <button type="button" class="btn btn-danger" title="Reject" onclick="saveDecision('{{league_request.reject_link}}', '#request{{league_request.id}}');">
+        <button type="button" class="btn btn-danger" title="Reject" aria-label="Reject"
+            onclick="saveDecision('{{league_request.reject_link}}', '#request{{league_request.id}}');">
             <i class="fa fa-times" aria-hidden="true"></i>
         </button>
         

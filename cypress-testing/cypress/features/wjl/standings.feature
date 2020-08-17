@@ -28,3 +28,7 @@ Scenario: Team links work
     When I visit the standings page
      And click on a team link
     Then I see more information about the team
+
+Scenario: The standings page meets accessibility standards
+    When I visit the standings page
+    Then the page is accessible

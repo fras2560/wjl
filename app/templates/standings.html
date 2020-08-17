@@ -9,9 +9,9 @@
 <h1>
     Standings
 </h1>
-<ul class="nav nav-pills" id="listing">
+<ul class="nav nav-pills" id="listing" role="tablist">
     {% for session in league_sessions %}
-    <li class="nav-item">
+    <li class="nav-item" role="presentation">
         {% if session.id == active_session.id %}
             <a class="nav-link active" aria-selected="true" id="sessionLink{{session.id}}" data-toggle="pill" role="tab" aria-controls="session{{session.id}}" href="#session{{session.id}}">
         {% else %}
@@ -29,10 +29,10 @@
         {% else %}
         <div id="session{{session.id}}" class="tab-pane fade in"aria-labelledby="sessionLink{{session.id}}" >
         {% endif %}
-          <h4 id="session_header_{{session.id}}">
+          <h2 id="session_header_{{session.id}}">
             {{session.name}}
-          </h4>
-          <img src="{{url_for('static', filename="ajax-loader.gif")}}" id="sessionloader{{session.id}}" />
+          </h2>
+          <img src="{{url_for('static', filename="ajax-loader.gif")}}" id="sessionloader{{session.id}}" alt="Loading"/>
           <table id="session_table_{{session.id}}" width="100%" class="display">
               <thead>
                   <tr>

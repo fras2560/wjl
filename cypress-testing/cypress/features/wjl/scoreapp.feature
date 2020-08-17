@@ -99,3 +99,9 @@ Scenario: Ensure the gamesheet is successful saved upon submission
      When the gamesheet is submitted
      Then gamesheet is saved
       And the app resets for next game
+
+Scenario: The score app meets accessibility standards
+    Given I am convenor
+      And there is a game today
+      And using the score App
+     Then the page is accessible

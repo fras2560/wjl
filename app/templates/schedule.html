@@ -9,13 +9,27 @@
 <h1>
     Schedule
 </h1>
-<ul class="nav nav-pills" id="listing">
+<ul class="nav nav-pills" id="listing" role="tablist">
     {% for session in league_sessions %}
-    <li class="nav-item">
+    <li class="nav-item" role="presentation">
         {% if session.id == active_session.id %}
-            <a class="nav-link active" aria-selected="true" id="sessionLink{{session.id}}" data-toggle="pill" role="tab" aria-controls="session{{session.id}}" href="#session{{session.id}}">
+            <a
+            class="nav-link active"
+            aria-selected="true"
+            id="sessionLink{{session.id}}"
+            data-toggle="pill"
+            role="tab"
+            aria-controls="session{{session.id}}"
+            href="#session{{session.id}}">
         {% else %}
-            <a class="nav-link" aria-selected="false" id="sessionLink{{session.id}}" data-toggle="pill" role="tab" aria-controls="session{{session.id}}" href="#session{{session.id}}">
+            <a
+            class="nav-link"
+            aria-selected="false"
+            id="sessionLink{{session.id}}"
+            data-toggle="pill"
+            role="tab"
+            aria-controls="session{{session.id}}"
+            href="#session{{session.id}}">
         {% endif %}
           {{session.name}}
         </a>
@@ -29,7 +43,7 @@
         {% else %}
         <div id="session{{session.id}}" class="tab-pane fade in"aria-labelledby="sessionLink{{session.id}}" >
         {% endif %}
-          <img src="{{url_for('static', filename="ajax-loader.gif")}}" id="sessionloader{{session.id}}" />
+          <img src="{{url_for('static', filename="ajax-loader.gif")}}" id="sessionloader{{session.id}}" alt="Loading" />
           <table id="session_table_{{session.id}}" width="100%" class="display">
               <thead>
                   <tr>
