@@ -79,6 +79,8 @@ const customViolationLogger = (axe: Axe): void => {
     if (violationData.length > 0) {
         cy.task('table', violationData);
     }
+    // fail if there is any violations
+    expect(violationData.length).to.be.eq(0);
 };
 
 /** Checks whether the page is accessible or not. */
