@@ -23,3 +23,13 @@ export const ensurePage = (page: Page): void => {
     assertPage(page);
 };
 Given(`on the {} page`, ensurePage);
+
+const accessiblePage = (): void => {
+    cy.injectAxe();
+    cy.configureAxe({
+        reporter: 'v2',
+        iframes: true,
+    });
+    cy.checkA11y();
+};
+Then(`the page is accessible`, accessiblePage);

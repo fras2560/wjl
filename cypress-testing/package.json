@@ -33,7 +33,7 @@
     "@typescript-eslint/parser": "^2.26.0",
     "babel-eslint": "^10.0.3",
     "babel-plugin-module-resolver": "^4.0.0",
-    "cypress": "^4.10.0",
+    "cypress": "^4.12.1",
     "cypress-cucumber-preprocessor": "^2.5.2",
     "cypress-pipe": "^1.5.0",
     "eslint": "^6.6.0",
@@ -51,9 +51,10 @@
   "dependencies": {
     "@types/cypress-cucumber-preprocessor": "^1.14.1",
     "@types/uuid": "^7.0.2",
+    "better-cypress-axe": "^1.0.8",
     "install": "^0.13.0",
     "md5-base64": "0.0.3",
-    "npm": "^6.14.4",
+    "npm": "^6.14.7",
     "oauth-1.0a": "^2.2.6",
     "typedoc": "^0.17.3",
     "uuid": "^3.4.0"

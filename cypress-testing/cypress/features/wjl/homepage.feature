@@ -2,10 +2,14 @@ Feature: Testing the homepage
 
     the homepage of the site
 
+Scenario: The homepage meets accessibility standards
+    When I visit the home page
+    Then the page is accessible
+
+
 Scenario: The homepage works as expected
     When I visit the home page
     Then I am welcomed
-    
 
 Scenario: The homepage works as expected
     Given I am logged in

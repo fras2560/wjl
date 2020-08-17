@@ -3,12 +3,10 @@ Feature: Testing the navigation bar
     the navigation bar of the app
 
 Scenario: All links are visible and accessible
-    # accessible based upon how query selectors
     When I visit the home page
     Then all standard links are visible
 
 Scenario: All admin links are visible and accessible
-    # accessible based upon how query selectors
     Given I am convenor
     When I visit the home page
     Then all convenor links are visible
@@ -58,7 +56,6 @@ Scenario Outline: All private links work when logged in
         |  gamesheet  |  submit score  |
 
 Scenario Outline: All admin links work when logged in as convenor
-    # accessible based upon how query selectors
     Given I am convenor
       And on the home page
      When I click <link>

@@ -8,11 +8,12 @@ Scenario: Anonymous cannot view team
     When I try to access the team
     Then I am on the login page
 
-Scenario: Players can view other teams
+Scenario: Players can view other teams and the page is accessible
     Given a team exists
      And I am logged in
     When I try to access the team
     Then see details about the team
+     And the page is accessible
 
 Scenario: Able to make a request to join a team
     Given a team exists
