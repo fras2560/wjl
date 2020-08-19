@@ -31,9 +31,9 @@
         {% for match in outstanding_matches %}
             <li>
                 {{match.date}}: {{match.home_team}} vs {{match.away_team}}
-                <a href="{{match.submit_link}}" class="btn btn-success">
+                <button href="{{match.submit_link}}" class="btn btn-success">
                     Submit scores
-                </a>
+                </button>
             </li>
         {% endfor %}
         </ul>
