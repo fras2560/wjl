@@ -66,6 +66,14 @@ a.btn:not([href]) {
     color : #005eff;
 }
 
+#wrapper a.btn-success {
+    color : white;
+}
+
+#wrapper a.btn-warning {
+    color : rgb(33, 37, 41);
+}
+
 #wrapper .btn-link {
     color : #005eff;
 }
