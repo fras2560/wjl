@@ -69,26 +69,23 @@ interface Axe {
  *
  * @param axe the axe run information
  */
-const customViolationLogger = (axe: Axe): Cypress.Chainable<AxeRule[]> => {
-    const violationData = axe.violations.map(({ id, impact, description, nodes }) => ({
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const customViolationLogger = (violations: any[]): void => {
+    cy.task(
+        'log',
+        `${violations.length} accessibility violation${violations.length === 1 ? '' : 's'} ${
+            violations.length === 1 ? 'was' : 'were'
+        } detected`,
+    );
+    // pluck specific keys to keep the table readable
+    const violationData = violations.map(({ id, impact, description, nodes }) => ({
         id,
         impact,
         description,
         nodes: nodes.length,
     }));
-    if (violationData.length > 0) {
-        cy.task('table', violationData);
-    }
-    return cy.wrap(axe.violations, { log: false });
-};
 
-/**
- * Logs any accessibility issues to the terminal.
- *
- * @param violations -
- */
-const customViolationAsserter = (violations: Array<AxeRule>): void => {
-    expect(violations.length, 'Expecting no accessibility issues').to.be.eq(0);
+    cy.task('table', violationData);
 };
 
 /** Checks whether the page is accessible or not. */
@@ -98,9 +95,6 @@ const accessiblePage = (): void => {
         reporter: 'v2',
         iframes: true,
     });
-    cy.checkA11y(undefined, undefined, {
-        logger: customViolationLogger,
-        asserter: customViolationAsserter,
-    });
+    cy.checkA11y(undefined, undefined, customViolationLogger);
 };
 Then(`the page is accessible`, accessiblePage);

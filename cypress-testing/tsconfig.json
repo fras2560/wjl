@@ -11,6 +11,8 @@
         "cypress",
         "node",
         "@types/testing-library__cypress",
+        "cypress-axe",
+        "axe-core"
     ],
     "esModuleInterop": true,
     "baseUrl": ".",

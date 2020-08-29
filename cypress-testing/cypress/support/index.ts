@@ -19,7 +19,7 @@
 // Import commands.js using ES2015 syntax:
 import './commands';
 import 'cypress-pipe';
-import 'better-cypress-axe';
+import 'cypress-axe';
 import { Player } from '@Interfaces/player';
 
 declare global {
