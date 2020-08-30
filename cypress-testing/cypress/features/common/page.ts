@@ -1,4 +1,5 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
+import { Result } from 'axe-core';
 
 /** WJL web pages that do not need identifiers. */
 export type Page = 'home' | 'schedule' | 'standings' | 'submit score' | 'login' | 'edit games' | 'pending requests';
@@ -67,10 +68,10 @@ interface Axe {
 /**
  * Logs any accessibility issues to the terminal.
  *
- * @param axe the axe run information
+ * @param violations the results that are violations
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const customViolationLogger = (violations: any[]): void => {
+const customViolationLogger = (violations: Result[]): void => {
     cy.task(
         'log',
         `${violations.length} accessibility violation${violations.length === 1 ? '' : 's'} ${
