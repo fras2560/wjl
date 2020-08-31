@@ -70,7 +70,6 @@ interface Axe {
  *
  * @param violations the results that are violations
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const customViolationLogger = (violations: Result[]): void => {
     cy.task(
         'log',
