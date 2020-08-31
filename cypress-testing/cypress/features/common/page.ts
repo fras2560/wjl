@@ -25,46 +25,6 @@ export const ensurePage = (page: Page): void => {
 };
 Given(`on the {} page`, ensurePage);
 
-/** Interface for a node in Axe model. */
-interface AxeNode {
-    impact: null | string;
-    html: string;
-}
-
-/** An Axe rule that been verified or violated. */
-interface AxeRule {
-    id: string;
-    nodes: Array<AxeNode>;
-    impact: string;
-    tags: Array<string>;
-    description: string;
-    help: string;
-    helpUrl: string;
-}
-
-/** Axe model for reporting. */
-interface Axe {
-    violations: Array<AxeRule>;
-    passes: Array<AxeRule>;
-    testEngine: {
-        name: string;
-        version: string;
-    };
-    testRunner: {
-        name: string;
-    };
-    testEnvironment: {
-        userAgent: string;
-        windowWidth: number;
-        windowHeight: number;
-        orientationAngle: 0;
-        orientationType: 'landscape-primary';
-    };
-    toolOptions: {
-        reprort: 'v1' | 'v2';
-    };
-    length: number;
-}
 /**
  * Logs any accessibility issues to the terminal.
  *
