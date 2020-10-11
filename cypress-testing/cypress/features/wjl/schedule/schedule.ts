@@ -109,19 +109,23 @@ Then(`the schedule is displayed`, assertScheduleDisplayed);
 /** Assert the team that was search is visible. */
 const assertTeamsGames = (): void => {
     cy.get<string>('@search_team').then((team) => {
-        // make sure the games are visible
-        cy.findAllByRole('row', { name: RegExp(team, 'i') }).should('be.visible');
-        // ensure all their games are displayed
-        cy.get('#session_table_1_info').then((element) => {
-            // get the number of total games from the info
-            const matches = element.text().match(/of \d+/);
-            const totalMatches = matches != null ? Number.parseInt(matches[0].replace('of', '').trim()) : 0;
-            cy.get<Array<ScheduledGame>>('@schedule').then((schedule) => {
-                const teamGames = schedule.filter(
-                    (game: ScheduledGame) => game.home_team == team || game.away_team == team,
-                );
-                expect(teamGames.length).to.eq(totalMatches);
-            });
+        cy.get<Array<ScheduledGame>>('@schedule').then((schedule) => {
+            // filter games so just the team interested in
+            const teamGames = schedule.filter(
+                (game: ScheduledGame) => game.home_team == team || game.away_team == team,
+            );
+
+            // make sure the games are visible
+            cy.findAllByRole('row', { name: RegExp(team, 'i') }).should('be.visible');
+
+            // ensure all their games are displayed
+            cy.get('#session_table_1_info')
+                .should('be.visible')
+                .and((element) => {
+                    const matches = element.text().match(/of \d+/);
+                    const totalMatches = matches != null ? Number.parseInt(matches[0].replace('of', '').trim()) : 0;
+                    expect(totalMatches).to.equal(teamGames.length);
+                });
         });
     });
 };
