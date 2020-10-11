@@ -119,11 +119,13 @@ const assertTeamsGames = (): void => {
             cy.findAllByRole('row', { name: RegExp(team, 'i') }).should('be.visible');
 
             // ensure all their games are displayed
-            cy.get('#session_table_1_info').should('be.visible').and((element) => {
-                const matches = element.text().match(/of \d+/);
-                const totalMatches = matches != null ? Number.parseInt(matches[0].replace('of', '').trim()) : 0;
-                expect(totalMatches).to.equal(teamGames.length);
-            })
+            cy.get('#session_table_1_info')
+                .should('be.visible')
+                .and((element) => {
+                    const matches = element.text().match(/of \d+/);
+                    const totalMatches = matches != null ? Number.parseInt(matches[0].replace('of', '').trim()) : 0;
+                    expect(totalMatches).to.equal(teamGames.length);
+                });
         });
     });
 };
