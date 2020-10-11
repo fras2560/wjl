@@ -16,11 +16,11 @@
             v-on:click="switchHammar"
             class="btn btn-link"
             title="Switch home team hammer">
-                <i class="fa fa-gavel clickableIcon" aria-hidden="true"></i>
+                <i class="fa fa-gavel clickableIcon" title="Home team hammer"></i>
             </button>
         </div>
         <div class="col-md-4 d-none d-sm-block" >
-            VS
+            versus
         </div>
         <div class="col-6 col-md-4 ">
             [[ match.away_team ]]
@@ -30,18 +30,18 @@
             v-on:click="switchHammar"
             class="btn btn-link"
             title="Switch away team hammer">
-                <i class="fa fa-gavel clickableIcon" aria-hidden="true"></i>
+                <i class="fa fa-gavel clickableIcon" title="Away team hammer"></i>
             </button>
         </div>
     </div>
     <div class="row align-items-center">
         <div class="col-6 col-sm-4" data-cy="home_wins">
-            [[ howManyWins(match.home_team_id, match) ]] - <i class="fa fa-trophy clickableIcon" aria-hidden="true"></i> 
+            [[ howManyWins(match.home_team_id, match) ]] -<i class="fa fa-trophy clickableIcon" title="Home team wins"></i> 
         </div>
         <div class="col-md-4 d-none d-sm-block" >
         </div>
         <div class="col-6 col-sm-4" data-cy="away_wins">
-            [[ howManyWins(match.away_team_id, match) ]] - <i class="fa fa-trophy clickableIcon" aria-hidden="true"></i>
+            [[ howManyWins(match.away_team_id, match) ]] - <i class="fa fa-trophy clickableIcon" title="Away team wins"></i>
         </div>
     </div>
     <div class="row align-items-center">
@@ -62,14 +62,15 @@
                 v-on:click="hitSlot(match.home_team_id)"
                 class="btn btn-danger scoreAppButton"
                 title="Home team hit a slot">
-                <i class="fa fa-bullseye fa-button" aria-hidden="true"></i> - [[ (active_sheet.home_slot) ? "yes" : "no" ]]
+                <i class="fa fa-bullseye fa-button" title="Home team slot"></i>[[ (active_sheet.home_slot) ? " - gameover" : "" ]]
             </button>
             <button
                 type="button"
                 v-else
-                class="btn btn-secondary scoreAppButton" disabled
+                class="btn btn-secondary scoreAppButton"
+                disabled
                 title="Reached score - home slot">
-                <i class="fa fa-bullseye fa-button" aria-hidden="true"></i> - [[ (active_sheet.home_slot) ? "yes" : "no" ]]
+                <i class="fa fa-bullseye fa-button" title="Home team slot"></i>[[ (active_sheet.home_slot) ? " - gameover" : "" ]]
             </button>
         </div>
         <div class="col-md-4 d-none d-sm-block" >
@@ -81,14 +82,15 @@
                 v-on:click="hitSlot(match.away_team_id)"
                 class="btn btn-danger scoreAppButton"
                 title="Away team hit a slot">
-                <i class="fa fa-bullseye fa-button" aria-hidden="true"></i> - [[ (active_sheet.away_slot) ? "yes" : "no" ]]
+                <i class="fa fa-bullseye fa-button" title="Away team slot"></i>[[ (active_sheet.away_slot) ? " - gameover" : "" ]]
             </button>
             <button
                 type="button"
                 v-else
-                class="btn btn-secondary scoreAppButton" disabled
+                class="btn btn-secondary scoreAppButton"
+                disabled
                 title="Reached score - away slot">
-                <i class="fa fa-bullseye fa-button" aria-hidden="true"></i> - [[ (active_sheet.away_slot) ? "yes" : "no" ]]
+                <i class="fa fa-bullseye fa-button" title="Away team slot"></i>[[ (active_sheet.away_slot) ? " - gameover" : "" ]]
             </button>
         </div>
     </div>
@@ -101,14 +103,15 @@
                 v-on:click="addScore(match.home_team_id, 3)"
                 class="btn btn-warning scoreAppButton"
                 title="Home jam">
-                <i class="fa fa-trash fa-button" aria-hidden="true"></i>  - [[ active_sheet.home_jams ]]
+                <i class="fa fa-trash fa-button" title="Home team jams"></i>  - [[ active_sheet.home_jams ]]
             </button>
             <button
                 type="button"
                 v-else
-                class="btn btn-secondary scoreAppButton" disabled
+                class="btn btn-secondary scoreAppButton"
+                disabled
                 title="Reached score - home jam"> 
-                <i class="fa fa-trash fa-button" aria-hidden="true"></i>  - [[ active_sheet.home_jams ]]
+                <i class="fa fa-trash fa-button" title="Home team jams"></i>  - [[ active_sheet.home_jams ]]
             </button>
         </div>
         <div class="col-md-4 d-none d-sm-block" >
@@ -120,14 +123,15 @@
                 v-on:click="addScore(match.away_team_id, 3)"
                 class="btn btn-warning scoreAppButton"
                 title="Away jam">
-                <i class="fa fa-trash fa-button" aria-hidden="true"></i> - [[ active_sheet.away_jams ]]
+                <i class="fa fa-trash fa-button" title="Away team jams"></i> - [[ active_sheet.away_jams ]]
             </button>
             <button
                 type="button"
                 v-else
-                class="btn btn-secondary scoreAppButton" disabled
+                class="btn btn-secondary scoreAppButton"
+                disabled
                 title="Reached score - away jam">
-                <i class="fa fa-trash fa-button" aria-hidden="true"></i> - [[ active_sheet.away_jams ]]
+                <i class="fa fa-trash fa-button" title="Away team jams"></i> - [[ active_sheet.away_jams ]]
             </button>
         </div>
     </div>
@@ -139,14 +143,15 @@
                 v-on:click="addScore(match.home_team_id, 2)"
                 class="btn btn-success scoreAppButton"
                 title="Home deuce">
-                <i class="fa fa-hand-peace-o fa-button" aria-hidden="true"></i> - [[ active_sheet.home_deuces ]]
+                <i class="fa fa-hand-peace-o fa-button" title="Home team deuces"></i> - [[ active_sheet.home_deuces ]]
             </button>
             <button
                 type="button"
                 v-else
-                class="btn btn-secondary scoreAppButton" disabled
+                class="btn btn-secondary scoreAppButton"
+                disabled
                 title="Reached score - home deuce">
-                <i class="fa fa-hand-peace-o fa-button" aria-hidden="true"></i> - [[ active_sheet.home_deuces ]]
+                <i class="fa fa-hand-peace-o fa-button" title="Home team deuces"></i> - [[ active_sheet.home_deuces ]]
             </button>
         </div>
         <div class="col-md-4 d-none d-sm-block" >
@@ -158,14 +163,15 @@
                  v-on:click="addScore(match.away_team_id, 2)"
                  class="btn btn-success scoreAppButton"
                  title="Away deuce">
-                <i class="fa fa-hand-peace-o fa-button" aria-hidden="true"></i> - [[ active_sheet.away_deuces ]]
+                <i class="fa fa-hand-peace-o fa-button" title="Away team deuces"></i> - [[ active_sheet.away_deuces ]]
             </button>
             <button
                 type="button"
                 v-else
-                class="btn btn-secondary scoreAppButton" disabled
+                class="btn btn-secondary scoreAppButton"
+                disabled
                 title="Reached score - away deuce">
-                <i class="fa fa-hand-peace-o fa-button" aria-hidden="true"></i> - [[ active_sheet.away_deuces ]]
+                <i class="fa fa-hand-peace-o fa-button" title="Away team deuces"></i> - [[ active_sheet.away_deuces ]]
             </button>
         </div>
     </div>
@@ -177,14 +183,14 @@
                 v-on:click="addScore(match.home_team_id, 1)"
                 class="btn btn-info scoreAppButton"
                 title="Home dinger">
-                <i class="fa fa-hand-o-up fa-button" aria-hidden="true"></i> - [[ active_sheet.home_dingers ]]
+                <i class="fa fa-hand-o-up fa-button" title="Home team dingers"></i> - [[ active_sheet.home_dingers ]]
             </button>
             <button
                 type="button"
                 v-else
                 class="btn btn-secondary scoreAppButton" disabled
                 title="Reached score - home dinger">
-                <i class="fa fa-hand-o-up fa-button" aria-hidden="true"></i> - [[ active_sheet.home_dingers ]]
+                <i class="fa fa-hand-o-up fa-button" title="Home team dingers"></i> - [[ active_sheet.home_dingers ]]
             </button>
         </div>
         <div class="col-md-4 d-none d-sm-block" >
@@ -196,14 +202,14 @@
                 v-on:click="addScore(match.away_team_id, 1)"
                 class="btn btn-info scoreAppButton"     
                 title="Away dinger">
-                <i class="fa fa-hand-o-up fa-button" aria-hidden="true"></i> - [[ active_sheet.away_dingers ]]
+                <i class="fa fa-hand-o-up fa-button" title="Away team dingers"></i> - [[ active_sheet.away_dingers ]]
             </button>
             <button
                 type="button"
                 v-else
                 class="btn btn-secondary scoreAppButton" disabled
                 title="Reached score - away dinger">
-                <i class="fa fa-hand-o-up fa-button" aria-hidden="true"></i> - [[ active_sheet.away_dingers ]]
+                <i class="fa fa-hand-o-up fa-button" title="Away team dingers"></i> - [[ active_sheet.away_dingers ]]
             </button>
         </div>
     </div>
@@ -219,7 +225,7 @@
                 class="btn btn-success scoreAppButton"
                 title="First to ten"
                 >
-                <i class="fa fa-plus fa-button" aria-hidden="true"></i>10
+                <i class="fa fa-plus fa-button" title="First to ten points"></i>10
 
             </button>
             <button
@@ -228,7 +234,7 @@
                 class="btn btn-danger scoreAppButton"
                 title="Sudden death"
                 >
-                <i class="fa fa-heartbeat fa-button" aria-hidden="true"></i>
+                <i class="fa fa-heartbeat fa-button" title="Sudden death"></i>
             </button>
         </div>
         <div class="col-sm-4 d-none d-sm-block">

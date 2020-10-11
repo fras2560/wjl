@@ -3,6 +3,11 @@
   "version": "0.1.0",
   "description": "",
   "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fras2560/wjl",
+    "private": true
+  },
   "scripts": {
     "compile": "tsc --noEmit",
     "open": "cypress open",

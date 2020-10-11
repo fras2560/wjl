@@ -1,4 +1,5 @@
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
+import { Result } from 'axe-core';
 
 /** WJL web pages that do not need identifiers. */
 export type Page = 'home' | 'schedule' | 'standings' | 'submit score' | 'login' | 'edit games' | 'pending requests';
@@ -24,53 +25,12 @@ export const ensurePage = (page: Page): void => {
 };
 Given(`on the {} page`, ensurePage);
 
-/** Interface for a node in Axe model. */
-interface AxeNode {
-    impact: null | string;
-    html: string;
-}
-
-/** An Axe rule that been verified or violated. */
-interface AxeRule {
-    id: string;
-    nodes: Array<AxeNode>;
-    impact: string;
-    tags: Array<string>;
-    description: string;
-    help: string;
-    helpUrl: string;
-}
-
-/** Axe model for reporting. */
-interface Axe {
-    violations: Array<AxeRule>;
-    passes: Array<AxeRule>;
-    testEngine: {
-        name: string;
-        version: string;
-    };
-    testRunner: {
-        name: string;
-    };
-    testEnvironment: {
-        userAgent: string;
-        windowWidth: number;
-        windowHeight: number;
-        orientationAngle: 0;
-        orientationType: 'landscape-primary';
-    };
-    toolOptions: {
-        reprort: 'v1' | 'v2';
-    };
-    length: number;
-}
 /**
  * Logs any accessibility issues to the terminal.
  *
- * @param axe the axe run information
+ * @param violations the results that are violations
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const customViolationLogger = (violations: any[]): void => {
+const customViolationLogger = (violations: Result[]): void => {
     cy.task(
         'log',
         `${violations.length} accessibility violation${violations.length === 1 ? '' : 's'} ${
