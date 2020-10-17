@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /standings
+Allow: /schedule
+Disallow: /login
