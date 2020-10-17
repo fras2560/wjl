@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="en">
   <head>
     {% if title %}
@@ -46,7 +47,7 @@
   
       <!-- Page Content -->
       <div id="page-content-wrapper">
-        <nav aria-label="Navigation" class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+        <nav aria-label="Navigation" role="navigation" class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
           <!-- Toggle menu for sidebar
               <button class="btn btn-primary" id="menu-toggle">Toggle Menu</button>
           -->
@@ -97,12 +98,12 @@
               </li>
               {% endif %}
               {% if base_data.is_convenor %}
-              <li class="nav-item dropdown">
+              <li class="nav-item dropdown" title="Admin">
                 <a id="adminNav" class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false" data-cy="admin">
                   Admin
                 </a>
-                <div class="dropdown-menu" role="list" aria-labelledby="adminNav">
-                  <a class="nav-link" role="listitem" href="{{url_for('edit_games') }}" data-cy="matches" title="Matches">
+                <div class="dropdown-menu" aria-labelledby="adminNav">
+                  <a class="nav-link" href="{{url_for('edit_games') }}" data-cy="matches" title="Matches">
                     Matches
                   </a>
                 </div>
