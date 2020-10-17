@@ -1,11 +1,17 @@
 # -*- coding: utf-8 -*-
 """Holds all website the views."""
 __all__ = []
-from flask import session, redirect, render_template
+from flask import session, redirect, render_template, send_from_directory
 from app import wjl_app
 from app.views.helper import get_base_data
 import pkgutil
 import inspect
+
+
+@wjl_app.route("/robots.txt")
+def robot():
+    """A route for the google web crawler."""
+    return send_from_directory(wjl_app.static_folder, "robots.txt")
 
 
 @wjl_app.route("/")
