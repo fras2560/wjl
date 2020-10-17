@@ -1,4 +1,10 @@
 {% extends "base.html" %}
+{% block header %}
+<link href="https://cdn.datatables.net/1.10.10/css/jquery.dataTables.min.css" rel="stylesheet">
+<link href="https://cdn.datatables.net/responsive/2.2.3/css/responsive.dataTables.min.css" rel="stylesheet">
+{% endblock %}
+
+
 {% block content %}
 <h1>
     Submit scores for match
@@ -27,36 +33,128 @@
 </ul>
 <div class="tab-content">
     <div id="outstandingGames" class="tab-pane fade show active" aria-labelledby="outstandingLink">
-        <ul>
-        {% for match in outstanding_matches %}
-            <li>
-                {{match.date}}: {{match.home_team}} vs {{match.away_team}}
-                <a href="{{match.submit_link}}" class="btn btn-success">
-                    Submit scores
-                </a>
-            </li>
-        {% endfor %}
-        </ul>
+        <table id="outstanding_games_table" width="100%" class="display">
+            <thead>
+                <tr>
+                    <th data-priority="2">
+                      Date
+                    </th>
+                    <th data-priority="3">
+                      Home Team
+                    </th>
+                    <th data-priority="4">
+                      Away Team
+                    </th>
+                    <th data-priority="1">
+                      Submit
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for match in outstanding_matches %}
+                <tr>
+                    <td>
+                        {{match.date}}
+                    </td>
+                    <td>
+                        {{match.home_team}}
+                    </td>
+                    <td>
+                        {{match.away_team}}
+                    </td>
+                    <td>
+                        <a href="{{match.submit_link}}" class="btn btn-success">
+                            Submit scores
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
     <div id="submittedGames" class="tab-pane fade in" aria-labelledby="submittedGamesLink">
-        <ul>
-            {% for match in submitted_matches %}
-                <li>
-                    {{match.date}}: {{match.home_team}} vs {{match.away_team}}
-                    <a href="{{match.submit_link}}" class="btn btn-success">
-                        Add scores
-                    </a>
-                    <a href="{{match.edit_link}}" class="btn btn-warning">
-                        Edit scores
-                    </a>
-                </li>
-            {% endfor %}
-        </ul>
+        <table id="submitted_games_table" width="100%" class="display">
+            <thead>
+                <tr>
+                    <th data-priority="3">
+                      Date
+                    </th>
+                    <th data-priority="4">
+                      Home Team
+                    </th>
+                    <th data-priority="5">
+                      Away Team
+                    </th>
+                    <th data-priority="2">
+                      Add
+                    </th>
+                    <th data-priority="1">
+                      Edit
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for match in submitted_matches %}
+                <tr>
+                    <td>
+                        {{match.date}}
+                    </td>
+                    <td>
+                        {{match.home_team}}
+                    </td>
+                    <td>
+                        {{match.away_team}}
+                    </td>
+                    <td>
+                        <a href="{{match.submit_link}}" class="btn btn-success">
+                            Add scores
+                        </a>
+                    </td>
+                    <td>
+                        <a href="{{match.edit_link}}" class="btn btn-warning">
+                            Edit scores
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 </div>
 {% endblock %}
 
-{% block footer %}
+{% block script %}
+<script src="{{ url_for('static', filename="js/jquery.dataTables.min.js") }}"></script>
+<script src="{{ url_for('static', filename="js/jquery.dataTables.responsive.min.js") }}"></script>
+
 <script>
+$(document).ready(ready());
+function ready() {
+    // plug-in code for jumping a page with a certain value
+    console.log("Ready");
+    jQuery.fn.dataTable.Api.register( 'page.jumpToDate()', function ( date, column ) {
+        var data = this.column(column, {order:'current'}).data();
+        let pos = 0;
+        for(let index = 0; index <= data.length; index++) {
+            if (Date.parse(date) <= Date.parse(data[index])){
+                pos = index;
+                break;
+            }
+        }
+        if ( pos >= 0 ) {
+            var page = Math.floor( pos / this.page.info().length );
+            this.page( page ).draw( false );
+        }
+        return this;
+    } );
+    $('#outstanding_games_table').DataTable({
+        "responsive": true,
+        "order": [[0, "asc"]],
+    });
+    $('#submitted_games_table').DataTable({
+        "responsive": true,
+        "order": [[0, "asc"]],
+    });
+}
 </script>
 {% endblock %}
