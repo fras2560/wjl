@@ -15,10 +15,13 @@ export type LinkName =
     | 'matches';
 
 /** All the public standard navigation  links. */
-const standardLinks = ['home', 'schedule', 'standings', 'gamesheet'];
+const STANDARD_LINKS = ['home', 'schedule', 'standings', 'gamesheet'];
+
+/** A link the requires the user to be logged in. */
+const LOGGED_IN_LINKS = ['requests'];
 
 /** The admin navigation links. */
-const adminLinks = ['requests', 'matches'];
+const ADMIN_LINKS = ['matches'];
 
 /** Defines the a gherkin parameter type called LinkName. */
 defineParameterType({
@@ -55,18 +58,28 @@ const assertLogoutOption = (): void => {
 Then(`I see option to logout`, assertLogoutOption);
 
 /**
+ * Gets the navigation element.
+ * @param link the name of the navigation link
+ * @return the navigation link
+ */
+const getNavigationElement = (link: LinkName): Cypress.Chainable<JQuery> => {
+    if (ADMIN_LINKS.includes(link)) {
+        return cy.findByRole('listitem', { name: 'Admin' }).findByRole('link', { name: RegExp(link, 'i') });
+    }
+    return cy.findByRole('list', { name: 'NavigationItems' }).findByRole('listitem', { name: RegExp(link, 'i') });
+};
+
+/**
  * Assert the link is visible and accessible.
  * @param link the name of the link
  */
 const assertLinkVisisble = (link: LinkName): void => {
-    cy.findByRole('list', { name: 'NavigationItems' }).within(() => {
-        cy.findByRole('listitem', { name: RegExp(link, 'i') }).should('be.visible');
-    });
+    getNavigationElement(link).should('be.visible');
 };
 
 /** Assert all the standard links are visisible. */
 const assertLinksVisible = (): void => {
-    for (const link of standardLinks) {
+    for (const link of STANDARD_LINKS) {
         assertLinkVisisble(link as LinkName);
     }
 };
@@ -75,18 +88,16 @@ Then(`all standard links are visible`, assertLinksVisible);
 /** Assert all the convenor links are visisible. */
 const assertConvenorLinks = (): void => {
     clickAdmin();
-    for (const link of adminLinks) {
+    for (const link of ADMIN_LINKS.concat(LOGGED_IN_LINKS)) {
         assertLinkVisisble(link as LinkName);
     }
 };
 Then(`all convenor links are visible`, assertConvenorLinks);
 
 const clickLink = (link: LinkName): void => {
-    if (adminLinks.includes(link)) {
+    if (ADMIN_LINKS.includes(link)) {
         clickAdmin();
     }
-    cy.findByRole('list', { name: 'NavigationItems' }).within(() => {
-        cy.findByRole('listitem', { name: RegExp(link, 'i') }).click();
-    });
+    getNavigationElement(link).click();
 };
 When(`I click {LinkName}`, clickLink);

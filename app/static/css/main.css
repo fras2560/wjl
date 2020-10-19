@@ -1,104 +1,134 @@
 .mainContent {
-    text-align: center;
+  text-align: center;
 }
 
 .fa.fa-button {
-    font-size: 20px;
+  font-size: 20px;
 }
-button.btn-link > .fa.clickableIcon{
-    color: #343a40;
+button.btn-link > .fa.clickableIcon {
+  color: #343a40;
 }
 
 .fa.clickableIcon {
-    
-    font-size: 30px;
+  font-size: 30px;
 }
 
 #outstandingGames li,
-#submittedGames li{
-    margin-top: 10px;
-    margin-bottom: 10px;
+#submittedGames li {
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 
 #listing li a.nav-link {
-    margin-top: 10px;
-    margin-bottom: 10px;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 
 .center-text {
-    line-height: 50px;
+  line-height: 50px;
 }
 
 button.scoreAppButton {
-    margin-top: 10px;
-    margin-bottom: 10px;
-    font-size: 20px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  font-size: 20px;
 }
 
 button.scoreAppButton:disabled,
 button.scoreAppButton:disabled {
-    cursor:not-allowed;
+  cursor: not-allowed;
 }
 
 #helpModal li {
-    text-align: left;
-    font-size: 12px;
+  text-align: left;
+  font-size: 12px;
 }
 
 .helpLink {
-    margin-bottom: 40px;
+  margin-bottom: 40px;
 }
 
 div.left-align {
-    text-align: left;
+  text-align: left;
 }
 
 a.btn:not([href]) {
-    outline: red solid 0.5em;
-    ERROR: In-accessible link styled as button;
+  outline: red solid 0.5em;
+  error: In-accessible link styled as button;
 }
 
 #navbarSupportedContent li.nav-item a.nav-link {
-    color: black;
+  color: black;
 }
 
 #wrapper a {
-    color : #005eff;
+  color: #005eff;
 }
 
 #wrapper a.btn-success {
-    color : white;
+  color: white;
 }
 
 #wrapper a.btn-warning {
-    color : rgb(33, 37, 41);
+  color: rgb(33, 37, 41);
 }
 
 #wrapper .btn-link {
-    color : #005eff;
+  color: #005eff;
 }
 
 #wrapper a.nav-link.active {
-    color: white;
-    background-color: #005eff;
+  color: white;
+  background-color: #005eff;
 }
 
 #wrapper .btn-link {
-    color : #005eff;
+  color: #005eff;
 }
 
 #wrapper .btn-success {
-    background-color: rgb(33, 136, 56);
+  background-color: rgb(33, 136, 56);
 }
 
 #wrapper .btn-success:hover {
-    background-color: rgb(40, 167, 69);;
+  background-color: rgb(40, 167, 69);
 }
 
 #wrapper .btn-info {
-    background-color: rgb(18, 123, 139);
+  background-color: rgb(18, 123, 139);
 }
 
 #wrapper .btn-info:hover {
-    background-color: rgb(24, 162, 184);
+  background-color: rgb(24, 162, 184);
+}
+
+table.dataTable thead th {
+  position: relative;
+  background-image: none !important;
+}
+
+table.dataTable thead th.sorting:after,
+table.dataTable thead th.sorting_asc:after,
+table.dataTable thead th.sorting_desc:after {
+  position: absolute !important;
+  top: 12px !important;
+  right: 8px !important;
+  display: block !important;
+  font-family: FontAwesome !important;
+}
+table.dataTable thead th.sorting:after {
+  content: "\f0dc" !important;
+  color: #ddd !important;
+  font-size: 0.8em !important;
+  padding-top: 0.12em !important;
+}
+table.dataTable thead th.sorting_asc:after {
+  content: "\f0de" !important;
+}
+table.dataTable thead th.sorting_desc:after {
+  content: "\f0dd" !important;
+}
+
+#page-content-wrapper .paginate_button current {
+  color: black !important;
 }

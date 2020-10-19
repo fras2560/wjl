@@ -2,7 +2,7 @@
 {% block content %}
 <div id="editMatchesApp">
     <h1>
-        Submit Match Scores
+        Pick a match to edit
     </h1>
     <match-component
         :match="match"
@@ -94,7 +94,7 @@ function startApp(matches, teams, fields) {
         <div class="row left-align border-top my-3">
             <div class="col-12 col-sm-6 col-md-3">
                 <label>Home team:</label>
-                <select class="form-control" v-model="match.home_team_id" >
+                <select class="form-control" v-model="match.home_team_id" aria-label="Home Team">
                     <option value="null">
                         TBD
                     </option>
@@ -107,7 +107,7 @@ function startApp(matches, teams, fields) {
             </div>
             <div class="col-12 col-sm-6 col-md-3">
                 <label>Away Team:</label>
-                <select class="form-control" v-model="match.away_team_id">
+                <select class="form-control" v-model="match.away_team_id" aria-label="Away Team">
                     <option value="null">
                         TBD
                     </option>
@@ -120,7 +120,7 @@ function startApp(matches, teams, fields) {
             </div>
             <div class="col-12 col-sm-6 col-md-2">
                 <label>Field:</label>
-                <select class="form-control" v-model="match.field_id">
+                <select class="form-control" v-model="match.field_id" aria-label="Field">
                     <option
                         v-for="field in fields"
                         v-bind:value="field.id">
@@ -130,11 +130,11 @@ function startApp(matches, teams, fields) {
             </div>
             <div class="col-12 col-sm-6 col-md-2">
                 <label>Date:</label>
-                <input v-model="match.datetime" placeholder="Match Date" class="form-control"  v-bind:class="dateValid" >
+                <input v-model="match.datetime" placeholder="Match Date" class="form-control"  v-bind:class="dateValid" aria-label="Date">
             </div>
             <div class="col-12 col-sm-6 col-md-2">
                 <label>Status:</label>
-                <input v-model="match.status" placeholder="Match Status" class="form-control">
+                <input v-model="match.status" placeholder="Match Status" class="form-control" aria-label="status">
             </div>
             <hr/>
         </div>
