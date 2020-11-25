@@ -10,9 +10,9 @@
         // load Cypress global type
         "cypress",
         "node",
-        "@types/testing-library__cypress",
         "cypress-axe",
-        "axe-core"
+        "axe-core",
+        "@types/testing-library__cypress"
     ],
     "esModuleInterop": true,
     "baseUrl": ".",
