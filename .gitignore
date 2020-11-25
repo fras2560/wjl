@@ -132,3 +132,6 @@ dmypy.json
 data/players.json
 
 .vscode/
+
+# help file for setting working environment
+setEnv.sh
