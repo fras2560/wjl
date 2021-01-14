@@ -1,11 +1,162 @@
 {% extends "base.html" %}
 {% block content %}
-<h1>
-    Edit Match Scores
-</h1>
+<div id="editSheetsApp">
+    <h1>
+        Edit Match Scores
+    </h1>
+    <h2>
+        {{ match.home_team}}
+        VS.
+        {{ match.away_team}}
+    </h2>
+    <sheet-component
+        :sheet="sheet"
+        v-for="sheet in match.sheets">
+    </sheet-component>
+</div>
 
-<h5>
-TODO
-</h5>
+{% endblock %}
 
+
+{% block script %}
+<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+<script>
+    $(document).ready(ready());
+    function ready() {
+
+        $.ajax({
+            type: "GET",
+            url: "{{match_link}}",
+            contentType: "application/json",
+            dataType: "json",
+            async: true,
+            success: function(match) {
+                startApp(match);
+                window.appReady = true;
+            }, error: function(request, error) {
+                console.error(request);
+                console.error(error);
+            }
+        });
+    }
+    function startApp(match) {
+        console.log(match);
+        Vue.component('sheet-component', {
+            props: {
+                sheet: Object
+            },
+            template: `
+            <div>
+                <div class="row left-align border-top my-3">
+                    <div class="col-12 col-sm-6 col-md-2">
+                        <label>Away Team score: [[sheet.away_score]]</label>
+                        <input v-model="sheet.away_score" placeholder="Away Team Score" class="form-control" aria-label="Away Team Score">
+                    </div>
+                    <div class="col-12 col-sm-6 col-md-2">
+                        <label>Away Team dingers:</label>
+                        <input v-model="sheet.away_dingers" placeholder="Away Team Dingers" class="form-control" aria-label="Away Team Dingers">
+                    </div>
+                    <div class="col-12 col-sm-4 col-md-2">
+                        <label>Away Team deuces:</label>
+                        <input v-model="sheet.away_deuces" placeholder="Away Team Deuces" class="form-control" aria-label="Away Team Deuces">
+                    </div>
+                    <div class="col-12 col-sm-4 col-md-2">
+                        <label>Away Team jams:</label>
+                        <input v-model="sheet.away_jams" placeholder="Away Team Jams" class="form-control" aria-label="Away Team Jams">
+                    </div>
+                    <div class="col-12 col-sm-4 col-md-4">
+                        <label>Away Team slot:</label>
+                        <input type="checkbox" v-model="sheet.away_slot" class="form-control" aria-label="Away Team Slot">
+                    </div>
+
+                    <div class="col-12 col-sm-6 col-md-2">
+                        <label>Home Team score:</label>
+                        <input v-model="sheet.home_score" placeholder="Home Team Score" class="form-control" aria-label="Home Team Score">
+                    </div>
+                    <div class="col-12 col-sm-6 col-md-2">
+                        <label>Home Team dingers:</label>
+                        <input v-model="sheet.home_dingers" placeholder="Home Team Dingers" class="form-control" aria-label="Home Team Dingers">
+                    </div>
+                    <div class="col-12 col-sm-4 col-md-2">
+                        <label>Home Team deuces:</label>
+                        <input v-model="sheet.home_deuces" placeholder="Home Team Deuces" class="form-control" aria-label="Home Team Deuces">
+                    </div>
+                    <div class="col-12 col-sm-4 col-md-2">
+                        <label>Home Team jams:</label>
+                        <input v-model="sheet.home_jams" placeholder="Home Team Jams" class="form-control" aria-label="Home Team Jams">
+                    </div>
+                    <div class="col-12 col-sm-4 col-md-4">
+                        <label>Home Team slot:</label>
+                        <input type="checkbox" v-model="sheet.home_slot" class="form-control" aria-label="Home Team Slot">
+                    </div>
+                    <hr/>
+                </div>
+            </div>
+            `,
+            delimiters: ['[[', ']]'],
+            watch:{
+                "sheet": {
+                    deep: true,
+                    handler(newValue, oldValue) {
+                        console.log("New Value");
+                        console.log(newValue);
+                        console.log(newValue.away_score != "")
+                        console.log(newValue.home_score != "")
+                        console.log(newValue.away_dingers != "")
+                        console.log(newValue.home_dingers != "")
+                        console.log(newValue.away_deuces != "")
+                        console.log(newValue.home_deuces != "")
+                        console.log(newValue.away_jams != "")
+                        console.log(newValue.home_jams != "")
+                        if(newValue.away_score !== "" &&
+                           newValue.home_score !== "" &&
+                           newValue.away_dingers !== "" &&
+                           newValue.home_dingers !== "" &&
+                           newValue.away_deuces !== "" &&
+                           newValue.home_deuces !== "" &&
+                           newValue.away_jams !== "" &&
+                           newValue.home_jams !== ""
+                        ) {
+                            console.log("Calling Save Sheet");
+                            this.saveSheet(newValue);
+                        }
+                        
+                    },
+                }
+            },
+            methods: {
+                /** Save the match to a database. */
+                saveSheet: function(sheet) {
+                    console.log("Save Sheet");
+                    $.ajax({
+                        type: "POST",
+                        data: JSON.stringify(sheet),
+                        url: "{{save_link}}",
+                        contentType: "application/json",
+                        dataType: "json",
+                        async: true,
+                        success: function(saved_sheet) {
+                            console.log(saved_sheet);
+                        }, error: function(request, error) {
+                            alert("Something went wrong, write down your score");
+                            console.error(request);
+                            console.error(error);
+                        }
+                    });
+                }
+            }
+        });
+        const app = new Vue({
+            el: '#editSheetsApp',
+            data: {
+                match: match,
+            },
+            delimiters: ['[[', ']]']
+        });
+        if (window.Cypress) {
+            window.sheetApp = app;
+        }
+        console.log(app);
+    }
+</script>
 {% endblock %}

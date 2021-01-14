@@ -13,6 +13,17 @@ from app.helpers import tomorrow_date
 import json
 
 
+def check_player_has_permissions_for_match(match_id):
+    """Returns match if the player can submit scores for the given match id"""
+    match = Match.query.get(match_id)
+    if match is None:
+        raise NotFoundException(f"Unable to find match - {match_id}")
+    if not current_user.can_submit_scores(match):
+        raise LackScorePermissionException(
+            f"Not part of either team - {match_id}")
+    return match
+
+
 @wjl_app.route("/submit_score")
 @login_required
 def submit_score():
@@ -44,15 +55,10 @@ def submit_score():
 
 
 @wjl_app.route("/submit_sheet/<int:match_id>")
-@login_required
+@api_score_required
 def submit_sheet(match_id: int):
     """A route to submit a gamesheet for some match."""
-    match = Match.query.get(match_id)
-    if match is None:
-        raise NotFoundException(f"Unable to find match - {match_id}")
-    if not current_user.can_submit_scores(match):
-        raise LackScorePermissionException(
-            f"Not part of either team - {match_id}")
+    match = check_player_has_permissions_for_match(match_id)
     return render_template("submit_sheet.html",
                            base_data=get_base_data(),
                            match=match.json(),
@@ -68,6 +74,8 @@ def save_sheet():
     try:
         sheet = request.get_json(silent=True)
         saved_sheet = Sheet.from_json(sheet)
+        # ensure the current users can actually save the sheet
+        check_player_has_permissions_for_match(saved_sheet.match_id)
         DB.session.add(saved_sheet)
         DB.session.commit()
         LOGGER.info(
@@ -82,14 +90,12 @@ def save_sheet():
 
 
 @wjl_app.route("/edit_sheet/<int:match_id>")
-@login_required
+@api_score_required
 def edit_sheet(match_id: int):
     """A route to edit a match's gamesheets."""
-    match = Match.query.get(match_id)
-    if match is None:
-        raise NotFoundException("Unable to find match {match_id}")
-    if not current_user.can_submit_scores(match):
-        raise LackScorePermissionException("Not part of team")
+    match = check_player_has_permissions_for_match(match_id)
     return render_template("edit_sheet.html",
                            base_data=get_base_data(),
-                           match=match)
+                           match=match,
+                           match_link=url_for("get_match", match_id=match_id),
+                           save_link=url_for("save_sheet"))
