@@ -5,7 +5,7 @@
 
 /**
  * A hook that runs once before all tests. It logs out the current user
- * such that Möbius does not have them recorded as active.
+ * such that WJL does not have them recorded as active.
  */
 const globalAfter = (): void => {
     cy.request({
