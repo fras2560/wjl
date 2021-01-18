@@ -21,8 +21,8 @@
     "lint": "tsc --noEmit && eslint '*/**/*.{js,ts,tsx}' --quiet --fix"
   },
   "keywords": [
-    "mobius",
-    "digital education",
+    "kan jam",
+    "sports",
     "cypress",
     "cucumber",
     "testing"

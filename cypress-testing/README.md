@@ -32,7 +32,7 @@ Note: When running the tests from command line it will not run any with @ignore.
 
 The following variables are used by Cypress during testing:
 
--   `CYPRESS_baseUrl` : the URL of the Möbius instance under test (requied, example: `http://localhost:5000` )
+-   `CYPRESS_baseUrl` : the URL of the app instance under test (requied, example: `http://localhost:5000` )
 
 # Path Aliases
 
