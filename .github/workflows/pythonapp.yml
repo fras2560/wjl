@@ -1,7 +1,7 @@
 name: WJL Pull-Request Reviews
 
 on:
-  pushes:
+  push:
     branches:
       - main
   pull_request:
