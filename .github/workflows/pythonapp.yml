@@ -45,7 +45,9 @@ jobs:
           npm run checkLint
           npm run test:all
           # generate the code report
+          echo "Generate Report"
           cd ..
+          ls
           coverage xml -o e2e.xml
       - name: Upload Video Run
         if: always()
