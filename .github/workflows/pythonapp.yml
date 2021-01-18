@@ -38,7 +38,7 @@ jobs:
         run: |
           export ARE_TESTING=true
           # run the server just in-memory
-          nohup coverage runserver.py  2>&1 &
+          nohup coverage run runserver.py  2>&1 &
           # now run the cypres tests against it
           cd cypress-testing
           npm install
