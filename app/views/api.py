@@ -195,6 +195,7 @@ def get_match(match_id):
     sheets = []
     for sheet in match.sheets:
         sheets.append(sheet.json())
+    sheets.sort(key=lambda sheet: sheet['id'])
     match_data["sheets"] = sheets
     return Response(json.dumps(match_data),
                     status=200, mimetype="application/json")
