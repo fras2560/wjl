@@ -39,7 +39,7 @@ jobs:
         with:
           start: coverage run runserver.py
           wait-on: "http://localhost:5000"
-          project: cypress-testing
+          working-directory: cypress-testing
           record: false
           command: npm run test:all
         env:
