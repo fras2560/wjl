@@ -35,26 +35,24 @@ jobs:
         with:
           node-version: "10.x"
       - name: UI Test with cypress
-        run: |
-          export ARE_TESTING=true
-          # run the server just in-memory
-          nohup coverage run runserver.py  2>&1 &
-          # now run the cypres tests against it
-          cd cypress-testing
-          npm install
-          npm run checkLint
-          npm run test:all
-          # generate the code report
-          echo "Generate Report"
-          cd ..
-          ls
-          coverage xml -o e2e.xml
+        uses: cypress-io/github-action@v2
+        with:
+          start: coverage run runserver.py
+          wait-on: 'http://localhost:5000'
+          project: cypress-testing
+          record: false
+          command: npm run test:all
+        env:
+          ARE_TESTING: true 
       - name: Upload Video Run
         if: always()
         uses: actions/upload-artifact@v1
         with:
           name: cypress-videos
           path: cypress-testing/cypress/videos
+      - name: Generate Code Coverage Report
+          run: |
+          coverage xml -o e2e.xml
       - name: Upload Cypress code coverage
         uses: codecov/codecov-action@v1
         with:
