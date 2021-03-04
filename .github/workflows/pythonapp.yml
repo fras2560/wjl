@@ -3,7 +3,7 @@ name: WJL Pull-Request Reviews
 on:
   pull_request:
     branches:
-      - master
+      - main
       - development
 
 jobs:
