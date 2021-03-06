@@ -132,3 +132,10 @@ table.dataTable thead th.sorting_desc:after {
 #page-content-wrapper .paginate_button current {
   color: black !important;
 }
+
+@media (max-width: 576px) {
+  .mobile-video {
+    height: 250px !important;
+    width: 300px !important;
+  }
+ }
