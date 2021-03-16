@@ -33,7 +33,7 @@
     "node_modules",
   ],
   "typedocOptions": {
-    "mode": "modules",
+    "entryPoints": ["cypress"],
     "out": "docs",
     "exclude": "/node_modules/**",
     "readme": "README.md",
