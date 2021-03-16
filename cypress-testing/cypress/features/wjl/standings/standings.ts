@@ -18,14 +18,14 @@ defineParameterType({
 
 /** Store all the standings tables data as it is requested. */
 const standingsHook = (): void => {
-    cy.server();
     cy.request({
         url: 'api/session',
         method: 'GET',
     }).then((sessions) => {
         sessions.body.forEach((element: SessionInterface) => {
+            cy.log(`session${element.id}`);
             cy.wrap(element).as(`session${element.id}`);
-            cy.route('GET', `/standings/${element.id}`).as(`standings${element.id}`);
+            cy.intercept('GET', new RegExp(`/standings/${element.id}$`)).as(`standings${element.id}`);
         });
     });
 };
@@ -55,8 +55,8 @@ const getActiveSession = (): void => {
 const orderByWins = (): void => {
     getActiveSession();
     cy.get<SessionInterface>('@active_session').then((session) => {
-        cy.wait(`@standings${session.id}`).then((xhr) => {
-            const standings = xhr.responseBody as Array<TeamRecord>;
+        cy.wait(`@standings${session.id}`).then((interception) => {
+            const standings = interception.response?.body as Array<TeamRecord>;
             let previousWins = 1.0;
             cy.findAllByRole('row').each((row, index) => {
                 if (index > 0) {
@@ -75,7 +75,7 @@ Then(`the teams are ordered by win percentage`, orderByWins);
 const clickColumnHeading = (column: StandingsColumn): void => {
     // click the column header twice so decending order
     const click = ($el: JQuery<HTMLElement>): JQuery<HTMLElement> => {
-        $el.click();
+        $el.trigger('click');
         return $el;
     };
 
@@ -91,8 +91,8 @@ const assertSortedByColumn = (column: StandingsColumn): void => {
     // click the column header
     getActiveSession();
     cy.get<SessionInterface>('@active_session').then((session) => {
-        cy.wait(`@standings${session.id}`).then((xhr) => {
-            const standings = xhr.responseBody as Array<TeamRecord>;
+        cy.wait(`@standings${session.id}`).then((interception) => {
+            const standings = interception.response?.body as Array<TeamRecord>;
             // sort the data by the column
             standings.sort((a: TeamRecord, b: TeamRecord) => {
                 // want to sort in descending order
@@ -113,8 +113,8 @@ Then(`the teams are ordered by {StandingsColumn}`, assertSortedByColumn);
 const searchForTeam = (): void => {
     getActiveSession();
     cy.get<SessionInterface>('@active_session').then((session) => {
-        cy.wait(`@standings${session.id}`).then((xhr) => {
-            const standings = xhr.responseBody as Array<TeamRecord>;
+        cy.wait(`@standings${session.id}`).then((interception) => {
+            const standings = interception.response?.body as Array<TeamRecord>;
             const someTeam = standings[0];
             cy.findByRole('searchbox', { name: /search/i }).type(someTeam.name);
             cy.wrap(someTeam).as('search_team');
@@ -136,8 +136,8 @@ Then(`the team is visible`, assertSearchTeamVisisble);
 const clickOnTeam = (): void => {
     getActiveSession();
     cy.get<SessionInterface>('@active_session').then((session) => {
-        cy.wait(`@standings${session.id}`).then((xhr) => {
-            const standings = xhr.responseBody as Array<TeamRecord>;
+        cy.wait(`@standings${session.id}`).then((interception) => {
+            const standings = interception.response?.body as Array<TeamRecord>;
             const someTeam = standings[0];
             cy.findByRole('link', { name: RegExp(someTeam.name, 'i') }).click();
             cy.wrap(someTeam.name).as('team');
@@ -152,7 +152,7 @@ const assertNoOtherTeamVisisble = (): void => {
         cy.get<TeamRecord>('@search_team').then((searchTeam) => {
             standings.forEach((team: TeamRecord) => {
                 if (team.name != searchTeam.name) {
-                    cy.findByRole('row', { name: RegExp(team.name, 'i') }).should('not.be.visible');
+                    cy.findByRole('row', { name: RegExp(team.name, 'i') }).should('not.exist');
                 }
             });
         });

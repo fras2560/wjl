@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-namespace */
 // ***********************************************************
@@ -40,8 +39,6 @@ declare global {
     }
 }
 
-// this prevents cypress from failing on javascript errors
-// Möbius currently has alot
 Cypress.on('uncaught:exception', () => {
     return false;
 });

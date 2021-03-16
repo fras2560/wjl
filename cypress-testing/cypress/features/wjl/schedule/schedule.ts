@@ -5,14 +5,13 @@ import { ScheduledGame } from '@Interfaces/schedule';
 
 /** Store all the schedules tables data as it is requested. */
 const schedulesHook = (): void => {
-    cy.server();
     cy.request({
         url: 'api/session',
         method: 'GET',
     }).then((sessions) => {
         sessions.body.forEach((element: SessionInterface) => {
             cy.wrap(element).as(`session${element.id}`);
-            cy.route('GET', `/schedule/${element.id}`).as(`schedule${element.id}`);
+            cy.intercept('GET', `/schedule/${element.id}`).as(`schedule${element.id}`);
         });
     });
 };
@@ -54,8 +53,8 @@ When(`click on a field link`, clickOnField);
 const searchForTeam = (): void => {
     getActiveSession();
     cy.get<SessionInterface>('@active_session').then((session) => {
-        cy.wait(`@schedule${session.id}`).then((xhr) => {
-            const schedule = xhr.responseBody as Array<ScheduledGame>;
+        cy.wait(`@schedule${session.id}`).then((interception) => {
+            const schedule = interception.response == null ? [] : (interception.response.body as Array<ScheduledGame>);
             const someTeam = schedule[0].home_team;
             cy.findByRole('searchbox', { name: /search/i }).type(someTeam);
             cy.wrap(someTeam).as('search_team');
@@ -69,8 +68,8 @@ When(`I search for a team`, searchForTeam);
 const searchForField = (): void => {
     getActiveSession();
     cy.get<SessionInterface>('@active_session').then((session) => {
-        cy.wait(`@schedule${session.id}`).then((xhr) => {
-            const schedule = xhr.responseBody as Array<ScheduledGame>;
+        cy.wait(`@schedule${session.id}`).then((interception) => {
+            const schedule = interception.response == null ? [] : (interception.response.body as Array<ScheduledGame>);
             const someField = schedule[0].field;
             cy.findByRole('searchbox', { name: /search/i }).type(someField);
             const fieldInterface: Field = { id: schedule[0].field_id, name: someField, description: null, link: null };
@@ -85,8 +84,9 @@ When(`I search for a field`, searchForField);
 const assertScheduleDisplayed = (): void => {
     getActiveSession();
     cy.get<SessionInterface>('@active_session').then((session) => {
-        cy.wait(`@schedule${session.id}`).then((xhr) => {
-            const schedule = xhr.responseBody as Array<ScheduledGame>;
+        cy.wait(`@schedule${session.id}`).then((interception) => {
+            assert.isNotNull(interception.response);
+            const schedule = interception.response == null ? [] : (interception.response.body as Array<ScheduledGame>);
             cy.get('#session_table_1_info').then((element) => {
                 // need to find the starting index
                 // since the schedule page jumps to current date

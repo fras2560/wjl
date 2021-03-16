@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
 import { Player } from '@Interfaces/player';
 import { Team } from '@Interfaces/team';
@@ -60,8 +59,7 @@ defineParameterType({
 
 /** Store all the game sheet submissions. */
 const scoreappHook = (): void => {
-    cy.server();
-    cy.route({
+    cy.intercept({
         url: 'save_sheet',
         method: 'POST',
     }).as('savedGamesheet');
@@ -324,9 +322,9 @@ Then(`{WhichTeam} team has the hammer`, assertWhichTeamHasHammer);
 
 /** Assert that the gamesheet is saved. */
 const assertGamesheetSaved = (): void => {
-    cy.wait('@savedGamesheet').then((xhr) => {
-        expect(xhr.status).to.be.eq(200);
-        const sheet: Sheet = xhr.responseBody as Sheet;
+    cy.wait('@savedGamesheet').then((interception) => {
+        expect(interception.response?.statusCode).to.be.eq(200);
+        const sheet: Sheet = interception.response?.body as Sheet;
         cy.log(`Id of saved sheet: ${sheet.id}`);
         expect(sheet).to.haveOwnProperty('id');
         expect(sheet.id).to.not.be.null;
