@@ -40,8 +40,6 @@ declare global {
     }
 }
 
-// this prevents cypress from failing on javascript errors
-// Möbius currently has alot
 Cypress.on('uncaught:exception', () => {
     return false;
 });
