@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
 import { somePlayer } from '@Common/helpers';
 import { createTeam, updateTeam } from '@Common/models';

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
 import { Given, When, Then } from 'cypress-cucumber-preprocessor/steps';
 import { Player } from '@Interfaces/player';
 import { Team } from '@Interfaces/team';
@@ -325,7 +324,7 @@ Then(`{WhichTeam} team has the hammer`, assertWhichTeamHasHammer);
 const assertGamesheetSaved = (): void => {
     cy.wait('@savedGamesheet').then((interception) => {
         expect(interception.response?.statusCode).to.be.eq(200);
-        let sheet: Sheet = interception.response?.body as Sheet;
+        const sheet: Sheet = interception.response?.body as Sheet;
         cy.log(`Id of saved sheet: ${sheet.id}`);
         expect(sheet).to.haveOwnProperty('id');
         expect(sheet.id).to.not.be.null;
