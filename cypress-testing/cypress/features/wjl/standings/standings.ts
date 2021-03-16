@@ -23,8 +23,9 @@ const standingsHook = (): void => {
         method: 'GET',
     }).then((sessions) => {
         sessions.body.forEach((element: SessionInterface) => {
+            cy.log(`session${element.id}`);
             cy.wrap(element).as(`session${element.id}`);
-            cy.intercept('GET', `/standings/${element.id}`).as(`standings${element.id}`);
+            cy.intercept('GET', new RegExp(`/standings/${element.id}$`)).as(`standings${element.id}`);
         });
     });
 };
