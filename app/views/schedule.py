@@ -5,7 +5,8 @@ from flask_login import current_user
 from sqlalchemy import asc
 from app import wjl_app
 from app.model import Session, Match
-from app.views.helper import get_active_session, get_base_data
+from app.views.helper import get_active_session, get_base_data,\
+    get_session_default_empty
 from app.views.types import ScheduleRecord
 from app.logging import LOGGER
 from app.errors import NotFoundException
@@ -13,7 +14,7 @@ from datetime import datetime
 import json
 
 
-@wjl_app.route("/schedule/<int:session_id>")
+@wjl_app.route("/schedule/api/<int:session_id>")
 def schedule_table(session_id):
     sesh = Session.query.get(session_id)
     if sesh is None:
@@ -28,13 +29,17 @@ def schedule_table(session_id):
                     status=200, mimetype="application/json")
 
 
-@wjl_app.route("/schedule")
-def schedule():
-    league_sessions = [sesh.json() for sesh in Session.query.all()]
-    active_session = get_active_session()
+@wjl_app.route("/schedule", defaults={'active': 1})
+@wjl_app.route("/schedule/<int:active>")
+def schedule(active):
+    active = active == 1
+    league_sessions = [sesh.json()
+                       for sesh in Session.query.all()
+                       if sesh.active == active]
+    active_session = get_active_session() if active else None
     active_session = (active_session
                       if active_session is not None
-                      else league_sessions[-1])
+                      else get_session_default_empty(league_sessions))
     return render_template("schedule.html",
                            base_data=get_base_data(),
                            league_sessions=league_sessions,

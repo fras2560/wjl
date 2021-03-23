@@ -76,12 +76,12 @@
               </li>
               {% endif %}
               <li class="nav-item" title="schedule">
-                <a class="nav-link" href="{{url_for('schedule') }}" data-cy="schedule">
+                <a class="nav-link" href="{{url_for('schedule', active=1) }}" data-cy="schedule">
                   Schedule
                 </a>
               </li>
               <li class="nav-item" title="standings">
-                <a class="nav-link" href="{{url_for('standings') }}" data-cy="standings">
+                <a class="nav-link" href="{{url_for('standings', active=1) }}" data-cy="standings">
                   Standings
                 </a>
               </li>
@@ -97,6 +97,19 @@
                 </a>
               </li>
               {% endif %}
+              <li class="nav-item dropdown" title="standings">
+                <a id="archivesNav" class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false" data-cy="archives">
+                  Archives
+                </a>
+                <div class="dropdown-menu" aria-labelledby="standingsNav">
+                  <a class="nav-link" href="{{url_for('standings', active=0) }}" data-cy="active-standings" title="Active Standings">
+                    Standings
+                  </a>
+                  <a class="nav-link" href="{{url_for('schedule', active=0) }}" data-cy="archive-standings" title="Archive Schedule">
+                    Schedule
+                  </a>
+                </div>
+              </li>
               {% if base_data.is_convenor %}
               <li class="nav-item dropdown" title="Admin">
                 <a id="adminNav" class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false" data-cy="admin">

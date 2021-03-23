@@ -112,7 +112,7 @@ function ready() {
 function loadSession(session_id) {
     $.ajax({
         type: "GET",
-        url: "/schedule/" + session_id,
+        url: "/schedule/api/" + session_id,
         contentType: "application/json",
         dataType: "json",
         async: true,

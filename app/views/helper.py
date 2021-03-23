@@ -41,3 +41,10 @@ def get_active_session() -> Session:
             LOGGER.debug(f"Active session is {sesh}")
             return Session.query.get(sesh[2])
     return None
+
+
+def get_session_default_empty(sessions) -> Session:
+    """Get a session from list of sessions but if empty return empty session"""
+    if len(sessions) >= 1:
+        return sessions[-1]
+    return Session("no sessions").json()
