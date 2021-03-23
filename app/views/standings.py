@@ -1,31 +1,36 @@
 # -*- coding: utf-8 -*-
 """Holds views that are related to the standings page."""
+import json
+from app.logging import LOGGER
+from app.model import Session, Match, Sheet, WhichTeam
+from app.views.types import TeamRecord
 from flask import render_template, Response
 from flask_login import current_user
 from sqlalchemy import or_, not_
 from app import wjl_app
-from app.views.helper import get_active_session, get_base_data
-from app.views.types import TeamRecord
-from app.model import Session, Match, Sheet, WhichTeam
-from app.logging import LOGGER
-import json
+from app.views.helper import get_active_session, get_base_data,\
+    get_session_default_empty
 
 
-@wjl_app.route("/standings")
-def standings():
+@wjl_app.route("/standings", defaults={'active': 1})
+@wjl_app.route("/standings/<int:active>")
+def standings(active):
     """A route to get the standings table."""
-    league_sessions = [sesh.json() for sesh in Session.query.all()]
-    active_session = get_active_session()
+    active = active == 1
+    league_sessions = [sesh.json()
+                       for sesh in Session.query.all()
+                       if sesh.active == active]
+    active_session = get_active_session() if active else None
     active_session = (active_session
                       if active_session is not None
-                      else league_sessions[-1])
+                      else get_session_default_empty(league_sessions))
     return render_template("standings.html",
                            base_data=get_base_data(),
                            league_sessions=league_sessions,
                            active_session=active_session)
 
 
-@wjl_app.route("/standings/<int:session_id>")
+@wjl_app.route("/standings/api/<int:session_id>")
 def standing_table(session_id: int):
     """An API that gets the standings table for the given session."""
     sesh = Session.query.get(session_id)
@@ -37,7 +42,7 @@ def standing_table(session_id: int):
     matches = (Match.query
                .filter(Match.session_id == session_id)
                .filter(not_(or_(Match.away_team_id == None,
-                            Match.home_team_id == None))).all())
+                                Match.home_team_id == None))).all())
     teams = {}
     for match in matches:
         if match.away_team_id not in teams.keys():

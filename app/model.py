@@ -324,16 +324,19 @@ class Session(DB.Model):
     """
     id = DB.Column(DB.Integer, primary_key=True)
     name = DB.Column(DB.String(120), unique=True)
+    active = DB.Column(DB.Boolean)
     matches = DB.relationship('Match',
                               backref='matches', lazy='dynamic')
 
-    def __init__(self, name: str):
+    def __init__(self, name: str, active: bool = True):
         self.name = name
+        self.active = active
 
     def json(self) -> dict:
         return {
             "id": self.id,
-            "name": self.name
+            "name": self.name,
+            "active": self.active
         }
 
     def __str__(self) -> str:
@@ -347,8 +350,9 @@ class Session(DB.Model):
             if sesh is None:
                 raise NotFoundException(f"Session not found: {session_id}")
             sesh.name = data.get("name")
+            sesh.active = data.get("active")
             return sesh
-        return Session(data.get("name"))
+        return Session(data.get("name"), data.get("active", True))
 
 
 class Match(DB.Model):

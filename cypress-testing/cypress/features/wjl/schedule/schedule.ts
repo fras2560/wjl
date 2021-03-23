@@ -11,7 +11,7 @@ const schedulesHook = (): void => {
     }).then((sessions) => {
         sessions.body.forEach((element: SessionInterface) => {
             cy.wrap(element).as(`session${element.id}`);
-            cy.intercept('GET', `/schedule/${element.id}`).as(`schedule${element.id}`);
+            cy.intercept('GET', `/schedule/api/${element.id}`).as(`schedule${element.id}`);
         });
     });
 };

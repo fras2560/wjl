@@ -3,6 +3,7 @@
 from flask_login import current_user
 from datetime import datetime
 from sqlalchemy import func
+from app import wjl_app
 from app.views.types import WebsiteData
 from app.authentication import are_logged_in, get_login_email
 from app.helpers import is_date_between_range
@@ -19,7 +20,8 @@ def get_base_data() -> WebsiteData:
     return {
         "logged_in": are_logged_in(),
         "email": get_login_email(),
-        "is_convenor": are_logged_in() and current_user.is_convenor
+        "is_convenor": are_logged_in() and current_user.is_convenor,
+        "testing": wjl_app.config['ARE_TESTING']
     }
 
 
@@ -39,3 +41,10 @@ def get_active_session() -> Session:
             LOGGER.debug(f"Active session is {sesh}")
             return Session.query.get(sesh[2])
     return None
+
+
+def get_session_default_empty(sessions) -> Session:
+    """Get a session from list of sessions but if empty return empty session"""
+    if len(sessions) >= 1:
+        return sessions[-1]
+    return Session("no sessions").json()
