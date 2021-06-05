@@ -72,12 +72,18 @@
             </tbody>
         </table>
     </div>
-    <div id="submittedGames" class="tab-pane fade in" aria-labelledby="submittedGamesLink">
-        <table id="submitted_games_table" width="100%" class="display">
+    <div id="submittedGames" class="tab-pane fade in" style="width: 90%" aria-labelledby="submittedGamesLink">
+        <table id="submitted_games_table" class="display">
             <thead>
                 <tr>
                     <th data-priority="3">
                       Date
+                    </th>
+                    <th data-priority="2">
+                        Add
+                    </th>
+                    <th data-priority="1">
+                        Edit
                     </th>
                     <th data-priority="4">
                       Home Team
@@ -85,12 +91,7 @@
                     <th data-priority="5">
                       Away Team
                     </th>
-                    <th data-priority="2">
-                      Add
-                    </th>
-                    <th data-priority="1">
-                      Edit
-                    </th>
+
                 </tr>
             </thead>
             <tbody>
@@ -98,12 +99,6 @@
                 <tr>
                     <td>
                         {{match.date}}
-                    </td>
-                    <td>
-                        {{match.home_team}}
-                    </td>
-                    <td>
-                        {{match.away_team}}
                     </td>
                     <td>
                         <a href="{{match.submit_link}}" class="btn btn-success">
@@ -115,6 +110,13 @@
                             Edit scores
                         </a>
                     </td>
+                    <td>
+                        {{match.home_team}}
+                    </td>
+                    <td>
+                        {{match.away_team}}
+                    </td>
+
                 </tr>
                 {% endfor %}
             </tbody>
@@ -150,10 +152,12 @@ function ready() {
     $('#outstanding_games_table').DataTable({
         "responsive": true,
         "order": [[0, "asc"]],
+        "pageLength": 25, 
     });
     $('#submitted_games_table').DataTable({
         "responsive": true,
-        "order": [[0, "asc"]],
+        "order": [[0, "desc"]],
+        "pageLength": 25,
     });
 }
 </script>
