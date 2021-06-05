@@ -42,7 +42,7 @@ def add_teams(file_path: str, field_lookup: dict) -> dict:
 
 def add_session() -> Session:
     """Add the session to the database."""
-    sesh = Session("Summer 2020")
+    sesh = Session("Summer 2021")
     DB.session.add(sesh)
     DB.session.commit()
     return sesh
