@@ -62,19 +62,6 @@
                   Home <span class="sr-only">(current)</span>
                 </a>
               </li>
-              {% if base_data.logged_in %}
-              <li class="nav-item" title="logout">
-                <a class="nav-link" href="{{ url_for('logout') }}" title="{{base_data.email}}" data-cy="logout">
-                Logout
-                </a>
-              </li>
-              {% else %}
-              <li class="nav-item" title="login">
-              <a class="nav-link" href="{{url_for('loginpage') }}" data-cy="login">
-                Login
-              </a>
-              </li>
-              {% endif %}
               <li class="nav-item" title="schedule">
                 <a class="nav-link" href="{{url_for('schedule', active=1) }}" data-cy="schedule">
                   Schedule
@@ -85,15 +72,40 @@
                   Standings
                 </a>
               </li>
-              <li class="nav-item" title="gamesheet">
-                <a class="nav-link" href="{{url_for('submit_score') }}" data-cy="gamesheet">
-                  Gamesheet
+              <li class="nav-item" title="videos">
+                <a class="nav-link" href="{{url_for('videos') }}" data-cy="standings">
+                  Videos
                 </a>
               </li>
               {% if base_data.logged_in %}
-              <li class="nav-item" title="requests">
-                <a class="nav-link" href="{{url_for('pending_requests') }}" data-cy="requests" title="Requests">
-                  Requests
+              <li class="nav-item dropdown" title="menu">
+                <a id="menuNav" class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false" data-cy="menu">
+                  Menu
+                </a>
+                <div class="dropdown-menu" aria-labelledby="menuNav">
+                  {% if base_data.is_convenor %}
+                  <a class="nav-link" href="{{url_for('edit_games') }}" data-cy="matches" title="Matches">
+                    Matches
+                  </a>
+                  {% endif %}
+                  <a class="nav-link" href="{{url_for('submit_score') }}" data-cy="gamesheet">
+                    Gamesheet
+                  </a>
+                  <a class="nav-link" href="{{url_for('pending_requests') }}" data-cy="requests" title="Requests">
+                    Requests
+                  </a>
+                  <a class="nav-link" href="{{ url_for('logout') }}" title="{{base_data.email}}" data-cy="logout">
+                    Logout
+                    </a>
+                  <a class="nav-link" href="{{url_for('delete_account_page') }}" data-cy="delete" title="Delete Account">
+                    Delete Account
+                  </a>
+                </div>
+              </li>
+              {% else %}
+              <li class="nav-item" title="login">
+                <a class="nav-link" href="{{url_for('loginpage') }}" data-cy="login">
+                  Login
                 </a>
               </li>
               {% endif %}
@@ -110,18 +122,6 @@
                   </a>
                 </div>
               </li>
-              {% if base_data.is_convenor %}
-              <li class="nav-item dropdown" title="Admin">
-                <a id="adminNav" class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false" data-cy="admin">
-                  Admin
-                </a>
-                <div class="dropdown-menu" aria-labelledby="adminNav">
-                  <a class="nav-link" href="{{url_for('edit_games') }}" data-cy="matches" title="Matches">
-                    Matches
-                  </a>
-                </div>
-              </li>
-              {% endif %}
             </ul>
           </div>
         </nav>

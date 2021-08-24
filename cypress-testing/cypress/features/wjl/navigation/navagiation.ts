@@ -12,13 +12,14 @@ export type LinkName =
     | 'gamesheet'
     | 'admin'
     | 'requests'
-    | 'matches';
+    | 'matches'
+    | 'videos';
 
 /** All the public standard navigation  links. */
-const STANDARD_LINKS = ['home', 'schedule', 'standings', 'gamesheet'];
+const STANDARD_LINKS = ['home', 'schedule', 'standings', 'videos'];
 
-/** A link the requires the user to be logged in. */
-const LOGGED_IN_LINKS = ['requests'];
+/** The menu links that require a basic account. */
+const MENU_LINKS = ['gamesheet', 'requests', 'delete'];
 
 /** The admin navigation links. */
 const ADMIN_LINKS = ['matches'];
@@ -26,15 +27,15 @@ const ADMIN_LINKS = ['matches'];
 /** Defines the a gherkin parameter type called LinkName. */
 defineParameterType({
     name: 'LinkName',
-    regexp: RegExp('home|login|logout|schedule|standings|gamesheet|admin|requests|matches'),
+    regexp: RegExp('home|login|logout|schedule|standings|gamesheet|admin|requests|matches|videos'),
     transformer: (page: string): LinkName => {
         return page.toLowerCase().replace(' ', '') as LinkName;
     },
 });
 
-/** Click admin naviation. */
-const clickAdmin = (): void => {
-    cy.findByRole('button', { name: /admin/i }).click();
+/** Click Menu naviation. */
+const clickMenu = (): void => {
+    cy.findByRole('button', { name: /menu/i }).click();
 };
 
 /** Assert there is a way to login. */
@@ -49,9 +50,9 @@ Then(`I see option to login`, assertLoginOption);
 const assertLogoutOption = (): void => {
     // assert logged in as the expected user
     cy.findByRole('list', { name: 'NavigationItems' }).within(() => {
+        clickMenu();
         cy.get<Player>('@current_player').then((player) => {
-            cy.findByRole('listitem', { name: /logout/i }).should('exist');
-            cy.findByRole('link', { name: player.email }).should('be.visible');
+            cy.findByRole('listitem', { name: /menu/i }).findByRole('link', { name: player.email });
         });
     });
 };
@@ -63,8 +64,8 @@ Then(`I see option to logout`, assertLogoutOption);
  * @return the navigation link
  */
 const getNavigationElement = (link: LinkName): Cypress.Chainable<JQuery> => {
-    if (ADMIN_LINKS.includes(link)) {
-        return cy.findByRole('listitem', { name: 'Admin' }).findByRole('link', { name: RegExp(link, 'i') });
+    if (ADMIN_LINKS.includes(link) || MENU_LINKS.includes(link)) {
+        return cy.findByRole('listitem', { name: /menu/i }).findByRole('link', { name: RegExp(link, 'i') });
     }
     return cy.findByRole('list', { name: 'NavigationItems' }).findByRole('listitem', { name: RegExp(link, 'i') });
 };
@@ -87,16 +88,16 @@ Then(`all standard links are visible`, assertLinksVisible);
 
 /** Assert all the convenor links are visisible. */
 const assertConvenorLinks = (): void => {
-    clickAdmin();
-    for (const link of ADMIN_LINKS.concat(LOGGED_IN_LINKS)) {
+    clickMenu();
+    for (const link of ADMIN_LINKS.concat(MENU_LINKS)) {
         assertLinkVisisble(link as LinkName);
     }
 };
 Then(`all convenor links are visible`, assertConvenorLinks);
 
 const clickLink = (link: LinkName): void => {
-    if (ADMIN_LINKS.includes(link)) {
-        clickAdmin();
+    if (ADMIN_LINKS.includes(link) || MENU_LINKS.includes(link)) {
+        clickMenu();
     }
     getNavigationElement(link).click();
 };
