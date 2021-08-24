@@ -6,11 +6,32 @@ from flask_login import current_user, logout_user, login_required,\
 from app import wjl_app
 from app.authentication import is_facebook_supported, is_github_supported,\
     is_gmail_supported
-from app.model import LeagueRequest, Team, Player, DB
+from app.model import LeagueRequest, OAuth, Team, Player, DB
 from app.logging import LOGGER
 from app.views.helper import get_base_data
 from app.errors import OAuthException, NotFoundException,\
     HaveLeagueRequestException
+
+
+@wjl_app.route("/delete-account")
+def delete_account_page():
+    """A route used to delete the user account."""
+    LOGGER.info(f"{current_user} is considering deleting their account")
+    return render_template("delete_account.html",
+                           base_data=get_base_data())
+
+
+@wjl_app.route("/delete-user", methods=["POST"])
+def delete_account():
+    """A post request that deletes the current user."""
+    LOGGER.info(f"{current_user} is deleting their account")
+    current_user.teams = []
+    DB.session.commit()
+    OAuth.query.filter_by(player_id=current_user.id).delete()
+    DB.session.delete(current_user)
+    DB.session.commit()
+    logout_user()
+    return redirect(url_for("homepage"))
 
 
 @wjl_app.route("/authenticate")
