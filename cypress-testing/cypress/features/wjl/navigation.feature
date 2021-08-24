@@ -21,6 +21,7 @@ Feature: Testing the navigation bar
             | home      |
             | schedule  |
             | standings |
+            | videos    |
 
     Scenario Outline: All resources that are protected work when logged-in and see option to logout
         Given I am logged in
@@ -33,6 +34,7 @@ Feature: Testing the navigation bar
             | home      |
             | schedule  |
             | standings |
+            | videos    |
 
     Scenario Outline: All private links redirect to login
         Given I am not logged in
@@ -41,9 +43,8 @@ Feature: Testing the navigation bar
         Then I am on the login page
 
         Examples:
-            | link      |
-            | gamesheet |
-            | login     |
+            | link  |
+            | login |
 
     Scenario Outline: All private links work when logged in
         Given I am logged in
