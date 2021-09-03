@@ -1,0 +1,215 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .wheel-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    .mainbox {
+        position: relative;
+        width: 300px;
+        height: 300px;
+    }
+    .mainbox:before {
+        position: absolute;
+        content: '';
+        width: 32px;
+        height: 32px;
+        background: url('https://learndesigntutorial.com/wp-content/uploads/2021/03/arrow-left.png') no-repeat;
+        background-size: 32px;
+        right: -30px;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+    .box {
+        width: 100%;
+        height: 100%;
+        position: relative;
+        border-radius: 50%;
+        border: 10px solid #333;
+        overflow: hidden;
+        transition: all ease 5s;
+    }
+    span {
+        width: 50%;
+        height: 50%;
+        display: inline-block;
+        position: absolute;
+    }
+
+    .span1 {
+        clip-path: polygon(0 92%, 100% 50%, 0 8%);
+        top: 72px;
+        left: 0;
+        background-color: #ffeb3b;
+    }
+    .span2 {
+        clip-path: polygon(100% 92%, 0 50%, 100% 8%);
+        top: 72px;
+        right: 0;
+        background-color: #e91e63;
+    }
+    .span3 {
+        clip-path: polygon(50% 0%, 8% 100%, 92% 100%);
+        bottom: 0;
+        left: 72px;
+        background-color: #4caf50;
+    }
+    .span4 {
+        clip-path: polygon(50% 100%, 92% 0, 8% 0);
+        top: 0;
+        left: 72px;
+        background-color: #3f51b5;
+    }
+
+    /*EXTRAS*/
+    .box1 .span3 b {
+        transform: translate(-50%, -50%) rotate(-270deg);
+    }
+    .box1 .span1 b,
+    .box2 .span1 b {
+        transform: translate(-50%, -50%) rotate(185deg);
+    }
+    .box2 .span3 b {
+        transform: translate(-50%, -50%) rotate(90deg);
+    }
+    .box1 .span4 b,
+    .box2 .span4 b {
+        transform: translate(-50%, -50%) rotate(-85deg);
+    }
+
+
+    .box2 {
+        width: 100%;
+        height: 100%;
+        transform: rotate(-135deg);
+    }
+    span b {
+        width: 40px;
+        height: 40px;
+        line-height: 40px;
+        border-radius: 50%;
+        font-size: 18px;
+        text-align: center;
+        background-color: white;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        box-shadow: inset 0 3px 3px 0 #717171;
+    }
+    .spin {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 75px;
+        height: 75px;
+        border-radius: 50%;
+        border: 4px solid #fff;
+        background-color: #FF5722;
+        color: #fff;
+        box-shadow: 0 5px 20px #000;
+        font-weight: bold;
+        font-size: 22px;
+        cursor: pointer;
+    }
+    .spin:active {
+        width: 70px;
+        height: 70px;
+        font-size: 20px;
+    }
+    .mainbox.animate:before {
+        animation: animateArrow 0.7s ease infinite; 
+    }
+    @keyframes animateArrow {
+        50% {
+            right: -40px;
+        }
+    }
+</style>
+<div class="container">
+    <div class="wheel-container">
+        <div id="mainbox" class="mainbox">
+            <div id="box" class="box">
+                <div class="box1">
+                    <span class="span1">
+                        <b>
+                            <i class="fa fa-trash" aria-hidden="true"></i>
+                        </b>
+                    </span>
+                    <span class="span2">
+                        <b>
+                            <i class="fa fa-star" aria-hidden="true"></i>
+                        </b>
+                    </span>
+                    <span class="span3">
+                        <b>
+                            <i class="fa fa-server" aria-hidden="true"></i>
+                        </b>
+                    </span>
+                    <span class="span4">
+                        <b>
+                            <i class="fa fa-futbol-o" aria-hidden="true"></i>
+                        </b>
+                    </span>
+                </div>
+                <div class="box2">
+                    <span class="span1">
+                        <b>
+                            <i class="fa fa-futbol-o" aria-hidden="true"></i>
+                        </b>
+                    </span>
+                    <span class="span2">
+                        <b>
+                            <i class="fa fa-server" aria-hidden="true"></i>
+                        </b>
+                    </span>
+                    <span class="span3">
+                        <b>
+                            <i class="fa fa-trash" aria-hidden="true"></i>
+                        </b>
+                    </span>
+                    <span class="span4">
+                        <b>
+                            <i class="fa fa-star" aria-hidden="true"></i>
+                        </b>
+                    </span>
+                </div>
+            </div>
+            <button class="spin" onclick="myfunction()">SPIN</button>
+        </div>
+    </div>
+    <div>
+        <i class="fa fa-futbol-o" aria-hidden="true"></i> - Spikeball
+        <br>
+        <i class="fa fa-server" aria-hidden="true"></i> - Ladder ball
+        <br>
+        <i class="fa fa-trash" aria-hidden="true"></i> - Kan Jams
+        <br>
+        <i class="fa fa-star" aria-hidden="true"></i> - Home team choice
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+function myfunction() {
+	var x = 1024;
+	var y = 9999;
+	var deg = Math.floor(Math.random() * (x - y)) + y; 
+	document.getElementById('box').style.transform = "rotate("+deg+"deg)";
+
+	var element = document.getElementById('mainbox');
+	element.classList.remove('animate');
+	setTimeout(function(){
+		element.classList.add('animate');
+		var valueList = ["10","20","50","100","150","200","400","500",];
+		var getValue = valueList[Math.floor(Math.random() * valueList.length)];
+		// alert(getValue); 
+	}, 5000);
+}
+</script>
+{% endblock %}

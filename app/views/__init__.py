@@ -26,6 +26,12 @@ def homepage():
                            base_data=get_base_data(),)
 
 
+@wjl_app.route("/wheel-spin")
+def spin_wheel_page():
+    """A route for the spinning wheel page."""
+    return render_template("game_wheel.html", base_data=get_base_data())
+
+
 for loader, name, is_pkg in pkgutil.walk_packages(__path__):
     module = loader.find_module(name).load_module(name)
 
