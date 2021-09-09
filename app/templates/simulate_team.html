@@ -6,6 +6,7 @@
     </h1>
     <div class="row align-items-center mb-3">
         <div class="col-6 col-md-4 ">
+            Your team
         </div>
         <div class="col-md-4 d-none d-sm-block" >
             versus
@@ -283,6 +284,9 @@
                     <li>
                         <i class="fa fa-gavel fa-button" aria-hidden="true"></i> - hammer/redemption: team with extra throw 
                     </li>
+                    <li>
+                        <i class="fa fa-circle-o" aria-hidden="true"></i> - miss: team missed on their throws
+                    </li>
                 </ul>
                 <p>
                     Use the buttons to help keep track of your score as you play.
@@ -360,7 +364,7 @@ function makeMove(team_map) {
     const some_number = Math.random();
     for (const [move, probability] of Object.entries(team_map)) {
         if (some_number < probability) {
-            console.log(move);
+            console.log({"team_map": team_map, 'move': move, 'probability': probability})
             return move;
         }
     }
@@ -396,7 +400,14 @@ function startApp(model, team_id) {
             is_computer_throwing: false,
             previous_computer_throws: [],
             team_model: model,
-            team_map: generateMapFromModel(model)
+            team_map: generateMapFromModel(model),
+            team_close_map: generateMapFromModel({
+                'miss': 0.3 * model.jam + model.miss,
+                'jam': 0.1 * model.jam,
+                'deuce': model.deuce + 0.3 * model.jam,
+                'dinger': model.deuce + 0.3 * model.jam,
+                'slot': model.slot
+            })
         },
         delimiters: ['[[', ']]'],
         methods: {
@@ -427,12 +438,13 @@ function startApp(model, team_id) {
             computerMove: function() {
                 this.is_computer_throwing = true;
                 this.previous_computer_throws = [];
-                let frisbee_throw = makeMove(this.team_map);
+                let frisbee_throw = makeMove((this.overtime_method != SUDDEN_DEATH && this.active_sheet.away_score > this.overtime_method * 10 + 18 ) ? this.team_close_map : this.team_map);
                 (frisbee_throw == 'slot') ? this.hitSlot(this.match.away_team_id) : this.addScore(this.match.away_team_id, convertMoveToScore(frisbee_throw));
                 this.previous_computer_throws.push(frisbee_throw);
                 if (!this.sheetComplete(this.active_sheet,this.overtime_method)) {
                     setTimeout(() => {
-                        frisbee_throw = makeMove(this.team_map);
+                        team_map = (this.overtime_method != SUDDEN_DEATH && this.active_sheet.away_score > this.overtime_method * 10 + 18 ) ? this.team_close_map : this.team_map;
+                        frisbee_throw = makeMove((this.overtime_method != SUDDEN_DEATH && this.active_sheet.away_score > this.overtime_method * 10 + 18 ) ? this.team_close_map : this.team_map);
                         (frisbee_throw == 'slot') ? this.hitSlot(this.match.away_team_id) : this.addScore(this.match.away_team_id, convertMoveToScore(frisbee_throw));
                         this.previous_computer_throws.push(frisbee_throw);
                         this.is_computer_throwing = false;
