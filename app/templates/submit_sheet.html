@@ -416,7 +416,7 @@ function startApp(match) {
                 const temp_sheet = Object.assign({}, this.active_sheet);
                 const score_limit = 
                     (this.overtime_method == SUDDEN_DEATH)
-                    ? Math.max(match.home_score, match.away_score) + 1
+                    ? Math.max(temp_sheet.home_score, temp_sheet.away_score) + 1
                     : this.overtime_method * 10 + 21;
                 if (home_team) {
                     temp_sheet.home_slot = true;
