@@ -8,6 +8,7 @@ from app.model import Match, Sheet, Team
 from app.logging import LOGGER
 import json
 
+
 @wjl_app.route("/simulator/pick-team")
 def pick_team():
     teams = [team.json() for team in Team.query.all()]
@@ -21,16 +22,15 @@ def simulate_game(team_id: int, difficulty: int):
     team = Team.query.get(team_id)
     return render_template("simulate_team.html",
                            base_data=get_base_data(),
-                           team = team.json(),
+                           team=team.json(),
                            team_id=team_id,
                            difficulty=difficulty)
 
 
 @wjl_app.route("/simulator/team/model/<int:team_id>/<int:difficulty>", methods=["GET"])
 def team_simulation_model(team_id: int, difficulty: int):
-
     return Response(json.dumps(get_team_model(team_id, difficulty)),
-                        status=200, mimetype="application/json")
+                    status=200, mimetype="application/json")
 
 
 class TeamSimulation(TypedDict):
@@ -45,8 +45,8 @@ class TeamSimulation(TypedDict):
 def pull_team_stats(team_id: int, sheet: Sheet, match: Match) -> dict:
     """Return the team stats from the given sheet."""
     if (team_id == match.away_team_id):
-        my_throws = sheet.away_jams +  sheet.away_deuces + sheet.away_dingers + (1 if sheet.away_slot else 0)
-        their_throws = sheet.home_jams +  sheet.home_deuces + sheet.home_dingers + (1 if sheet.home_slot else 0)
+        my_throws = sheet.away_jams + sheet.away_deuces + sheet.away_dingers + (1 if sheet.away_slot else 0)
+        their_throws = sheet.home_jams + sheet.home_deuces + sheet.home_dingers + (1 if sheet.home_slot else 0)
         return {
             'slot': 1 if sheet.away_slot else 0,
             'jam': sheet.away_jams,
@@ -55,8 +55,8 @@ def pull_team_stats(team_id: int, sheet: Sheet, match: Match) -> dict:
             'miss': 0 if my_throws > their_throws else their_throws - my_throws
         }
     else:
-        my_throws = sheet.home_jams +  sheet.home_deuces + sheet.home_dingers + (1 if sheet.home_slot else 0)
-        their_throws = sheet.away_jams +  sheet.away_deuces + sheet.away_dingers + (1 if sheet.away_slot else 0)
+        my_throws = sheet.home_jams + sheet.home_deuces + sheet.home_dingers + (1 if sheet.home_slot else 0)
+        their_throws = sheet.away_jams + sheet.away_deuces + sheet.away_dingers + (1 if sheet.away_slot else 0)
         return {
             'slot': 1 if sheet.home_slot else 0,
             'jam': sheet.home_jams,
