@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Holds views related to game simulator app."""
+"""Holds views related to practice (game against bot)."""
 from typing import TypedDict
 from flask import render_template, Response
 from app import wjl_app
@@ -9,31 +9,31 @@ from app.logging import LOGGER
 import json
 
 
-@wjl_app.route("/simulator/pick-team")
+@wjl_app.route("/practice/pick-team")
 def pick_team():
     teams = [team.json() for team in Team.query.all()]
-    return render_template("select_team_simulator.html",
+    return render_template("select_team_practice.html",
                            base_data=get_base_data(),
                            teams=teams)
 
 
-@wjl_app.route("/simulator/team/<int:team_id>/<int:difficulty>")
-def simulate_game(team_id: int, difficulty: int):
+@wjl_app.route("/practice/team/<int:team_id>/<int:difficulty>")
+def practice_game(team_id: int, difficulty: int):
     team = Team.query.get(team_id)
-    return render_template("simulate_team.html",
+    return render_template("team_practice.html",
                            base_data=get_base_data(),
                            team=team.json(),
                            team_id=team_id,
                            difficulty=difficulty)
 
 
-@wjl_app.route("/simulator/team/model/<int:team_id>/<int:difficulty>", methods=["GET"])
-def team_simulation_model(team_id: int, difficulty: int):
+@wjl_app.route("/practice/team/model/<int:team_id>/<int:difficulty>", methods=["GET"])
+def team_practice_model(team_id: int, difficulty: int):
     return Response(json.dumps(get_team_model(team_id, difficulty)),
                     status=200, mimetype="application/json")
 
 
-class TeamSimulation(TypedDict):
+class PracticeTeam(TypedDict):
     """A model for a team simulation."""
     slot: float
     dingers: float
@@ -66,7 +66,7 @@ def pull_team_stats(team_id: int, sheet: Sheet, match: Match) -> dict:
         }
 
 
-def get_team_model(team_id: int, difficulty: int) -> TeamSimulation:
+def get_team_model(team_id: int, difficulty: int) -> PracticeTeam:
     """Return the team simulation model"""
     sess = get_active_session()
     matches = Match.query.filter(Match.session_id == sess.id).all()

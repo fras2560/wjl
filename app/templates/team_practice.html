@@ -2,7 +2,7 @@
 {% block content %}
 <div id="submitScoreApp">
     <h1>
-        Simulate a game
+        Practice
     </h1>
     <div class="row align-items-center mb-3">
         <div class="col-6 col-md-4 ">
@@ -285,7 +285,7 @@
                         <i class="fa fa-gavel fa-button" aria-hidden="true"></i> - hammer/redemption: team with extra throw 
                     </li>
                     <li>
-                        <i class="fa fa-circle-o" aria-hidden="true"></i> - miss: team missed on their throws
+                        <i class="fa fa-circle-o" aria-hidden="true"></i> - miss: team missed on their throw
                     </li>
                 </ul>
                 <p>
@@ -312,7 +312,7 @@ window.appReady = false;
 function ready() {
     $.ajax({
         type: "GET",
-        url: "{{ url_for('team_simulation_model', team_id=team_id, difficulty=difficulty) }}",
+        url: "{{ url_for('team_practice_model', team_id=team_id, difficulty=difficulty) }}",
         contentType: "application/json",
         dataType: "json",
         async: true,
@@ -441,7 +441,8 @@ function startApp(model, team_id) {
                 let frisbee_throw = makeMove((this.overtime_method != SUDDEN_DEATH && this.active_sheet.away_score > this.overtime_method * 10 + 18 ) ? this.team_close_map : this.team_map);
                 (frisbee_throw == 'slot') ? this.hitSlot(this.match.away_team_id) : this.addScore(this.match.away_team_id, convertMoveToScore(frisbee_throw));
                 this.previous_computer_throws.push(frisbee_throw);
-                if (!this.sheetComplete(this.active_sheet,this.overtime_method)) {
+                someone_won = this.sheetComplete(this.active_sheet,this.overtime_method)
+                if (!someone_won || this.active_sheet.home_score > this.active_sheet.away_score ) {
                     setTimeout(() => {
                         team_map = (this.overtime_method != SUDDEN_DEATH && this.active_sheet.away_score > this.overtime_method * 10 + 18 ) ? this.team_close_map : this.team_map;
                         frisbee_throw = makeMove((this.overtime_method != SUDDEN_DEATH && this.active_sheet.away_score > this.overtime_method * 10 + 18 ) ? this.team_close_map : this.team_map);
@@ -495,10 +496,14 @@ function startApp(model, team_id) {
                 const temp = this.active_sheet;
                 this.previous_states.push(temp);
                 this.active_sheet = temp_sheet;
-                if (home_team && !this.sheetComplete(this.active_sheet,this.overtime_method)) {
+                someone_won = this.sheetComplete(this.active_sheet,this.overtime_method)
+                if (home_team && (!someone_won || (someone_won && this.active_sheet.home_score > this.active_sheet.away_score))) {
                     const numberOfThrows = this.previous_states.length;
                     if (numberOfThrows % 2 == 0 && numberOfThrows > 0) {
                         // computer show go every two moves
+                        this.computerMove();
+                    } else if (someone_won && this.active_sheet.home_score > this.active_sheet.away_score){
+                        // unless the human won the game computer gets last throw
                         this.computerMove();
                     }
                 }
