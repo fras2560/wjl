@@ -133,6 +133,11 @@ table.dataTable thead th.sorting_desc:after {
   color: black !important;
 }
 
+ul.simulator {
+  list-style-position: inside;
+}
+
+
 @media (max-width: 576px) {
   .mobile-video {
     height: 250px !important;

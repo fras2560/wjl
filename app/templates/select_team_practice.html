@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>
+    Pick a team to play
+</h1>
+<div class="container">
+    <ul class="simulator">
+        {% for team in teams %}
+            <li class="mt-3 mb-3">
+                <div class="btn-group" role="group" aria-label="Difficult">
+                    <a type="button" href="{{url_for('practice_game', team_id=team.id, difficulty=3)}}" class="btn btn-success">
+                        Easy
+                    </a>
+                    <a type="button" href="{{url_for('practice_game', team_id=team.id, difficulty=2)}}" class="btn btn-warning text-white">
+                        Medium
+                    </a>
+                    <a type="button" href="{{url_for('practice_game', team_id=team.id, difficulty=1)}}" class="btn btn-danger text-white">
+                        Hard
+                    </a>
+                </div>
+                <br> 
+                {{team.name}}
+            </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

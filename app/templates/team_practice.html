@@ -1,0 +1,644 @@
+{% extends "base.html" %}
+{% block content %}
+<div id="submitScoreApp">
+    <h1>
+        Practice
+    </h1>
+    <div class="row align-items-center mb-3">
+        <div class="col-6 col-md-4 ">
+            Your team
+        </div>
+        <div class="col-md-4 d-none d-sm-block" >
+            versus
+        </div>
+        <div class="col-6 col-md-4 ">
+            {{team.name}}<br>
+            <i class="fa fa-gavel clickableIcon" title="Away team hammer"></i>
+            <br>
+            <i v-if="is_computer_throwing" class="fa fa-clock-o" aria-hidden="true" title="Opponent throwing"></i>
+            <br>
+        </div>
+    </div>
+    <div class="row align-items-center">
+        <div class="col-6 col-sm-4" data-cy="home_wins">
+            [[ howManyWins(match.home_team_id, match) ]] -<i class="fa fa-trophy clickableIcon" title="Home team wins"></i> 
+        </div>
+        <div class="col-md-4 d-none d-sm-block" >
+        </div>
+        <div class="col-6 col-sm-4" data-cy="away_wins">
+            [[ howManyWins(match.away_team_id, match) ]] - <i class="fa fa-trophy clickableIcon" title="Away team wins"></i>
+        </div>
+    </div>
+    <div class="row align-items-center">
+        <div class="col-6 col-sm-4" data-cy="homeScore">
+            [[ active_sheet.home_score ]]
+        </div>
+        <div class="col-md-4 d-none d-sm-block" >
+        </div>
+        <div class="col-6 col-sm-4" data-cy="awayScore">
+            [[ active_sheet.away_score ]]
+        </div>
+    </div>
+    <div class="row align-item-center">
+        <div class="col-6 col-sm-4">
+            <button
+                type="button"
+                v-if="teamControlsEnabled(match.home_team_id)"
+                v-on:click="hitSlot(match.home_team_id)"
+                class="btn btn-danger scoreAppButton"
+                title="Home team hit a slot">
+                <i class="fa fa-bullseye fa-button" title="Home team slot"></i>[[ (active_sheet.home_slot) ? " - gameover" : "" ]]
+            </button>
+            <button
+                type="button"
+                v-else
+                class="btn btn-secondary scoreAppButton"
+                disabled
+                title="Reached score - home slot">
+                <i class="fa fa-bullseye fa-button" title="Home team slot"></i>[[ (active_sheet.home_slot) ? " - gameover" : "" ]]
+            </button>
+        </div>
+        <div class="col-md-4 d-none d-sm-block" >
+        </div>
+        <div class="col-6 col-sm-4">
+            <i class="fa fa-bullseye fa-button" title="Away team slot"></i>[[ (active_sheet.away_slot) ? " - gameover" : "" ]]
+        </div>
+    </div>
+
+    <div class="row align-item-center">
+        <div class="col-6 col-sm-4">
+            <button
+                type="button"
+                v-if="teamControlsEnabled(match.home_team_id)"
+                v-on:click="addScore(match.home_team_id, 3)"
+                class="btn btn-warning scoreAppButton"
+                title="Home jam">
+                <i class="fa fa-trash fa-button" title="Home team jams"></i>  - [[ active_sheet.home_jams ]]
+            </button>
+            <button
+                type="button"
+                v-else
+                class="btn btn-secondary scoreAppButton"
+                disabled
+                title="Reached score - home jam"> 
+                <i class="fa fa-trash fa-button" title="Home team jams"></i>  - [[ active_sheet.home_jams ]]
+            </button>
+        </div>
+        <div class="col-md-4 d-none d-sm-block" >
+        </div>
+        <div class="col-6 col-sm-4">
+            <i class="fa fa-trash fa-button" title="Away team jams"></i> - [[ active_sheet.away_jams ]]
+        </div>
+    </div>
+    <div class="row align-item-center">
+        <div class="col-6 col-sm-4">
+            <button
+                type="button"
+                v-if="teamControlsEnabled(match.home_team_id)"
+                v-on:click="addScore(match.home_team_id, 2)"
+                class="btn btn-success scoreAppButton"
+                title="Home deuce">
+                <i class="fa fa-hand-peace-o fa-button" title="Home team deuces"></i> - [[ active_sheet.home_deuces ]]
+            </button>
+            <button
+                type="button"
+                v-else
+                class="btn btn-secondary scoreAppButton"
+                disabled
+                title="Reached score - home deuce">
+                <i class="fa fa-hand-peace-o fa-button" title="Home team deuces"></i> - [[ active_sheet.home_deuces ]]
+            </button>
+        </div>
+        <div class="col-md-4 d-none d-sm-block" >
+        </div>
+        <div class="col-6 col-sm-4">
+            <i class="fa fa-hand-peace-o fa-button" title="Away team deuces"></i> - [[ active_sheet.away_deuces ]]
+        </div>
+    </div>
+    <div class="row align-item-center">
+        <div class="col-6 col-sm-4">
+            <button
+                type="button"
+                v-if="teamControlsEnabled(match.home_team_id)"
+                v-on:click="addScore(match.home_team_id, 1)"
+                class="btn btn-info scoreAppButton"
+                title="Home dinger">
+                <i class="fa fa-hand-o-up fa-button" title="Home team dingers"></i> - [[ active_sheet.home_dingers ]]
+            </button>
+            <button
+                type="button"
+                v-else
+                class="btn btn-secondary scoreAppButton" disabled
+                title="Reached score - home dinger">
+                <i class="fa fa-hand-o-up fa-button" title="Home team dingers"></i> - [[ active_sheet.home_dingers ]]
+            </button>
+        </div>
+        <div class="col-md-4 d-none d-sm-block" >
+        </div>
+        <div class="col-6 col-sm-4">
+            <i class="fa fa-hand-o-up fa-button" title="Away team dingers"></i> - [[ active_sheet.away_dingers ]]
+        </div>
+    </div>
+    <div class="row align-item-center">
+        <div class="col-6 col-sm-4">
+            <button
+                type="button"
+                v-if="teamControlsEnabled(match.home_team_id)"
+                v-on:click="addScore(match.home_team_id, 0)"
+                class="btn btn-info scoreAppButton"
+                title="Home miss">
+                <i class="fa fa-circle-o" title="Home team misses"></i>
+            </button>
+            <button
+                type="button"
+                v-else
+                class="btn btn-secondary scoreAppButton" disabled
+                title="Reached score - missed shot">
+                <i class="fa fa-circle-o" title="Home team misses"></i>
+            </button>
+        </div>
+        <div class="col-md-4 d-none d-sm-block" >
+        </div>
+        <div class="col-6 col-sm-4">
+            <span v-if="previous_computer_throws.length > 0">
+                Last Throws: [[ previous_computer_throws.join(",") ]]
+            </span>
+        </div>
+    </div>
+    <div class="row align-items-center">
+        <div class="col-sm-4 d-none d-sm-block">
+            <!-- Empty divs. -->
+        </div>
+        <div class="col-12 col-sm-4 text-center" >
+            <!-- The overtime controls. -->
+            <button
+                v-if="askForOvertimeMethod()"
+                v-on:click="pickOvertimeMethod(overtime_method + 1)"
+                class="btn btn-success scoreAppButton"
+                title="First to ten"
+                >
+                <i class="fa fa-plus fa-button" title="First to ten points"></i>10
+
+            </button>
+            <button
+                v-if="askForOvertimeMethod()"
+                v-on:click="pickOvertimeMethod('sudden_death')"
+                class="btn btn-danger scoreAppButton"
+                title="Sudden death"
+                >
+                <i class="fa fa-heartbeat fa-button" title="Sudden death"></i>
+            </button>
+        </div>
+        <div class="col-sm-4 d-none d-sm-block">
+            <!-- Empty divs -->
+        </div>
+    </div>
+    <div class="row align-items-center">
+        <div class="col-sm-4 d-none d-sm-block">
+            <!-- Empty divs. -->
+        </div>
+        <div class="col-12 col-sm-4 text-center" >
+            <!-- Submit and undo controls. -->
+            <button
+                v-if="sheetComplete(active_sheet, overtime_method) && !askForOvertimeMethod()"
+                v-on:click="nextGame()"
+                class="btn btn-success scoreAppButton"
+                title="Start Over"
+                >
+                <i class="fa fa-check fa-button" aria-hidden="true"></i>
+            </button>
+            <button
+                v-if="undoEnabled()"
+                v-on:click="undo()"
+                class="btn btn-light scoreAppButton"
+                title="Undo"
+                >
+                <i class="fa fa-undo fa-button" aria-hidden="true"></i>
+            </button>
+        </div>
+        <div class="col-sm-4 d-none d-sm-block">
+            <!-- Empty divs -->
+        </div>
+    </div>
+    <div class="row align-items-center">
+        <div class="col-sm-4 d-none d-sm-block">
+            <!-- Empty divs. -->
+        </div>
+        <div class="col-12 col-sm-4 text-center" >
+            <!-- Help Controls. -->
+            <button
+                class="btn btn-link helpLink"
+                title="Help"
+                data-toggle="modal"
+                data-target="#helpModal"
+                >
+                Help
+            </button>
+        </div>
+        <div class="col-sm-4 d-none d-sm-block">
+            <!-- Empty divs -->
+        </div>
+    </div>
+</div>
+
+<!-- Help Modal -->
+<div class="modal fade" id="helpModal" tabindex="-1" role="dialog" aria-labelledby="helpModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="helpModalLabel">Submitting your score</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <h5>Icon explanations</h5>
+                <ul>
+                    <li>
+                        <i class="fa fa-undo fa-butto" aria-hidden="true"></i> - Undo your previous action (except OT selection)
+                    </li>
+                    <li>
+                        <i class="fa fa-check fa-butto" aria-hidden="true"></i> - Submit the score for the game
+                    </li>
+                    <li>
+                        <i class="fa fa-heartbeat fa-butto" aria-hidden="true"></i> - sudden death overtime
+                    </li>
+                    <li>
+                        <i class="fa fa-plus fa-butto" aria-hidden="true"></i>10 - overtime with first to ten
+                    </li>
+                    <li>
+                        <i class="fa fa-hand-o-up fa-button" aria-hidden="true"></i> - one-point dinger
+                    </li>
+                    <li>
+                        <i class="fa fa-hand-peace-o fa-button" aria-hidden="true"></i>  - two-point deuce
+                    </li>
+                    <li>
+                        <i class="fa fa-trash fa-button" aria-hidden="true"></i> - 3-point jam
+                    </li>
+                    <li>
+                        <i class="fa fa-bullseye fa-button" aria-hidden="true"></i> - hit a slot
+                    </li>
+                    <li>
+                        <i class="fa fa-trophy fa-button" aria-hidden="true"></i> - how many wins in the match
+                    </li>
+                    <li>
+                        <i class="fa fa-gavel fa-button" aria-hidden="true"></i> - hammer/redemption: team with extra throw 
+                    </li>
+                    <li>
+                        <i class="fa fa-circle-o" aria-hidden="true"></i> - miss: team missed on their throw
+                    </li>
+                </ul>
+                <p>
+                    Use the buttons to help keep track of your score as you play.
+                    The application was designed to handle over time with either playing sudden death or first to score ten.
+                    A slot if a instance win regardless of hammer and overtime.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
+
+{% block script %}
+<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+<script>
+$(document).ready(ready());
+window.appReady = false;
+function ready() {
+    $.ajax({
+        type: "GET",
+        url: "{{ url_for('team_practice_model', team_id=team_id, difficulty=difficulty) }}",
+        contentType: "application/json",
+        dataType: "json",
+        async: true,
+        success: function(model) {
+            startApp(model, {{team_id}});
+            window.appReady = true;
+        }, error: function(request, error) {
+            console.error(request);
+            console.error(error);
+        }
+    });
+}
+
+/** A constant for suddent death*/
+const SUDDEN_DEATH = "sudden_death";
+
+/** Returns a new sheet for the match.*/
+function newSheet() {
+    return {
+        "id": null,
+        "match_id": null,
+        "away_score": 0,
+        "home_score": 0,
+        "home_slot": false,
+        "away_slot": false,
+        "home_jams": 0,
+        "away_jams": 0,
+        "home_deuces": 0,
+        "away_deuces": 0,
+        "home_dingers": 0,
+        "away_dingers": 0
+    };
+}
+
+/** Returns a map for random numbers. */
+function generateMapFromModel(team_model) {
+    let sum = 0.00;
+    const team_map = {}
+    for (const [move, probability] of Object.entries(team_model)) {
+        sum += probability;
+        team_map[move] = sum;
+    }
+    console.log(team_map);
+    return team_map;
+}
+
+/** Returns a random move based upon the team probability. */
+function makeMove(team_map) {
+    const some_number = Math.random();
+    for (const [move, probability] of Object.entries(team_map)) {
+        if (some_number < probability) {
+            console.log({"team_map": team_map, 'move': move, 'probability': probability})
+            return move;
+        }
+    }
+    return "miss";
+}
+
+function convertMoveToScore(move) {
+    if (move == 'dinger') {
+        return 1;
+    } else if (move == 'deuce') {
+        return 2;
+    } else if (move == 'jam') {
+        return 3;
+    }
+    return 0;
+}
+
+function startApp(model, team_id) {
+    const app = new Vue({
+        el: '#submitScoreApp',
+        data: {
+            active_sheet: newSheet(),
+            hammer: team_id,
+            previous_states: [],
+            overtime_method: 0,
+            match: {
+                'sheets': [],
+                'away_team_id': team_id,
+                'home_team_id': -1,
+                'home_score': 0,
+                'away_score': 0
+            },
+            is_computer_throwing: false,
+            previous_computer_throws: [],
+            team_model: model,
+            team_map: generateMapFromModel(model),
+            team_close_map: generateMapFromModel({
+                'miss': 0.3 * model.jam + model.miss,
+                'jam': 0.1 * model.jam,
+                'deuce': model.deuce + 0.3 * model.jam,
+                'dinger': model.deuce + 0.3 * model.jam,
+                'slot': model.slot
+            })
+        },
+        delimiters: ['[[', ']]'],
+        methods: {
+            /** The given team hit a slot. */
+            hitSlot: function(team_id) {
+                const home_team = this.match.home_team_id == team_id;
+                const temp_sheet = Object.assign({}, this.active_sheet);
+                const score_limit = 
+                    (this.overtime_method == SUDDEN_DEATH)
+                    ? Math.max(temp_sheet.home_score, temp_sheet.away_score) + 1
+                    : this.overtime_method * 10 + 21;
+                if (home_team) {
+                    temp_sheet.home_slot = true;
+                    temp_sheet.home_score = score_limit;
+                } else {
+                    temp_sheet.away_slot = true;
+                    temp_sheet.away_score = score_limit;
+                }
+                // remember the previous state in case undo
+                const temp = this.active_sheet;
+                this.previous_states.push(temp);
+                this.active_sheet = temp_sheet;
+            },
+            generateMove: function() {
+                const number = Math.random();
+
+            },
+            computerMove: function() {
+                this.is_computer_throwing = true;
+                this.previous_computer_throws = [];
+                let frisbee_throw = makeMove((this.overtime_method != SUDDEN_DEATH && this.active_sheet.away_score > this.overtime_method * 10 + 18 ) ? this.team_close_map : this.team_map);
+                (frisbee_throw == 'slot') ? this.hitSlot(this.match.away_team_id) : this.addScore(this.match.away_team_id, convertMoveToScore(frisbee_throw));
+                this.previous_computer_throws.push(frisbee_throw);
+                someone_won = this.sheetComplete(this.active_sheet,this.overtime_method)
+                if (!someone_won || this.active_sheet.home_score > this.active_sheet.away_score ) {
+                    setTimeout(() => {
+                        team_map = (this.overtime_method != SUDDEN_DEATH && this.active_sheet.away_score > this.overtime_method * 10 + 18 ) ? this.team_close_map : this.team_map;
+                        frisbee_throw = makeMove((this.overtime_method != SUDDEN_DEATH && this.active_sheet.away_score > this.overtime_method * 10 + 18 ) ? this.team_close_map : this.team_map);
+                        (frisbee_throw == 'slot') ? this.hitSlot(this.match.away_team_id) : this.addScore(this.match.away_team_id, convertMoveToScore(frisbee_throw));
+                        this.previous_computer_throws.push(frisbee_throw);
+                        this.is_computer_throwing = false;
+                    }, 500);
+                } else {
+                    this.is_computer_throwing = false;
+                }
+                
+            },
+            /** Add to the given teams score the given number of points. */
+            addScore: function(team_id, points) {
+                const home_team = this.match.home_team_id == team_id;
+                const temp_sheet = Object.assign({}, this.active_sheet);
+                if (home_team) {
+                    // check if their score went over
+                    const goOver = this.didGoOver(
+                        this.active_sheet.home_score,
+                        points,
+                        this.overtime_method);
+                    temp_sheet.home_score += (goOver) ? (-1 * points) : points;
+
+                    // keep tracks of stats only if did not go over
+                    if (!goOver && points == 3) {
+                        temp_sheet.home_jams += 1;
+                    } else if (!goOver && points == 2) {
+                        temp_sheet.home_deuces += 1;
+                    } else if (!goOver && points == 1) {
+                        temp_sheet.home_dingers += 1;
+                    }
+                } else {
+                    // check if their score went over
+                    const goOver = this.didGoOver(
+                        this.active_sheet.away_score,
+                        points,
+                        this.overtime_method);
+                    temp_sheet.away_score += (goOver) ? (-1 * points) : points;
+
+                    // keep tracks of stats only if did not go over
+                    if (!goOver && points == 3) {
+                        temp_sheet.away_jams += 1;
+                    } else if (!goOver && points == 2) {
+                        temp_sheet.away_deuces += 1;
+                    } else if (!goOver && points == 1) {
+                        temp_sheet.away_dingers += 1;
+                    }
+                }
+                // remember the previous state in case undo
+                const temp = this.active_sheet;
+                this.previous_states.push(temp);
+                this.active_sheet = temp_sheet;
+                someone_won = this.sheetComplete(this.active_sheet,this.overtime_method)
+                if (home_team && (!someone_won || (someone_won && this.active_sheet.home_score > this.active_sheet.away_score))) {
+                    const numberOfThrows = this.previous_states.length;
+                    if (numberOfThrows % 2 == 0 && numberOfThrows > 0) {
+                        // computer show go every two moves
+                        this.computerMove();
+                    } else if (someone_won && this.active_sheet.home_score > this.active_sheet.away_score){
+                        // unless the human won the game computer gets last throw
+                        this.computerMove();
+                    }
+                }
+            },
+
+            /** Reset the current sheet. */
+            reset: function() {
+                this.active_sheet = window.newSheet(this.match);
+                this.previous_states = [];
+                this.overtime_method = null;
+            },
+            /** Switch the hammer to the other team. */
+            switchHammar: function() {
+                this.hammer = (this.hammer == this.match.home_team_id)
+                    ? this.match.away_team_id : this.match.home_team_id;
+            },
+            /** Moved to the next game. */
+            nextGame: function() {
+                this.match.sheets.push(this.active_sheet);
+                this.reset();
+            },
+            /** Determine how many wins the team has in the match. */
+            howManyWins: function(team_id) {
+                let wins = 0;
+                const home_team = this.match.home_team_id == team_id;
+                for (let sheet of this.match.sheets) {
+                    if (home_team && (sheet.home_score > sheet.away_score ||
+                                sheet.home_slot == true)) {
+                        wins  += 1;
+                    } else if (!home_team && (sheet.away_score > sheet.home_score ||
+                                              sheet.away_slot == true)) {
+                        wins += 1;
+                    }
+                }
+                return wins;
+            },
+
+            /** Returns whether the given team controls should be enabled or disabled. */
+            teamControlsEnabled: function(team_id) {
+                const have_hammer = team_id == this.hammer;
+                const my_score = (team_id == this.match.home_team_id)
+                    ? this.active_sheet.home_score : this.active_sheet.away_score;
+                const other_score =  (team_id == this.match.home_team_id)
+                    ?  this.active_sheet.away_score : this.active_sheet.home_score;
+                if (this.active_sheet.home_slot || this.active_sheet.away_slot){
+                    // if either team hits a slots then controls become disabled
+                    return false;
+                } else if (!this.sheetComplete(this.active_sheet,
+                                               this.overtime_method)) {
+                    // if niether team has reach end game score
+                    // then controls should be enabled
+                    return true;
+                } else if (this.overtime_method == SUDDEN_DEATH) {
+                    // sudden death should always have controls enabled
+                    return true;
+                } else {
+                    score_limit = this.overtime_method * 10 + 21;
+                    if (my_score == score_limit) {
+                        // if I have reach score limit then controls are disbaled
+                        return false;
+                    } else if (other_score == score_limit && !have_hammer) {
+                        // if other team has reached score limit and has hammer
+                        // then controls are disabled
+                        return false;
+                    } else {
+                        // I have hammer but other team has reach limit
+                        return true;
+                    }
+                }
+            },
+
+            /** Returns whether the given sheet is complete. */
+            sheetComplete: function(sheet, overtime_method) {
+                if(sheet.away_slot || sheet.home_slot) {
+                    return true;
+                } else if (overtime_method == SUDDEN_DEATH) {
+                    return sheet.home_score != sheet.away_score;
+                } else {
+                    score_limit = overtime_method * 10 + 21;
+                    return sheet.home_score == score_limit || sheet.away_score == score_limit;
+                }
+            },
+
+            /** Determine whether need to ask for overtime method. */
+            askForOvertimeMethod: function() {
+                if (this.overtime_method == SUDDEN_DEATH) {
+                    // once sudden death then never going to change
+                    // back to first to ten
+                    return false;
+                } else {
+                    score_limit = this.overtime_method * 10 + 21;
+                    if (this.active_sheet.home_score == score_limit &&
+                        this.active_sheet.away_score ==score_limit) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
+            },
+
+            /** Picks the overtime method to use. */
+            pickOvertimeMethod: function(method) {
+                this.overtime_method = method;
+            },
+            whichOvertimeMethod: function() {
+                return this.overtime_method;
+            },
+            /** Determine if the player went over the correct score. */
+            didGoOver: function (team_points, points) {
+                if (this.overtime_method == "sudden_death") {
+                    // sudden death you can never go over
+                    return false;
+                } else {
+                    // allows for infinite number of overtimes
+                    return (team_points + points > (this.overtime_method * 10 + 21)) ? true : false;
+                }
+            },
+
+            /** Any undos available. */
+            undoEnabled: function() {
+                return this.previous_states.length > 0;
+            },
+
+            /** Undo the previous change. */
+            undo: function() {
+                if (this.undoEnabled()) {
+                    this.active_sheet = this.previous_states.pop();
+                }
+            }
+        }
+    });
+    if (window.Cypress) {
+        window.scoreApp = app;
+    }
+}
+</script>
+
+{% endblock %}
