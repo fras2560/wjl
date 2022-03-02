@@ -2,12 +2,18 @@
 <html lang="en">
   <head>
     {% if title %}
-    <title>{{title}} - WJl</title>
+      <meta property="og:site_title" content="{{title}} - WJL">
+      <title>{{title}} - WJL</title>
     {% else %}
-    <title>WJL</title>
+      <meta property="og:site_title" content="{{title}} - WJL">
+      <title>WJL</title>
     {% endif %}
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta property="og-type" content="website">
+    <meta property="og:image" content="{{ url_for('static', filename='WJL-Logo.png') }}">
+    <meta property="og:site_name" content="Waterloo Jam League">
+    <meta property="og:description" content="A website for a kan jam league">
     <meta name="description" content="WJL web app">
     <meta name="author" content="Dallas Fraser">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
