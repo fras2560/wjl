@@ -4,7 +4,7 @@ from typing import TypedDict
 from flask import render_template, Response
 from app import wjl_app
 from app.views.helper import get_active_session, get_base_data
-from app.model import Match, Sheet, Team
+from app.model import Match, Session, Sheet, Team
 from app.logging import LOGGER
 import json
 
@@ -69,6 +69,10 @@ def pull_team_stats(team_id: int, sheet: Sheet, match: Match) -> dict:
 def get_team_model(team_id: int, difficulty: int) -> PracticeTeam:
     """Return the team simulation model"""
     sess = get_active_session()
+    if sess is None:
+        sess = Session.query.filter(Session.active is True).first()
+        if sess is None: 
+            sess = Session.query.first()
     matches = Match.query.filter(Match.session_id == sess.id).all()
     model = {
         "slot": 0,
