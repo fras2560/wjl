@@ -43,6 +43,17 @@ def get_active_session() -> Session:
     return None
 
 
+def get_some_session() -> Session:
+    """Get some league session.
+
+    Returns:
+        Session: the current active session otherwise just some session 
+    """
+    sess = get_active_session()
+    sess = sess if sess is not None else Session.query.filter(Session.active == True).first()
+    return sess if sess is not None else Session.query.first()
+
+
 def get_session_default_empty(sessions) -> Session:
     """Get a session from list of sessions but if empty return empty session"""
     if len(sessions) >= 1:
