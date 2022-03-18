@@ -47,7 +47,7 @@ def get_some_session() -> Session:
     """Get some league session.
 
     Returns:
-        Session: the current active session otherwise just some session 
+        Session: the current active session otherwise just some session
     """
     sess = get_active_session()
     sess = sess if sess is not None else Session.query.filter(Session.active == True).first()

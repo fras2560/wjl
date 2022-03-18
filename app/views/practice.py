@@ -3,8 +3,8 @@
 from typing import TypedDict
 from flask import render_template, Response
 from app import wjl_app
-from app.views.helper import get_active_session, get_base_data, get_some_session
-from app.model import Match, Session, Sheet, Team
+from app.views.helper import get_base_data, get_some_session
+from app.model import Match, Sheet, Team
 from app.logging import LOGGER
 import json
 
