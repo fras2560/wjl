@@ -1,1 +1,1 @@
-web: gunicorn runserver:wjl_app
+web: gunicorn runserver:wjl_app -b :8080

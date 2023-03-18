@@ -6,13 +6,6 @@ if __name__ == "__main__":
         from initDB import init_database
         print("Initializing database")
         init_database()
+    
     start = False
-    port = os.environ.get("WJL_PORT", 5000)
-    while not start and port < 5010:
-        try:
-            wjl_app.run(debug=True, port=port)
-            start = True
-        except OSError as e:
-            print(e)
-            print(f"Port:{port} taken trying another")
-            port += 1
+    wjl_app.run(host='0.0.0.0', port=8080)
