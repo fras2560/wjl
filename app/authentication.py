@@ -12,7 +12,7 @@ from flask_dance.consumer import oauth_authorized, oauth_error
 from flask_login import LoginManager, current_user, login_user
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy import func
-from app.errors import OAuthException, NotPartOfLeagueException,\
+from app.errors import OAuthException, NotPartOfLeagueException, \
     HaveLeagueRequestException, NotConvenorException
 from app.model import DB, Player, OAuth, LeagueRequest
 from app.logging import LOGGER

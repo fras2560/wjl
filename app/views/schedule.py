@@ -5,7 +5,7 @@ from flask_login import current_user
 from sqlalchemy import asc
 from app import wjl_app
 from app.model import Session, Match
-from app.views.helper import get_active_session, get_base_data,\
+from app.views.helper import get_active_session, get_base_data, \
     get_session_default_empty
 from app.views.types import ScheduleRecord
 from app.logging import LOGGER
