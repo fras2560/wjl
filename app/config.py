@@ -8,6 +8,9 @@ class Config(object):
     URL = os.environ.get("DATABASE_URL", "sqlite://")
     SECRET_KEY = os.environ.get("SECRET_KEY", str(uuid1()))
     SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL", "sqlite://")
+    SQLALCHEMY_ENGINE_OPTIONS = {
+        'pool_pre_ping': True
+    }
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     GOOGLE_OAUTH_CLIENT_ID = os.environ.get("GOOGLE_OAUTH_CLIENT_ID", "")
     GOOGLE_OAUTH_CLIENT_SECRET = os.environ.get(
