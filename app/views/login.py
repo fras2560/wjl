@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
 """Holds views related to login and authenticating"""
 from flask import render_template, redirect, url_for, request, session
-from flask_login import current_user, logout_user, login_required,\
+from flask_login import current_user, logout_user, login_required, \
     login_user
 from app import wjl_app
-from app.authentication import is_facebook_supported, is_github_supported,\
+from app.authentication import is_facebook_supported, is_github_supported, \
     is_gmail_supported
 from app.model import LeagueRequest, OAuth, Team, Player, DB
 from app.logging import LOGGER
 from app.views.helper import get_base_data
-from app.errors import OAuthException, NotFoundException,\
+from app.errors import OAuthException, NotFoundException, \
     HaveLeagueRequestException
 
 

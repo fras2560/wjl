@@ -3,8 +3,8 @@
 from flask import render_template, session, url_for, redirect
 from flask_login import current_user
 from app import wjl_app
-from app.errors import OAuthException, NotFoundException,\
-    NotPartOfLeagueException, HaveLeagueRequestException,\
+from app.errors import OAuthException, NotFoundException, \
+    NotPartOfLeagueException, HaveLeagueRequestException, \
     NotConvenorException
 from app.model import Team, LeagueRequest
 from app.views import get_base_data
